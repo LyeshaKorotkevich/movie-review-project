@@ -9,6 +9,19 @@
 </head>
 <body class="bg-light">
 <div class="container py-5">
+
+    <nav class="nav nav-pills nav-justified mb-4">
+        <%
+            String currentType = request.getParameter("type");
+        %>
+        <a class="nav-item nav-link <%= "0".equals(currentType) ? "active" : "" %>" href="?typeNumber=0">Все</a>
+        <a class="nav-item nav-link <%= "1".equals(currentType) ? "active" : "" %>" href="?typeNumber=1">Фильмы</a>
+        <a class="nav-item nav-link <%= "2".equals(currentType) ? "active" : "" %>" href="?typeNumber=2">Сериалы</a>
+        <a class="nav-item nav-link <%= "3".equals(currentType) ? "active" : "" %>" href="?typeNumber=3">Мультфильмы</a>
+        <a class="nav-item nav-link <%= "4".equals(currentType) ? "active" : "" %>" href="?typeNumber=4">Аниме</a>
+        <a class="nav-item nav-link <%= "5".equals(currentType) ? "active" : "" %>" href="?typeNumber=5">Анимационные сериалы</a>
+    </nav>
+
     <h1 class="text-center mb-4">Список фильмов</h1>
     <div class="row">
         <%
@@ -40,13 +53,17 @@
 
     <nav aria-label="Навигация по страницам">
         <ul class="pagination justify-content-center">
+            <%
+                String currentTypeNumber = request.getParameter("typeNumber");
+                currentTypeNumber = currentTypeNumber != null ? currentTypeNumber : "0";
+            %>
             <% if (currentPage > 1) { %>
             <li class="page-item">
-                <a class="page-link" href="?page=<%= currentPage - 1 %>">Предыдущая</a>
+                <a class="page-link" href="?page=<%= currentPage - 1 %>&typeNumber=<%= currentTypeNumber %>">Предыдущая</a>
             </li>
             <% } %>
             <li class="page-item">
-                <a class="page-link" href="?page=<%= currentPage + 1 %>">Следующая</a>
+                <a class="page-link" href="?page=<%= currentPage + 1 %>&typeNumber=<%= currentTypeNumber %>">Следующая</a>
             </li>
         </ul>
     </nav>

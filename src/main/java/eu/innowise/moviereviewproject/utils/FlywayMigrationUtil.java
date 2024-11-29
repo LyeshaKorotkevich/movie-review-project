@@ -9,15 +9,16 @@ import javax.naming.NamingException;
 public class FlywayMigrationUtil {
 
     public static void runMigrations() {
+        log.info("Starting Flyway migrations...");
         try {
             Flyway flyway = Flyway.configure()
                     .dataSource(DataSourceUtil.getDataSource())
                     .load();
 
             flyway.migrate();
-
             log.info("Flyway migrations executed successfully.");
         } catch (NamingException e) {
+            log.error("Error during Flyway migrations.", e);
             throw new RuntimeException(e);
         }
     }
