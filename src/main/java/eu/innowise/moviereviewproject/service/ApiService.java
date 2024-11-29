@@ -3,6 +3,7 @@ package eu.innowise.moviereviewproject.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.innowise.moviereviewproject.model.Movie;
+import eu.innowise.moviereviewproject.model.MovieType;
 import eu.innowise.moviereviewproject.repository.MovieRepository;
 import eu.innowise.moviereviewproject.repository.impl.MovieRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -64,7 +65,7 @@ public class ApiService {
         StringBuilder urlBuilder = new StringBuilder(API_URL)
                 .append("?page=").append(page)
                 .append("&limit=12")
-                .append("&selectFields=id&selectFields=name&selectFields=description&selectFields=year&selectFields=poster")
+                .append("&selectFields=id&selectFields=name&selectFields=description&selectFields=year&selectFields=poster&selectFields=typeNumber")
                 .append("&notNullFields=id&notNullFields=name&notNullFields=description&notNullFields=year&notNullFields=poster.url");
 
         if (typeNumber > 0) {
@@ -75,13 +76,15 @@ public class ApiService {
     }
 
     private Movie mapToMovie(JsonNode movieNode) {
-        // TODO add another field to store type of movie
         Movie movie = new Movie();
         movie.setExternalId(movieNode.get("id").asLong());
         movie.setTitle(movieNode.get("name").asText());
         movie.setPosterUrl(movieNode.get("poster").get("url").asText());
         movie.setReleaseYear(movieNode.get("year").asInt());
         movie.setDescription(movieNode.get("description").asText());
+
+        int typeNumber = movieNode.get("typeNumber").asInt();
+        movie.setMovieType(MovieType.fromTypeNumber(typeNumber));
         return movie;
     }
 }

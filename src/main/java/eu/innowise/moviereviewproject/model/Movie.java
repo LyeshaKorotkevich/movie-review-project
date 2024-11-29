@@ -2,6 +2,8 @@ package eu.innowise.moviereviewproject.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -52,6 +54,10 @@ public class Movie {
     public double getRating() {
         return rateCount == 0 ? 0 : (double) rateSum / rateCount;
     }
+
+    @Column(name = "movie_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private MovieType movieType;
 
     public void addRating(int rating) {
         this.rateSum += rating;
