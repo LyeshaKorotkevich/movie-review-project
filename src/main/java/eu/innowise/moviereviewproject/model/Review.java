@@ -11,15 +11,15 @@ import jakarta.persistence.SequenceGenerator;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Entity
 public class Review {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reviews_seq")
-    @SequenceGenerator(name = "reviews_seq", sequenceName = "review_id_seq", initialValue = 100, allocationSize = 1)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     private String content;
     private int rate;

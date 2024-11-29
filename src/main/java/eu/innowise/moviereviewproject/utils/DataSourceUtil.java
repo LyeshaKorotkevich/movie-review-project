@@ -10,7 +10,7 @@ public class DataSourceUtil {
 
     public static DataSource getDataSource() throws NamingException {
         InitialContext context = new InitialContext();
-        return (DataSource) context.lookup("java:/comp/env/jdbc/MyDataSource");
+        return (DataSource) context.lookup("java:/comp/env/jdbc/MyLocalDB");
     }
 
     public static Connection getConnection() throws NamingException, SQLException {

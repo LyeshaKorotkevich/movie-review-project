@@ -11,15 +11,15 @@ import jakarta.persistence.SequenceGenerator;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Entity
 public class Watchlist {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "watchlist_seq")
-    @SequenceGenerator(name = "watchlist_seq", sequenceName = "watchlist_id_seq", initialValue = 100, allocationSize = 1)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
