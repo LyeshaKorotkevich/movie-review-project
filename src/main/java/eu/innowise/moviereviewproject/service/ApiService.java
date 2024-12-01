@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.innowise.moviereviewproject.model.Movie;
 import eu.innowise.moviereviewproject.model.MovieType;
 import eu.innowise.moviereviewproject.repository.MovieRepository;
-import eu.innowise.moviereviewproject.repository.impl.MovieRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
@@ -15,15 +14,21 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
+import static eu.innowise.moviereviewproject.utils.Constants.API_KEY;
+import static eu.innowise.moviereviewproject.utils.Constants.API_URL;
+
 @Slf4j
 public class ApiService {
 
-    private static final String API_URL = "https://api.kinopoisk.dev/v1.4/movie";
-    private static final String API_KEY = "2GM61NX-6RV4E74-KGHP0K9-XEB3D4V";
+    private final HttpClient httpClient;
+    private final ObjectMapper objectMapper;
+    private final MovieRepository movieRepository;
 
-    private final HttpClient httpClient = HttpClient.newHttpClient();
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    private final MovieRepository movieRepository = new MovieRepositoryImpl();
+    public ApiService(HttpClient httpClient, ObjectMapper objectMapper, MovieRepository movieRepository) {
+        this.httpClient = httpClient;
+        this.objectMapper = objectMapper;
+        this.movieRepository = movieRepository;
+    }
 
     public List<Movie> fetchMoviesFromApi(int page, int typeNumber) throws Exception {
         String url = buildUrl(page, typeNumber);

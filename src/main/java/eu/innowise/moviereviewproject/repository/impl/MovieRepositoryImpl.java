@@ -1,6 +1,7 @@
 package eu.innowise.moviereviewproject.repository.impl;
 
 import eu.innowise.moviereviewproject.model.Movie;
+import eu.innowise.moviereviewproject.model.MovieType;
 import eu.innowise.moviereviewproject.repository.MovieRepository;
 import eu.innowise.moviereviewproject.utils.JpaUtil;
 import jakarta.persistence.EntityManager;
@@ -12,6 +13,8 @@ import java.util.UUID;
 public class MovieRepositoryImpl implements MovieRepository {
 
     private final EntityManager entityManager = JpaUtil.getEntityManager();
+
+    private static final int PAGE_SIZE = 12;
 
     @Override
     public void save(Movie movie) {
@@ -35,6 +38,17 @@ public class MovieRepositoryImpl implements MovieRepository {
 
     public List<Movie> findAll() {
         return entityManager.createQuery("SELECT m FROM Movie m", Movie.class).getResultList();
+    }
+
+    public List<Movie> findAll(int page, int typeNumber) {
+        int firstResult = (page - 1) * PAGE_SIZE;
+        MovieType movieType = MovieType.fromTypeNumber(typeNumber);
+
+        return entityManager.createQuery("SELECT m FROM Movie m WHERE m.movieType = :movieType", Movie.class)
+                .setParameter("movieType", movieType)
+                .setFirstResult(firstResult)
+                .setMaxResults(PAGE_SIZE)
+                .getResultList();
     }
 
     @Override

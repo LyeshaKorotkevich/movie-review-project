@@ -1,7 +1,8 @@
 package eu.innowise.moviereviewproject.servlet;
 
+import eu.innowise.moviereviewproject.config.ApplicationConfig;
 import eu.innowise.moviereviewproject.model.Movie;
-import eu.innowise.moviereviewproject.service.ApiService;
+import eu.innowise.moviereviewproject.service.MovieService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,7 +16,11 @@ import java.util.List;
 @WebServlet("/movies")
 public class MoviesServlet extends HttpServlet {
 
-    private final ApiService apiService = new ApiService();
+    private final MovieService movieService;
+
+    public MoviesServlet() {
+        this.movieService = ApplicationConfig.getMovieService();
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
@@ -28,8 +33,7 @@ public class MoviesServlet extends HttpServlet {
 
             log.info("Parsed request parameters: page={}, typeNumber={}", page, typeNumber);
 
-            // TODO maybe to do async
-            List<Movie> movies = apiService.fetchMoviesFromApi(page, typeNumber);
+            List<Movie> movies = movieService.getAllMovies(page, typeNumber);
 
             req.setAttribute("movies", movies);
             req.setAttribute("currentPage", page);
@@ -40,7 +44,7 @@ public class MoviesServlet extends HttpServlet {
             req.getRequestDispatcher("/WEB-INF/views/movies.jsp").forward(req, resp);
         } catch (Exception e) {
             log.error("Error occurred while processing request for movies.", e);
-            throw new ServletException("Ошибка получения фильмов", e);
+            throw new ServletException("Error fetching movies", e);
         }
     }
 

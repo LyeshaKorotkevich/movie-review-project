@@ -2,18 +2,42 @@ package eu.innowise.moviereviewproject.service;
 
 import eu.innowise.moviereviewproject.model.Movie;
 import eu.innowise.moviereviewproject.repository.MovieRepository;
-import eu.innowise.moviereviewproject.repository.impl.MovieRepositoryImpl;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 public class MovieService {
 
-    private final MovieRepository movieRepository = new MovieRepositoryImpl();
+    private final MovieRepository movieRepository;
+    private final ApiService apiService;
+
+    public MovieService(MovieRepository movieRepository, ApiService apiService) {
+        this.movieRepository = movieRepository;
+        this.apiService = apiService;
+    }
 
     public List<Movie> getAllMovies() {
         return movieRepository.findAll();
+    }
+
+    public List<Movie> getAllMovies(int page, int typeNumber) {
+        List<Movie> movies = movieRepository.findAll(page, typeNumber);
+        if (!movies.isEmpty()) {
+            log.info("Movies loaded from the database.");
+            return movies;
+        }
+
+        log.info("No movies found in the database. Fetching from API...");
+        try {
+            movies = apiService.fetchMoviesFromApi(page, typeNumber);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return movies;
     }
 
     public Optional<Movie> getMovieById(UUID id) {
