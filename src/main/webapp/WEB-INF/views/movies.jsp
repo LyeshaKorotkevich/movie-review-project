@@ -5,6 +5,7 @@
 <html>
 <head>
     <title>Список фильмов</title>
+    <link rel="stylesheet" href="<%= request.getContextPath() + "/resources/css/style.css" %>" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 <body class="bg-light">
@@ -34,13 +35,19 @@
         %>
         <div class="col-md-4 mb-4">
             <div class="card h-100">
-                <img src="<%= movie.getPosterUrl() != null ? movie.getPosterUrl() : "https://via.placeholder.com/300x450" %>" class="card-img-top" alt="Постер">
-                <div class="card-body">
-                    <h5 class="card-title"><%= movie.getTitle() %></h5>
-                    <p class="card-text">Год: <%= movie.getReleaseYear() %></p>
-                </div>
+                <a href="<%= request.getContextPath() + "/movies/" + movie.getId() %>" class="movie-link">
+                    <img src="<%= movie.getPosterUrl() != null ? movie.getPosterUrl() : "https://via.placeholder.com/300x450" %>"
+                         class="card-img-top" alt="Постер">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title text-truncate"><%= movie.getTitle() %></h5>
+                        <p class="card-text">Год: <%= movie.getReleaseYear() %></p>
+                        
+                        <small class="text-muted">Рейтинг: <%= movie.getRating() %></small>
+                    </div>
+                </a>
             </div>
         </div>
+
         <%
             }
         } else {

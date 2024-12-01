@@ -15,6 +15,7 @@ public class ServletsUtil {
 
     public static UUID extractUuidFromPath(HttpServletRequest req, HttpServletResponse resp, int urlLength, int idPosition) throws IOException {
         String pathInfo = req.getPathInfo();
+        log.info("pathInfo to extract UUID: {}", pathInfo);
 
         String[] pathParts = pathInfo.split("/");
         if (pathParts.length != urlLength) {
@@ -25,7 +26,7 @@ public class ServletsUtil {
 
         UUID id;
         try {
-            id = UUID.fromString(pathParts[idPosition]);
+            id = UUID.fromString(pathParts[idPosition-1]);
         } catch (IllegalArgumentException e) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             log.error("UUID is not a valid UUID");

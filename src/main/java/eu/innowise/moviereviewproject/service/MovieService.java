@@ -1,11 +1,11 @@
 package eu.innowise.moviereviewproject.service;
 
+import eu.innowise.moviereviewproject.exceptions.movie.MovieNotFoundException;
 import eu.innowise.moviereviewproject.model.Movie;
 import eu.innowise.moviereviewproject.repository.MovieRepository;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -40,8 +40,9 @@ public class MovieService {
         return movies;
     }
 
-    public Optional<Movie> getMovieById(UUID id) {
-        return movieRepository.findById(id);
+    public Movie getMovieById(UUID id) {
+        return movieRepository.findById(id)
+                .orElseThrow(() -> new MovieNotFoundException("Movie with ID " + id + " not found"));
     }
 
     public void saveMovie(Movie movie) {

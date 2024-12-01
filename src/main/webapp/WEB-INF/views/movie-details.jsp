@@ -1,16 +1,40 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: leha
-  Date: 1.12.24
-  Time: 14:45
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="eu.innowise.moviereviewproject.model.Movie" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<!DOCTYPE html>
 <html>
 <head>
-    <title>Title</title>
+    <title>Детали фильма</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
-<body>
+<body class="bg-light">
+<div class="container py-5">
 
+    <%
+        Movie movie = (Movie) request.getAttribute("movie");
+        if (movie != null) {
+    %>
+    <h1 class="text-center mb-4"><%= movie.getTitle() %></h1>
+
+    <div class="row">
+        <div class="col-md-6">
+            <img src="<%= movie.getPosterUrl() != null ? movie.getPosterUrl() : "https://via.placeholder.com/300x450" %>" class="img-fluid" alt="Постер фильма">
+        </div>
+        <div class="col-md-6">
+            <p><strong>Год:</strong> <%= movie.getReleaseYear() %></p>
+            <p><strong>Описание:</strong> <%= movie.getDescription() %></p>
+            <p><strong>Рейтинг:</strong> <%= movie.getRating() %></p>
+        </div>
+    </div>
+
+    <a href="<%= request.getContextPath() + "/movies" %>" class="btn btn-primary mt-4">Назад к списку фильмов</a>
+
+    <%
+    } else {
+    %>
+    <p class="text-center">Фильм не найден.</p>
+    <%
+        }
+    %>
+</div>
 </body>
 </html>

@@ -34,7 +34,7 @@ public class MovieDetailsServlet extends HttpServlet {
 
             log.info("Extracted movieId={}", movieId);
 
-            Optional<Movie> movie = movieService.getMovieById(movieId);
+            Movie movie = movieService.getMovieById(movieId);
 
             req.setAttribute("movie", movie);
 
