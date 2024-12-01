@@ -2,8 +2,10 @@ package eu.innowise.moviereviewproject.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.innowise.moviereviewproject.model.Genre;
 import eu.innowise.moviereviewproject.model.Movie;
 import eu.innowise.moviereviewproject.model.MovieType;
+import eu.innowise.moviereviewproject.repository.GenreRepository;
 import eu.innowise.moviereviewproject.repository.MovieRepository;
 import lombok.extern.slf4j.Slf4j;
 
@@ -12,7 +14,9 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static eu.innowise.moviereviewproject.utils.Constants.API_KEY;
 import static eu.innowise.moviereviewproject.utils.Constants.API_URL;
@@ -22,12 +26,15 @@ public class ApiService {
 
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
-    private final MovieRepository movieRepository;
 
-    public ApiService(HttpClient httpClient, ObjectMapper objectMapper, MovieRepository movieRepository) {
+    private final MovieRepository movieRepository;
+    private final GenreRepository genreRepository;
+
+    public ApiService(HttpClient httpClient, ObjectMapper objectMapper, MovieRepository movieRepository, GenreRepository genreRepository) {
         this.httpClient = httpClient;
         this.objectMapper = objectMapper;
         this.movieRepository = movieRepository;
+        this.genreRepository = genreRepository;
     }
 
     public List<Movie> fetchMoviesFromApi(int page, int typeNumber) throws Exception {
@@ -70,7 +77,7 @@ public class ApiService {
         StringBuilder urlBuilder = new StringBuilder(API_URL)
                 .append("?page=").append(page)
                 .append("&limit=12")
-                .append("&selectFields=id&selectFields=name&selectFields=description&selectFields=year&selectFields=poster&selectFields=typeNumber")
+                .append("&selectFields=id&selectFields=name&selectFields=description&selectFields=year&selectFields=poster&selectFields=typeNumber&selectFields=genres")
                 .append("&notNullFields=id&notNullFields=name&notNullFields=description&notNullFields=year&notNullFields=poster.url");
 
         if (typeNumber > 0) {
@@ -90,6 +97,16 @@ public class ApiService {
 
         int typeNumber = movieNode.get("typeNumber").asInt();
         movie.setMovieType(MovieType.fromTypeNumber(typeNumber));
+
+        Set<Genre> genres = new HashSet<>();
+        if (movieNode.has("genres") && movieNode.get("genres").isArray()) {
+            for (JsonNode genreNode : movieNode.get("genres")) {
+                String genreName = genreNode.get("name").asText();
+                Genre genre = genreRepository.saveIfNotExists(genreName);
+                genres.add(genre);
+            }
+        }
+        movie.setGenres(genres);
         return movie;
     }
 }

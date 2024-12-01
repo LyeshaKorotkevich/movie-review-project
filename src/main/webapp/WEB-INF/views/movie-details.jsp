@@ -1,4 +1,5 @@
 <%@ page import="eu.innowise.moviereviewproject.model.Movie" %>
+<%@ page import="eu.innowise.moviereviewproject.model.Genre" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
@@ -23,6 +24,21 @@
             <p><strong>Год:</strong> <%= movie.getReleaseYear() %></p>
             <p><strong>Описание:</strong> <%= movie.getDescription() %></p>
             <p><strong>Рейтинг:</strong> <%= movie.getRating() %></p>
+            <p><strong>Жанры:</strong>
+                <%
+                    if (movie.getGenres() != null && !movie.getGenres().isEmpty()) {
+                        for (Genre genre : movie.getGenres()) {
+                %>
+                <span class="badge badge-secondary"><%= genre.getName() %></span>
+                <%
+                    }
+                } else {
+                %>
+                <span>Не указаны</span>
+                <%
+                    }
+                %>
+            </p>
         </div>
     </div>
 
