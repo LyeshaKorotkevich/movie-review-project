@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.innowise.moviereviewproject.model.Genre;
 import eu.innowise.moviereviewproject.model.Movie;
 import eu.innowise.moviereviewproject.model.MovieType;
+import eu.innowise.moviereviewproject.model.Person;
 import eu.innowise.moviereviewproject.repository.GenreRepository;
 import eu.innowise.moviereviewproject.repository.MovieRepository;
+import eu.innowise.moviereviewproject.repository.PersonRepository;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
@@ -28,12 +30,14 @@ public class ApiService {
     private final ObjectMapper objectMapper;
 
     private final MovieRepository movieRepository;
+    private final PersonRepository personRepository;
     private final GenreRepository genreRepository;
 
-    public ApiService(HttpClient httpClient, ObjectMapper objectMapper, MovieRepository movieRepository, GenreRepository genreRepository) {
+    public ApiService(HttpClient httpClient, ObjectMapper objectMapper, MovieRepository movieRepository, PersonRepository personRepository, GenreRepository genreRepository) {
         this.httpClient = httpClient;
         this.objectMapper = objectMapper;
         this.movieRepository = movieRepository;
+        this.personRepository = personRepository;
         this.genreRepository = genreRepository;
     }
 
@@ -77,7 +81,7 @@ public class ApiService {
         StringBuilder urlBuilder = new StringBuilder(API_URL)
                 .append("?page=").append(page)
                 .append("&limit=12")
-                .append("&selectFields=id&selectFields=name&selectFields=description&selectFields=year&selectFields=poster&selectFields=typeNumber&selectFields=genres")
+                .append("&selectFields=id&selectFields=name&selectFields=description&selectFields=year&selectFields=poster&selectFields=typeNumber&selectFields=genres&selectFields=persons")
                 .append("&notNullFields=id&notNullFields=name&notNullFields=description&notNullFields=year&notNullFields=poster.url");
 
         if (typeNumber > 0) {
@@ -107,6 +111,22 @@ public class ApiService {
             }
         }
         movie.setGenres(genres);
+
+        Set<Person> persons = new HashSet<>();
+        if (movieNode.has("persons") && movieNode.get("persons").isArray()) {
+            for (JsonNode personNode : movieNode.get("persons")) {
+                Person person = new Person();
+                person.setExternalId(personNode.get("id").asLong());
+                person.setPhotoUrl(personNode.get("photo").asText());
+                person.setName(personNode.get("name").asText());
+                person.setEnName(personNode.get("enName").asText());
+                person.setProfession(personNode.get("profession").asText());
+                Person existingPerson = personRepository.findByExternalId(person.getExternalId())
+                        .orElseGet(() -> personRepository.save(person));
+                persons.add(existingPerson);
+            }
+        }
+        movie.setPersons(persons);
         return movie;
     }
 }

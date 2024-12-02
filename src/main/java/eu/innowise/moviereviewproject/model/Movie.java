@@ -51,6 +51,14 @@ public class Movie {
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private Set<Genre> genres = new HashSet<>();
 
+    @ManyToMany
+    @JoinTable(
+            name = "movie_person",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "person_id")
+    )
+    private Set<Person> persons = new HashSet<>();
+
     public double getRating() {
         return rateCount == 0 ? 0 : (double) rateSum / rateCount;
     }

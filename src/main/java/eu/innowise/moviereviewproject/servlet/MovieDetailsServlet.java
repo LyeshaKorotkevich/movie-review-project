@@ -27,7 +27,7 @@ public class MovieDetailsServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
         try {
 
             UUID movieId = ServletsUtil.extractUuidFromPath(req, resp, 2, 2);

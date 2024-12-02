@@ -1,11 +1,16 @@
 <%@ page import="eu.innowise.moviereviewproject.model.Movie" %>
 <%@ page import="eu.innowise.moviereviewproject.model.Genre" %>
+<%@ page import="eu.innowise.moviereviewproject.model.Person" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.stream.Collectors" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
 <head>
     <title>Детали фильма</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="<%= request.getContextPath() + "/resources/css/style.css" %>">
 </head>
 <body class="bg-light">
 <div class="container py-5">
@@ -39,6 +44,48 @@
                     }
                 %>
             </p>
+            <%
+                if (movie.getPersons() != null && !movie.getPersons().isEmpty()) {
+                    Map<String, List<Person>> filteredPersons = movie.getPersons()
+                            .stream()
+                            .filter(person -> "актеры".equalsIgnoreCase(person.getProfession()) || "режиссеры".equalsIgnoreCase(person.getProfession()))
+                            .collect(Collectors.groupingBy(Person::getProfession));
+
+                    for (Map.Entry<String, List<Person>> entry : filteredPersons.entrySet()) {
+                        String profession = entry.getKey();
+                        List<Person> persons = entry.getValue();
+            %>
+            <div class="mb-4">
+                <h5 class="text-primary"><%= profession != null ? profession : "Не указана профессия" %></h5>
+                <div class="row">
+                    <%
+                        for (Person person : persons) {
+                            String displayName = person.getName() != null ? person.getName() : person.getEnName();
+                    %>
+                    <div class="col-6 col-sm-4 col-md-3 mb-3 person-card">
+                        <div class="card">
+                            <img src="<%= person.getPhotoUrl() != null ? person.getPhotoUrl() : "https://via.placeholder.com/100" %>"
+                                 class="card-img-top rounded-circle"
+                                 style="height: 100px; object-fit: cover;"
+                                 alt="<%= displayName %>">
+                            <div class="card-body">
+                                <h6 class="card-title text-center"><%= displayName %></h6>
+                            </div>
+                        </div>
+                    </div>
+                    <%
+                        }
+                    %>
+                </div>
+            </div>
+            <%
+                }
+            } else {
+            %>
+            <p>Актеры и режиссеры не указаны.</p>
+            <%
+                }
+            %>
         </div>
     </div>
 

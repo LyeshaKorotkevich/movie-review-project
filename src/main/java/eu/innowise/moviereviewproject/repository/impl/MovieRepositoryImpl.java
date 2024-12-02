@@ -17,10 +17,11 @@ public class MovieRepositoryImpl implements MovieRepository {
     private static final int PAGE_SIZE = 12;
 
     @Override
-    public void save(Movie movie) {
+    public Movie save(Movie movie) {
         entityManager.getTransaction().begin();
         entityManager.persist(movie);
         entityManager.getTransaction().commit();
+        return movie;
     }
 
     @Override
