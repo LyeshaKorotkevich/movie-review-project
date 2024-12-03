@@ -23,7 +23,13 @@
         <a class="nav-item nav-link <%= "5".equals(currentType) ? "active" : "" %>" href="?typeNumber=5">Анимационные сериалы</a>
     </nav>
 
-    <h1 class="text-center mb-4">Список фильмов</h1>
+    <div class="mb-4">
+        <form class="form-inline d-flex justify-content-center" action="<%= request.getContextPath() %>/movies/search" method="get">
+            <input class="form-control mr-2" type="search" name="query" placeholder="Поиск фильмов..." aria-label="Search" style="width: 60%;">
+            <button class="btn btn-primary" type="submit">Искать</button>
+        </form>
+    </div>
+
     <div class="row">
         <%
             List<Movie> movies =

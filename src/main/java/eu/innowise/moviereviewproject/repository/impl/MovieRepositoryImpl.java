@@ -53,6 +53,17 @@ public class MovieRepositoryImpl implements MovieRepository {
     }
 
     @Override
+    public List<Movie> findMoviesByPartialTitle(String query, int page) {
+        int firstResult = (page - 1) * PAGE_SIZE;
+        String jpql = "SELECT m FROM Movie m WHERE m.title ILIKE :query";
+        return entityManager.createQuery(jpql, Movie.class)
+                .setParameter("query", "%" + query + "%")
+                .setFirstResult(firstResult)
+                .setMaxResults(PAGE_SIZE)
+                .getResultList();
+    }
+
+    @Override
     public boolean existsByExternalId(Long externalId) {
         String jpql = "SELECT 1 FROM Movie m WHERE m.externalId = :externalId";
         List result = entityManager.createQuery(jpql)

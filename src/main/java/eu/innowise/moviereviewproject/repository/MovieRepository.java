@@ -9,4 +9,6 @@ public interface MovieRepository extends CrudRepository<Movie> {
     boolean existsByExternalId(Long externalId);
 
     List<Movie> findAll(int page, int typeNumber);
+
+    List<Movie> findMoviesByPartialTitle(String query, int page);
 }

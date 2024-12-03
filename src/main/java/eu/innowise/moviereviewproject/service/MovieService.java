@@ -5,6 +5,8 @@ import eu.innowise.moviereviewproject.model.Movie;
 import eu.innowise.moviereviewproject.repository.MovieRepository;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,6 +40,17 @@ public class MovieService {
         }
 
         return movies;
+    }
+
+    public List<Movie> searchMovies(int page, String query) {
+
+        String encodedQuery = URLEncoder.encode(query.trim(), StandardCharsets.UTF_8);
+
+        try {
+            return apiService.fetchMoviesFromSearchFromApi(page, encodedQuery);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Movie getMovieById(UUID id) {

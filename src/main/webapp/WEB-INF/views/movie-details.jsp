@@ -3,7 +3,6 @@
 <%@ page import="eu.innowise.moviereviewproject.model.Person" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
-<%@ page import="java.util.stream.Collectors" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
@@ -17,6 +16,7 @@
 
     <%
         Movie movie = (Movie) request.getAttribute("movie");
+        Map<String, List<Person>> filteredPersons = (Map<String, List<Person>>) request.getAttribute("filteredPersons");
         if (movie != null) {
     %>
     <h1 class="text-center mb-4"><%= movie.getTitle() %></h1>
@@ -45,12 +45,7 @@
                 %>
             </p>
             <%
-                if (movie.getPersons() != null && !movie.getPersons().isEmpty()) {
-                    Map<String, List<Person>> filteredPersons = movie.getPersons()
-                            .stream()
-                            .filter(person -> "актеры".equalsIgnoreCase(person.getProfession()) || "режиссеры".equalsIgnoreCase(person.getProfession()))
-                            .collect(Collectors.groupingBy(Person::getProfession));
-
+                if (filteredPersons != null && !filteredPersons.isEmpty()) {
                     for (Map.Entry<String, List<Person>> entry : filteredPersons.entrySet()) {
                         String profession = entry.getKey();
                         List<Person> persons = entry.getValue();
@@ -88,8 +83,6 @@
             %>
         </div>
     </div>
-
-    <a href="<%= request.getContextPath() + "/movies" %>" class="btn btn-primary mt-4">Назад к списку фильмов</a>
 
     <%
     } else {

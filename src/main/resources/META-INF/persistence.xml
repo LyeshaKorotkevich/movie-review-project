@@ -15,6 +15,7 @@
         <class>eu.innowise.moviereviewproject.model.Review</class>
         <class>eu.innowise.moviereviewproject.model.User</class>
         <class>eu.innowise.moviereviewproject.model.Watchlist</class>
+        <class>eu.innowise.moviereviewproject.model.Person</class>
 
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>

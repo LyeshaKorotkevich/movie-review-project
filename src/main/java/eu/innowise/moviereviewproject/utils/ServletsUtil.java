@@ -4,16 +4,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.util.UUID;
 
 @Slf4j
-public class ServletsUtil {
+public final class ServletsUtil {
 
     private ServletsUtil() {
     }
 
-    public static UUID extractUuidFromPath(HttpServletRequest req, HttpServletResponse resp, int urlLength, int idPosition) throws IOException {
+    public static UUID extractUuidFromPath(HttpServletRequest req, HttpServletResponse resp, int urlLength, int idPosition) {
         String pathInfo = req.getPathInfo();
         log.info("pathInfo to extract UUID: {}", pathInfo);
 
@@ -33,5 +32,15 @@ public class ServletsUtil {
             return null;
         }
         return id;
+    }
+
+    public static int parseInteger(String param, int defaultValue, int min, int max) {
+        try {
+            int value = Integer.parseInt(param);
+            return Math.max(min, Math.min(max, value));
+        } catch (NumberFormatException e) {
+            log.warn("Invalid integer value: {}. Using default: {}", param, defaultValue);
+            return defaultValue;
+        }
     }
 }

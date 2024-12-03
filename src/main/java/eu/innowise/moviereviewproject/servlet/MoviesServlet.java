@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+import static eu.innowise.moviereviewproject.utils.ServletsUtil.parseInteger;
+
 @Slf4j
 @WebServlet("/movies")
 public class MoviesServlet extends HttpServlet {
@@ -45,16 +47,6 @@ public class MoviesServlet extends HttpServlet {
         } catch (Exception e) {
             log.error("Error occurred while processing request for movies.", e);
             throw new ServletException("Error fetching movies", e);
-        }
-    }
-
-    private int parseInteger(String param, int defaultValue, int min, int max) {
-        try {
-            int value = Integer.parseInt(param);
-            return Math.max(min, Math.min(max, value));
-        } catch (NumberFormatException e) {
-            log.warn("Invalid integer value: {}. Using default: {}", param, defaultValue);
-            return defaultValue;
         }
     }
 }
