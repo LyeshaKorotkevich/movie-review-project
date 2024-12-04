@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 @Slf4j
-@WebServlet("/movies/*/review")
+@WebServlet(value = "/movies/*/review")
 public class MovieReviewServlet extends HttpServlet {
 
     private final MovieService movieService;

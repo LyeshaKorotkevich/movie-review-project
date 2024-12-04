@@ -34,7 +34,7 @@ public final class ServletsUtil {
         return id;
     }
 
-    public static int parseInteger(String param, int defaultValue, int min, int max) {
+    public static Integer parseInteger(String param, Integer defaultValue, int min, int max) {
         try {
             int value = Integer.parseInt(param);
             return Math.max(min, Math.min(max, value));

@@ -58,6 +58,14 @@ public class MovieService {
                 .orElseThrow(() -> new MovieNotFoundException("Movie with ID " + id + " not found"));
     }
 
+    public List<Movie> getFilteredMovies(int page, Integer typeNumber, String genre, Integer startYear, Integer endYear, Integer minRating, Integer maxRating) {
+        log.info("Fetching filtered movies: page={}, typeNumber={}, genre={}, startYear={}, endYear={}, minRating={}, maxRating={}",
+                page, typeNumber, genre, startYear, endYear, minRating, maxRating);
+
+        return movieRepository.findFilteredMovies(page, typeNumber, genre, startYear, endYear, minRating, maxRating);
+    }
+
+
     public void saveMovie(Movie movie) {
         movieRepository.save(movie);
     }

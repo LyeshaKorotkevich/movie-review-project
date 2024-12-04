@@ -11,4 +11,6 @@ public interface MovieRepository extends CrudRepository<Movie> {
     List<Movie> findAll(int page, int typeNumber);
 
     List<Movie> findMoviesByPartialTitle(String query, int page);
+
+    List<Movie> findFilteredMovies(int page, Integer typeNumber, String genre, Integer startYear, Integer endYear, Integer minRating, Integer maxRating);
 }

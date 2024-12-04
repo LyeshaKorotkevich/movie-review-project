@@ -5,6 +5,7 @@ import eu.innowise.moviereviewproject.model.MovieType;
 import eu.innowise.moviereviewproject.repository.MovieRepository;
 import eu.innowise.moviereviewproject.utils.JpaUtil;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -83,6 +84,59 @@ public class MovieRepositoryImpl implements MovieRepository {
                     .setFirstResult(firstResult)
                     .setMaxResults(PAGE_SIZE)
                     .getResultList();
+        }
+    }
+
+    @Override
+    public List<Movie> findFilteredMovies(int page, Integer typeNumber, String genre, Integer startYear, Integer endYear, Integer minRating, Integer maxRating) {
+        try (EntityManager entityManager = JpaUtil.getEntityManager()) {
+            StringBuilder queryBuilder = new StringBuilder("SELECT m FROM Movie m WHERE 1=1");
+
+            if (typeNumber!= null && typeNumber != 0) {
+                queryBuilder.append(" AND m.movieType = :movieType");
+            }
+            if (genre != null && !genre.isEmpty()) {
+                queryBuilder.append(" AND m.genre = :genre");
+            }
+            if (startYear != null) {
+                queryBuilder.append(" AND m.releaseYear >= :startYear");
+            }
+            if (endYear != null) {
+                queryBuilder.append(" AND m.releaseYear <= :endYear");
+            }
+            if (minRating != null) {
+                queryBuilder.append(" AND m.rating >= :minRating");
+            }
+            if (maxRating != null) {
+                queryBuilder.append(" AND m.rating <= :maxRating");
+            }
+
+            Query query = entityManager.createQuery(queryBuilder.toString(), Movie.class);
+
+            if (typeNumber!= null && typeNumber != 0) {
+                MovieType movieType = MovieType.fromTypeNumber(typeNumber);
+                query.setParameter("movieType", movieType);
+            }
+            if (genre != null && !genre.isEmpty()) {
+                query.setParameter("genre", genre);
+            }
+            if (startYear != null) {
+                query.setParameter("startYear", startYear);
+            }
+            if (endYear != null) {
+                query.setParameter("endYear", endYear);
+            }
+            if (minRating != null) {
+                query.setParameter("minRating", minRating);
+            }
+            if (maxRating != null) {
+                query.setParameter("maxRating", maxRating);
+            }
+
+            query.setFirstResult((page - 1) * PAGE_SIZE);
+            query.setMaxResults(PAGE_SIZE);
+
+            return query.getResultList();
         }
     }
 

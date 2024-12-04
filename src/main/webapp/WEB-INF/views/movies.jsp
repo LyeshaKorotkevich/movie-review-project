@@ -6,54 +6,105 @@
 <head>
     <title>Список фильмов</title>
     <link rel="stylesheet" href="<%= request.getContextPath() + "/resources/css/style.css" %>">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 <body class="bg-light">
-<div class="container py-5">
+<div class="container py-3">
+    <header class="mb-4">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav mr-auto">
+                    <%
+                        String currentType = request.getParameter("typeNumber");
+                        currentType = currentType != null ? currentType : "0";
+                    %>
+                    <li class="nav-item <%= "0".equals(currentType) ? "active" : "" %>">
+                        <a class="nav-link" href="?typeNumber=0">Все</a>
+                    </li>
+                    <li class="nav-item <%= "1".equals(currentType) ? "active" : "" %>">
+                        <a class="nav-link" href="?typeNumber=1">Фильмы</a>
+                    </li>
+                    <li class="nav-item <%= "2".equals(currentType) ? "active" : "" %>">
+                        <a class="nav-link" href="?typeNumber=2">Сериалы</a>
+                    </li>
+                    <li class="nav-item <%= "3".equals(currentType) ? "active" : "" %>">
+                        <a class="nav-link" href="?typeNumber=3">Мультфильмы</a>
+                    </li>
+                    <li class="nav-item <%= "4".equals(currentType) ? "active" : "" %>">
+                        <a class="nav-link" href="?typeNumber=4">Аниме</a>
+                    </li>
+                    <li class="nav-item <%= "5".equals(currentType) ? "active" : "" %>">
+                        <a class="nav-link" href="?typeNumber=5">Анимационные сериалы</a>
+                    </li>
+                </ul>
+                <form class="form-inline my-2 my-lg-0" action="<%= request.getContextPath() %>/movies/search" method="get">
+                    <input class="form-control mr-sm-2" type="search" name="query" placeholder="Поиск фильмов..." aria-label="Search">
+                    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Искать</button>
+                </form>
+            </div>
+        </nav>
+    </header>
 
-    <nav class="nav nav-pills nav-justified mb-4">
-        <%
-            String currentType = request.getParameter("type");
-        %>
-        <a class="nav-item nav-link <%= "0".equals(currentType) ? "active" : "" %>" href="?typeNumber=0">Все</a>
-        <a class="nav-item nav-link <%= "1".equals(currentType) ? "active" : "" %>" href="?typeNumber=1">Фильмы</a>
-        <a class="nav-item nav-link <%= "2".equals(currentType) ? "active" : "" %>" href="?typeNumber=2">Сериалы</a>
-        <a class="nav-item nav-link <%= "3".equals(currentType) ? "active" : "" %>" href="?typeNumber=3">Мультфильмы</a>
-        <a class="nav-item nav-link <%= "4".equals(currentType) ? "active" : "" %>" href="?typeNumber=4">Аниме</a>
-        <a class="nav-item nav-link <%= "5".equals(currentType) ? "active" : "" %>" href="?typeNumber=5">Анимационные сериалы</a>
-    </nav>
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            Фильтры поиска
+        </div>
+        <div class="card-body">
+            <form class="form-inline d-flex flex-wrap justify-content-start" action="<%= request.getContextPath() %>/movies/filter" method="get" style="gap: 15px;">
+                <div class="form-group">
+                    <label for="genre" class="mr-2">Жанр</label>
+                    <select id="genre" class="form-control form-control-sm" name="genre">
+                        <option value="">Все жанры</option>
+                        <%
+                            List<String> genres = (List<String>) request.getAttribute("genres");
+                            if (genres != null) {
+                                for (String genre : genres) {
+                        %>
+                        <option value="<%= genre %>"><%= genre %></option>
+                        <%
+                                }
+                            }
+                        %>
+                    </select>
+                </div>
 
-    <div class="mb-4">
-        <form class="form-inline d-flex justify-content-center" action="<%= request.getContextPath() %>/movies/search" method="get">
-            <input class="form-control mr-2" type="search" name="query" placeholder="Поиск фильмов..." aria-label="Search" style="width: 60%;">
-            <button class="btn btn-primary" type="submit">Искать</button>
-        </form>
+                <div class="form-group">
+                    <label class="mr-2">Год выпуска</label>
+                    <input type="number" class="form-control form-control-sm" name="startYear" placeholder="От" style="width: 80px;">
+                    <input type="number" class="form-control form-control-sm" name="endYear" placeholder="До" style="width: 80px;">
+                </div>
+
+                <div class="form-group">
+                    <label class="mr-2">Рейтинг</label>
+                    <input type="number" class="form-control form-control-sm" name="minRating" placeholder="От" style="width: 80px;">
+                    <input type="number" class="form-control form-control-sm" name="maxRating" placeholder="До" style="width: 80px;">
+                </div>
+                <input type="hidden" name="typeNumber" value="${param.typeNumber}"/>
+                <button class="btn btn-primary btn-sm">Применить</button>
+            </form>
+        </div>
     </div>
 
     <div class="row">
         <%
-            List<Movie> movies =
-                    (List<Movie>) request.getAttribute("movies");
+            List<Movie> movies = (List<Movie>) request.getAttribute("movies");
             int currentPage = (int) request.getAttribute("currentPage");
-
             if (movies != null && !movies.isEmpty()) {
                 for (Movie movie : movies) {
         %>
         <div class="col-md-4 mb-4">
             <div class="card h-100">
                 <a href="<%= request.getContextPath() + "/movies/" + movie.getId() %>" class="movie-link">
-                    <img src="<%= movie.getPosterUrl() != null ? movie.getPosterUrl() : "https://via.placeholder.com/300x450" %>"
-                         class="card-img-top" alt="Постер">
-                    <div class="card-body d-flex flex-column">
+                    <img src="<%= movie.getPosterUrl() != null ? movie.getPosterUrl() : "https://via.placeholder.com/300x450" %>" class="card-img-top" alt="Постер">
+                    <div class="card-body">
                         <h5 class="card-title text-truncate"><%= movie.getTitle() %></h5>
                         <p class="card-text">Год: <%= movie.getReleaseYear() %></p>
-
                         <small class="text-muted">Рейтинг: <%= movie.getRating() %></small>
                     </div>
                 </a>
             </div>
         </div>
-
         <%
             }
         } else {
@@ -66,20 +117,19 @@
 
     <nav aria-label="Навигация по страницам">
         <ul class="pagination justify-content-center">
-            <%
-                String currentTypeNumber = request.getParameter("typeNumber");
-                currentTypeNumber = currentTypeNumber != null ? currentTypeNumber : "0";
-            %>
             <% if (currentPage > 1) { %>
             <li class="page-item">
-                <a class="page-link" href="?page=<%= currentPage - 1 %>&typeNumber=<%= currentTypeNumber %>">Предыдущая</a>
+                <a class="page-link" href="?page=<%= currentPage - 1 %>&typeNumber=<%= currentType %>">Предыдущая</a>
             </li>
             <% } %>
             <li class="page-item">
-                <a class="page-link" href="?page=<%= currentPage + 1 %>&typeNumber=<%= currentTypeNumber %>">Следующая</a>
+                <a class="page-link" href="?page=<%= currentPage + 1 %>&typeNumber=<%= currentType %>">Следующая</a>
             </li>
         </ul>
     </nav>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
