@@ -43,12 +43,12 @@ public class MovieRepositoryImpl implements MovieRepository {
         }
     }
 
-    @Override
     public Optional<Movie> findById(UUID id) {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
             String jpql = "SELECT m FROM Movie m LEFT JOIN FETCH m.persons LEFT JOIN FETCH m.genres WHERE m.id = :id";
             Movie movie = entityManager.createQuery(jpql, Movie.class)
                     .setParameter("id", id)
+                    .setHint("org.hibernate.cacheable", true)
                     .getSingleResult();
             return Optional.ofNullable(movie);
         }
@@ -68,6 +68,7 @@ public class MovieRepositoryImpl implements MovieRepository {
                     .setParameter("movieType", movieType)
                     .setFirstResult(firstResult)
                     .setMaxResults(PAGE_SIZE)
+                    .setHint("org.hibernate.cacheable", true)
                     .getResultList();
         }
     }

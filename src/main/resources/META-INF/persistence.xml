@@ -8,7 +8,7 @@
     <persistence-unit name="movieReviewUnit">
 
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <jta-data-source>java:/comp/env/jdbc/MyLocalDB</jta-data-source>
+        <non-jta-data-source>java:/comp/env/jdbc/MyLocalDB</non-jta-data-source>
 
         <class>eu.innowise.moviereviewproject.model.Movie</class>
         <class>eu.innowise.moviereviewproject.model.Genre</class>
@@ -23,9 +23,11 @@
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
 
-<!--            <property name="hibernate.cache.use_second_level_cache" value="true"/>-->
-
-            <property name="hibernate.transaction.coordinator_class" value="jdbc"/>
+            <property name="hibernate.cache.use_second_level_cache" value="true"/>
+            <property name="hibernate.cache.use_query_cache" value="true"/>
+            <property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.jcache.JCacheRegionFactory"/>
+            <property name="javax.cache.provider" value="org.ehcache.jsr107.EhcacheCachingProvider"/>
+            <property name="hibernate.javax.cache.uri" value="ehcache.xml"/>
         </properties>
     </persistence-unit>
 </persistence>

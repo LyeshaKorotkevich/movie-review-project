@@ -11,6 +11,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import lombok.Data;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,6 +20,7 @@ import java.util.UUID;
 
 @Data
 @Entity
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "entityCache")
 public class Movie {
 
     @Id
