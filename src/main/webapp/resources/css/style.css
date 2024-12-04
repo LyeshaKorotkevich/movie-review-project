@@ -40,3 +40,21 @@
     font-size: 0.8rem;
     color: #888;
 }
+
+.star-rating {
+    direction: rtl;
+    display: flex;
+}
+.star-rating input[type="radio"] {
+    display: none;
+}
+.star-rating label {
+    color: #ddd;
+    font-size: 2rem;
+    cursor: pointer;
+}
+.star-rating input[type="radio"]:checked ~ label,
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+    color: #ffc107;
+}

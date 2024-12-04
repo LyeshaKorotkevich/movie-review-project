@@ -4,39 +4,49 @@ import eu.innowise.moviereviewproject.model.Genre;
 import eu.innowise.moviereviewproject.repository.GenreRepository;
 import eu.innowise.moviereviewproject.utils.JpaUtil;
 import jakarta.persistence.EntityManager;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 
+@Slf4j
 public class GenreRepositoryImpl implements GenreRepository {
-
-    private final EntityManager entityManager = JpaUtil.getEntityManager();
-
 
     @Override
     public Optional<Genre> findByName(String name) {
-        return entityManager.createQuery(
-                        "SELECT g FROM Genre g WHERE g.name = :name", Genre.class)
-                .setParameter("name", name)
-                .getResultStream()
-                .findFirst();
+        try (EntityManager entityManager = JpaUtil.getEntityManager()) {
+            return entityManager.createQuery(
+                            "SELECT g FROM Genre g WHERE g.name = :name", Genre.class)
+                    .setParameter("name", name)
+                    .getResultStream()
+                    .findFirst();
+        } catch (Exception e) {
+            log.error("Error occurred while fetching genre by name: {}", name, e);
+            throw new RuntimeException("Error occurred while fetching genre by name", e);
+        }
     }
 
     @Override
     public Genre saveIfNotExists(String name) {
-        entityManager.getTransaction().begin();
+        try (EntityManager entityManager = JpaUtil.getEntityManager()) {
+            entityManager.getTransaction().begin();
 
-        Optional<Genre> existingGenre = findByName(name);
+            Optional<Genre> existingGenre = findByName(name);
 
-        Genre genre;
-        if (existingGenre.isPresent()) {
-            genre = existingGenre.get();
-        } else {
-            genre = new Genre();
-            genre.setName(name);
-            entityManager.persist(genre);
+            Genre genre;
+            if (existingGenre.isPresent()) {
+                genre = existingGenre.get();
+            } else {
+                genre = new Genre();
+                genre.setName(name);
+                entityManager.persist(genre);
+                log.info("New genre saved: {}", genre.getName());
+            }
+
+            entityManager.getTransaction().commit();
+            return genre;
+        } catch (Exception e) {
+            log.error("Error occurred while saving genre: {}", name, e);
+            throw new RuntimeException("Error occurred while saving genre", e);
         }
-
-        entityManager.getTransaction().commit();
-        return genre;
     }
 }

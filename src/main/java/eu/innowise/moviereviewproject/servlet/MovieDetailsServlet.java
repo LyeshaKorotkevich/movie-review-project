@@ -12,10 +12,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -39,11 +37,6 @@ public class MovieDetailsServlet extends HttpServlet {
             Movie movie = movieService.getMovieById(movieId);
 
             Map<String, List<Person>> filteredPersons = filterAndLimitPersons(movie);
-
-            filteredPersons.forEach((profession, persons) -> {
-                log.info("Profession: " + profession);
-                persons.forEach(person -> log.info(" - " + person.getName()));
-            });
 
             req.setAttribute("movie", movie);
             req.setAttribute("filteredPersons", filteredPersons);

@@ -10,6 +10,7 @@
     <title>Детали фильма</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="<%= request.getContextPath() + "/resources/css/style.css" %>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body class="bg-light">
 <div class="container py-5">
@@ -82,6 +83,31 @@
                 }
             %>
         </div>
+    </div>
+
+    <div class="mt-5">
+        <h3>Оставьте вашу рецензию</h3>
+        <form action="<%= request.getContextPath() + "/review" %>" method="post">
+            <div class="form-group">
+                <label>Рейтинг:</label>
+                <div class="star-rating">
+                    <%
+                        for (int i = 10; i >= 1; i--) {
+                    %>
+                    <input type="radio" id="star-<%= i %>" name="rating" value="<%= i %>">
+                    <label for="star-<%= i %>"><i class="fas fa-star"></i></label>
+                    <%
+                        }
+                    %>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="review">Рецензия:</label>
+                <textarea class="form-control" id="review" name="review" rows="5" placeholder="Напишите вашу рецензию здесь..."></textarea>
+            </div>
+<%--            <input type="hidden" name="movieId" value="<%= movie.getId() %>">--%>
+            <button type="submit" class="btn btn-primary">Отправить</button>
+        </form>
     </div>
 
     <%

@@ -13,12 +13,6 @@ public class JpaUtil {
         return entityManagerFactory.createEntityManager();
     }
 
-    public static void closeEntityManager(EntityManager em) {
-        if (em != null && em.isOpen()) {
-            em.close();
-        }
-    }
-
     public static void closeEntityManagerFactory() {
         if (entityManagerFactory != null && entityManagerFactory.isOpen()) {
             entityManagerFactory.close();
