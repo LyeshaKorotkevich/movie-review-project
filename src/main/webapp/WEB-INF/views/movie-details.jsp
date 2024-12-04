@@ -105,7 +105,6 @@
                 <label for="review">Рецензия:</label>
                 <textarea class="form-control" id="review" name="review" rows="5" placeholder="Напишите вашу рецензию здесь..."></textarea>
             </div>
-<%--            <input type="hidden" name="movieId" value="<%= movie.getId() %>">--%>
             <button type="submit" class="btn btn-primary">Отправить</button>
         </form>
     </div>
