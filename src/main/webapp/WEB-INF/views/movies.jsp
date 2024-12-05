@@ -1,6 +1,7 @@
 <%@ page import="eu.innowise.moviereviewproject.model.Movie" %>
 <%@ page import="java.util.List" %>
 <%@ page import="eu.innowise.moviereviewproject.model.Genre" %>
+<%@ page import="eu.innowise.moviereviewproject.model.User" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
@@ -43,6 +44,31 @@
                     <input class="form-control mr-sm-2" type="search" name="query" placeholder="Поиск фильмов..." aria-label="Search">
                     <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Искать</button>
                 </form>
+
+                <ul class="navbar-nav ml-auto">
+                    <%
+                        User user = (User) session.getAttribute("user");
+                        if (user != null) {
+                    %>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <%= user.getUsername() %>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="<%= request.getContextPath() %>/auth/logout">Выйти</a>
+                        </div>
+                    </li>
+                    <%
+                    } else {
+                    %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<%= request.getContextPath() %>/auth/login">Войти</a>
+                    </li>
+                    <%
+                        }
+                    %>
+                </ul>
             </div>
         </nav>
     </header>
