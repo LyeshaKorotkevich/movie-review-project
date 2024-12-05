@@ -1,11 +1,13 @@
 package eu.innowise.moviereviewproject.repository.impl;
 
 import eu.innowise.moviereviewproject.model.Genre;
+import eu.innowise.moviereviewproject.model.Movie;
 import eu.innowise.moviereviewproject.repository.GenreRepository;
 import eu.innowise.moviereviewproject.utils.JpaUtil;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -22,6 +24,13 @@ public class GenreRepositoryImpl implements GenreRepository {
         } catch (Exception e) {
             log.error("Error occurred while fetching genre by name: {}", name, e);
             throw new RuntimeException("Error occurred while fetching genre by name", e);
+        }
+    }
+
+    @Override
+    public List<Genre> findAll() {
+        try (EntityManager entityManager = JpaUtil.getEntityManager()) {
+            return entityManager.createQuery("SELECT g FROM Genre g", Genre.class).getResultList();
         }
     }
 

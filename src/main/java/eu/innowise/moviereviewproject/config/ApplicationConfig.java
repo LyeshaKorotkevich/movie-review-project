@@ -8,6 +8,7 @@ import eu.innowise.moviereviewproject.repository.impl.GenreRepositoryImpl;
 import eu.innowise.moviereviewproject.repository.impl.MovieRepositoryImpl;
 import eu.innowise.moviereviewproject.repository.impl.PersonRepositoryImpl;
 import eu.innowise.moviereviewproject.service.ApiService;
+import eu.innowise.moviereviewproject.service.GenreService;
 import eu.innowise.moviereviewproject.service.MovieService;
 import lombok.Getter;
 
@@ -29,4 +30,7 @@ public final class ApplicationConfig {
 
     @Getter
     private static final MovieService movieService = new MovieService(movieRepository, apiService);
+
+    @Getter
+    private static final GenreService genreService = new GenreService(genreRepository);
 }

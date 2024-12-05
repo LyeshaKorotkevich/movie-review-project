@@ -2,6 +2,7 @@ package eu.innowise.moviereviewproject.servlet;
 
 import eu.innowise.moviereviewproject.config.ApplicationConfig;
 import eu.innowise.moviereviewproject.model.Movie;
+import eu.innowise.moviereviewproject.service.GenreService;
 import eu.innowise.moviereviewproject.service.MovieService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -10,8 +11,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 
 import static eu.innowise.moviereviewproject.utils.ServletsUtil.parseInteger;
@@ -21,13 +20,15 @@ import static eu.innowise.moviereviewproject.utils.ServletsUtil.parseInteger;
 public class MoviesFilterServlet extends HttpServlet {
 
     private final MovieService movieService;
+    private final GenreService genreService;
 
     public MoviesFilterServlet() {
         this.movieService = ApplicationConfig.getMovieService();
+        this.genreService = ApplicationConfig.getGenreService();
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
         try {
             log.info("Received request for filtered movies with parameters: genre={}, startYear={}, endYear={}, minRating={}, maxRating={}, typeNumber={}, page={}",
                     req.getParameter("genre"), req.getParameter("startYear"), req.getParameter("endYear"),
@@ -49,7 +50,7 @@ public class MoviesFilterServlet extends HttpServlet {
             req.setAttribute("movies", filteredMovies);
             req.setAttribute("currentPage", page);
             req.setAttribute("currentTypeNumber", typeNumber);
-            //req.setAttribute("genres", genreService.getAll());
+            req.setAttribute("genres", genreService.getAll());
 
             log.info("Filtered movies fetched successfully. Forwarding to JSP.");
 

@@ -1,5 +1,6 @@
 <%@ page import="eu.innowise.moviereviewproject.model.Movie" %>
 <%@ page import="java.util.List" %>
+<%@ page import="eu.innowise.moviereviewproject.model.Genre" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
@@ -57,11 +58,11 @@
                     <select id="genre" class="form-control form-control-sm" name="genre">
                         <option value="">Все жанры</option>
                         <%
-                            List<String> genres = (List<String>) request.getAttribute("genres");
+                            List<Genre> genres = (List<Genre>) request.getAttribute("genres");
                             if (genres != null) {
-                                for (String genre : genres) {
+                                for (Genre genre : genres) {
                         %>
-                        <option value="<%= genre %>"><%= genre %></option>
+                        <option value="<%= genre.getName() %>"><%= genre.getName() %></option>
                         <%
                                 }
                             }

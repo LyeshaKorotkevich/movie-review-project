@@ -2,6 +2,7 @@ package eu.innowise.moviereviewproject.servlet;
 
 import eu.innowise.moviereviewproject.config.ApplicationConfig;
 import eu.innowise.moviereviewproject.model.Movie;
+import eu.innowise.moviereviewproject.service.GenreService;
 import eu.innowise.moviereviewproject.service.MovieService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -19,9 +20,11 @@ import static eu.innowise.moviereviewproject.utils.ServletsUtil.parseInteger;
 public class MoviesServlet extends HttpServlet {
 
     private final MovieService movieService;
+    private final GenreService genreService;
 
     public MoviesServlet() {
         this.movieService = ApplicationConfig.getMovieService();
+        this.genreService = ApplicationConfig.getGenreService();
     }
 
     @Override
@@ -40,6 +43,7 @@ public class MoviesServlet extends HttpServlet {
             req.setAttribute("movies", movies);
             req.setAttribute("currentPage", page);
             req.setAttribute("currentTypeNumber", typeNumber);
+            req.setAttribute("genres", genreService.getAll());
 
             log.info("Movies fetched successfully. Forwarding to JSP.");
 

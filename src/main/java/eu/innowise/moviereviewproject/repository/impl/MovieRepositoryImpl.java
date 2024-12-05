@@ -1,13 +1,21 @@
 package eu.innowise.moviereviewproject.repository.impl;
 
+import eu.innowise.moviereviewproject.model.Genre;
 import eu.innowise.moviereviewproject.model.Movie;
 import eu.innowise.moviereviewproject.model.MovieType;
 import eu.innowise.moviereviewproject.repository.MovieRepository;
 import eu.innowise.moviereviewproject.utils.JpaUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -90,53 +98,39 @@ public class MovieRepositoryImpl implements MovieRepository {
     @Override
     public List<Movie> findFilteredMovies(int page, Integer typeNumber, String genre, Integer startYear, Integer endYear, Integer minRating, Integer maxRating) {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            StringBuilder queryBuilder = new StringBuilder("SELECT m FROM Movie m WHERE 1=1");
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Movie> cq = cb.createQuery(Movie.class);
+            Root<Movie> movie = cq.from(Movie.class);
+            Join<Movie, Genre> genreJoin = movie.join("genres");
 
-            if (typeNumber!= null && typeNumber != 0) {
-                queryBuilder.append(" AND m.movieType = :movieType");
-            }
+            List<Predicate> predicates = new ArrayList<>();
             if (genre != null && !genre.isEmpty()) {
-                queryBuilder.append(" AND m.genre = :genre");
+                predicates.add(cb.equal(genreJoin.get("name"), genre));
+            }
+            if (typeNumber != null && typeNumber != 0) {
+                predicates.add(cb.equal(movie.get("movieType"), MovieType.fromTypeNumber(typeNumber)));
             }
             if (startYear != null) {
-                queryBuilder.append(" AND m.releaseYear >= :startYear");
+                predicates.add(cb.greaterThanOrEqualTo(movie.get("releaseYear"), startYear));
             }
             if (endYear != null) {
-                queryBuilder.append(" AND m.releaseYear <= :endYear");
+                predicates.add(cb.lessThanOrEqualTo(movie.get("releaseYear"), endYear));
             }
             if (minRating != null) {
-                queryBuilder.append(" AND m.rating >= :minRating");
+                predicates.add(cb.greaterThanOrEqualTo(movie.get("rating"), minRating));
             }
             if (maxRating != null) {
-                queryBuilder.append(" AND m.rating <= :maxRating");
+                predicates.add(cb.lessThanOrEqualTo(movie.get("rating"), maxRating));
             }
 
-            Query query = entityManager.createQuery(queryBuilder.toString(), Movie.class);
+            cq.select(movie).distinct(true).where(predicates.toArray(new Predicate[0]));
 
-            if (typeNumber!= null && typeNumber != 0) {
-                MovieType movieType = MovieType.fromTypeNumber(typeNumber);
-                query.setParameter("movieType", movieType);
-            }
-            if (genre != null && !genre.isEmpty()) {
-                query.setParameter("genre", genre);
-            }
-            if (startYear != null) {
-                query.setParameter("startYear", startYear);
-            }
-            if (endYear != null) {
-                query.setParameter("endYear", endYear);
-            }
-            if (minRating != null) {
-                query.setParameter("minRating", minRating);
-            }
-            if (maxRating != null) {
-                query.setParameter("maxRating", maxRating);
-            }
-
+            TypedQuery<Movie> query = entityManager.createQuery(cq);
             query.setFirstResult((page - 1) * PAGE_SIZE);
             query.setMaxResults(PAGE_SIZE);
 
             return query.getResultList();
+
         }
     }
 
