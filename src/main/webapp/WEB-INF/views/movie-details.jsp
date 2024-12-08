@@ -88,7 +88,7 @@
     <div class="mt-5">
         <h3>Оставьте вашу рецензию</h3>
         <form action="<%= request.getContextPath() + "/review" %>" method="post">
-            <div class="form-group">
+        <div class="form-group">
                 <label>Рейтинг:</label>
                 <div class="star-rating">
                     <%
@@ -105,6 +105,7 @@
                 <label for="review">Рецензия:</label>
                 <textarea class="form-control" id="review" name="review" rows="5" placeholder="Напишите вашу рецензию здесь..."></textarea>
             </div>
+            <input type="hidden" name="movieId" value="<%= movie.id() %>">
             <button type="submit" class="btn btn-primary">Отправить</button>
         </form>
     </div>

@@ -19,36 +19,25 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static eu.innowise.moviereviewproject.utils.Constants.MOVIE_PAGE_SIZE;
+
 @Slf4j
 public class MovieRepositoryImpl implements MovieRepository {
 
-    private static final int PAGE_SIZE = 12;
-
-    // TODO maybe it is right to do rollback if error occurs
-
     @Override
     public Movie save(Movie movie) {
-        try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            entityManager.getTransaction().begin();
+        return executeInTransaction(entityManager -> {
             entityManager.persist(movie);
-            entityManager.getTransaction().commit();
-        } catch (Exception e) {
-            log.error("Error occurred while saving movie: {}", movie.getTitle(), e);
-            throw new RuntimeException("Error occurred while saving the movie", e);
-        }
-        return movie;
+            return movie;
+        });
     }
 
     @Override
     public void update(Movie movie) {
-        try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            entityManager.getTransaction().begin();
+        executeInTransaction(entityManager -> {
             entityManager.merge(movie);
-            entityManager.getTransaction().commit();
-        } catch (Exception e) {
-            log.error("Error occurred while updating movie: {}", movie.getTitle(), e);
-            throw new RuntimeException("Error occurred while updating the movie", e);
-        }
+            return null;
+        });
     }
 
     @Override
@@ -58,8 +47,11 @@ public class MovieRepositoryImpl implements MovieRepository {
             Movie movie = entityManager.createQuery(jpql, Movie.class)
                     .setParameter("id", id)
                     .setHint("org.hibernate.cacheable", true)
-                    .getSingleResult();
+                    .getSingleResultOrNull();
             return Optional.ofNullable(movie);
+        } catch (Exception e) {
+            log.error("Error occurred while finding movie by ID: {}", id, e);
+            throw new RuntimeException("Error occurred while finding movie", e);
         }
     }
 
@@ -73,12 +65,12 @@ public class MovieRepositoryImpl implements MovieRepository {
     @Override
     public List<Movie> findAll(int page, int typeNumber) {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            int firstResult = (page - 1) * PAGE_SIZE;
+            int firstResult = (page - 1) * MOVIE_PAGE_SIZE;
             MovieType movieType = MovieType.fromTypeNumber(typeNumber);
-            return entityManager.createQuery("SELECT m FROM Movie m  WHERE m.movieType = :movieType", Movie.class)
+            return entityManager.createQuery("SELECT m FROM Movie m WHERE m.movieType = :movieType", Movie.class)
                     .setParameter("movieType", movieType)
                     .setFirstResult(firstResult)
-                    .setMaxResults(PAGE_SIZE)
+                    .setMaxResults(MOVIE_PAGE_SIZE)
                     .setHint("org.hibernate.cacheable", true)
                     .getResultList();
         }
@@ -87,12 +79,12 @@ public class MovieRepositoryImpl implements MovieRepository {
     @Override
     public List<Movie> findMoviesByPartialTitle(String query, int page) {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            int firstResult = (page - 1) * PAGE_SIZE;
+            int firstResult = (page - 1) * MOVIE_PAGE_SIZE;
             String jpql = "SELECT m FROM Movie m WHERE m.title ILIKE :query";
             return entityManager.createQuery(jpql, Movie.class)
                     .setParameter("query", "%" + query + "%")
                     .setFirstResult(firstResult)
-                    .setMaxResults(PAGE_SIZE)
+                    .setMaxResults(MOVIE_PAGE_SIZE)
                     .getResultList();
         }
     }
@@ -128,8 +120,8 @@ public class MovieRepositoryImpl implements MovieRepository {
             cq.select(movie).distinct(true).where(predicates.toArray(new Predicate[0]));
 
             TypedQuery<Movie> query = entityManager.createQuery(cq);
-            query.setFirstResult((page - 1) * PAGE_SIZE);
-            query.setMaxResults(PAGE_SIZE);
+            query.setFirstResult((page - 1) * MOVIE_PAGE_SIZE);
+            query.setMaxResults(MOVIE_PAGE_SIZE);
 
             return query.getResultList();
         }
@@ -149,8 +141,7 @@ public class MovieRepositoryImpl implements MovieRepository {
 
     @Override
     public void deleteById(UUID id) {
-        try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            entityManager.getTransaction().begin();
+        executeInTransaction(entityManager -> {
             Movie movie = entityManager.find(Movie.class, id);
             if (movie != null) {
                 entityManager.remove(movie);
@@ -158,10 +149,7 @@ public class MovieRepositoryImpl implements MovieRepository {
             } else {
                 log.warn("Movie with ID: {} not found for deletion", id);
             }
-            entityManager.getTransaction().commit();
-        } catch (Exception e) {
-            log.error("Error occurred while deleting movie with ID: {}", id, e);
-            throw new RuntimeException("Error occurred while deleting the movie", e);
-        }
+            return null;
+        });
     }
 }

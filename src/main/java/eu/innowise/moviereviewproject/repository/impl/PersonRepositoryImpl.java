@@ -14,44 +14,19 @@ import java.util.UUID;
 public class PersonRepositoryImpl implements PersonRepository {
 
     @Override
-    public Optional<Person> findByExternalId(Long externalId) {
-        try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            String jpql = "SELECT p FROM Person p WHERE p.externalId = :externalId";
-            List<Person> result = entityManager.createQuery(jpql, Person.class)
-                    .setParameter("externalId", externalId)
-                    .getResultList();
-            return result.isEmpty() ? Optional.empty() : Optional.of(result.get(0));
-        } catch (Exception e) {
-            log.error("Error occurred while finding person by externalId: {}", externalId, e);
-            throw new RuntimeException("Error occurred while finding person by externalId", e);
-        }
-    }
-
-    @Override
     public Person save(Person entity) {
-        try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            entityManager.getTransaction().begin();
+        return executeInTransaction(entityManager -> {
             entityManager.persist(entity);
-            entityManager.getTransaction().commit();
-            log.info("Person saved successfully: {}", entity.getExternalId());
             return entity;
-        } catch (Exception e) {
-            log.error("Error occurred while saving person: {}", entity.getExternalId(), e);
-            throw new RuntimeException("Error occurred while saving person", e);
-        }
+        });
     }
 
     @Override
     public void update(Person entity) {
-        try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            entityManager.getTransaction().begin();
+        executeInTransaction(entityManager -> {
             entityManager.merge(entity);
-            entityManager.getTransaction().commit();
-            log.info("Person updated successfully: {}", entity.getExternalId());
-        } catch (Exception e) {
-            log.error("Error occurred while updating person: {}", entity.getExternalId(), e);
-            throw new RuntimeException("Error occurred while updating person", e);
-        }
+            return null;
+        });
     }
 
     @Override
@@ -62,6 +37,20 @@ public class PersonRepositoryImpl implements PersonRepository {
         } catch (Exception e) {
             log.error("Error occurred while finding person by ID: {}", id, e);
             throw new RuntimeException("Error occurred while finding person by ID", e);
+        }
+    }
+
+    @Override
+    public Optional<Person> findByExternalId(Long externalId) {
+        try (EntityManager entityManager = JpaUtil.getEntityManager()) {
+            String jpql = "SELECT p FROM Person p WHERE p.externalId = :externalId";
+            Person result = entityManager.createQuery(jpql, Person.class)
+                    .setParameter("externalId", externalId)
+                    .getSingleResultOrNull();
+            return Optional.ofNullable(result);
+        } catch (Exception e) {
+            log.error("Error occurred while finding person by externalId: {}", externalId, e);
+            throw new RuntimeException("Error occurred while finding person by externalId", e);
         }
     }
 
@@ -77,8 +66,7 @@ public class PersonRepositoryImpl implements PersonRepository {
 
     @Override
     public void deleteById(UUID id) {
-        try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            entityManager.getTransaction().begin();
+        executeInTransaction(entityManager -> {
             Person person = entityManager.find(Person.class, id);
             if (person != null) {
                 entityManager.remove(person);
@@ -86,10 +74,7 @@ public class PersonRepositoryImpl implements PersonRepository {
             } else {
                 log.warn("Person with ID: {} not found for deletion", id);
             }
-            entityManager.getTransaction().commit();
-        } catch (Exception e) {
-            log.error("Error occurred while deleting person with ID: {}", id, e);
-            throw new RuntimeException("Error occurred while deleting person", e);
-        }
+            return null;
+        });
     }
 }

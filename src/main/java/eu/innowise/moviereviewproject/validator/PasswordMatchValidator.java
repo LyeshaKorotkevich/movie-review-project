@@ -1,6 +1,7 @@
 package eu.innowise.moviereviewproject.validator;
 
 import eu.innowise.moviereviewproject.dto.RegistrationDTO;
+import eu.innowise.moviereviewproject.validator.annotation.PasswordMatch;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

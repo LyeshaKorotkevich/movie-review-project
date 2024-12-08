@@ -179,7 +179,9 @@ public class ApiService {
         if (genresNode != null && genresNode.isArray()) {
             for (JsonNode genreNode : genresNode) {
                 String genreName = genreNode.get("name").asText();
-                genres.add(genreRepository.saveIfNotExists(genreName));
+                Genre genre = new Genre();
+                genre.setName(genreName);
+                genres.add(genreRepository.findByName(genreName).orElseGet(() -> genreRepository.save(genre)));
             }
         }
         return genres;

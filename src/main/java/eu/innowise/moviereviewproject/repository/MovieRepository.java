@@ -3,8 +3,9 @@ package eu.innowise.moviereviewproject.repository;
 import eu.innowise.moviereviewproject.model.Movie;
 
 import java.util.List;
+import java.util.UUID;
 
-public interface MovieRepository extends CrudRepository<Movie> {
+public interface MovieRepository extends CrudRepository<Movie, UUID> {
 
     boolean existsByExternalId(Long externalId);
 

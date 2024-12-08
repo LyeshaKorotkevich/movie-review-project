@@ -10,7 +10,7 @@ public record UserDTO(
         String email,
         String userRole,
         LocalDate createdAt,
-        List<ReveiwDTO> reviews,
+        List<ReviewDTO> reviews,
         List<WatchlistDTO> watchlistMovies
 ) {
 }

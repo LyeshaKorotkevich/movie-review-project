@@ -1,6 +1,7 @@
 package eu.innowise.moviereviewproject.service;
 
 import eu.innowise.moviereviewproject.dto.RegistrationDTO;
+import eu.innowise.moviereviewproject.dto.UserDTO;
 import eu.innowise.moviereviewproject.exceptions.DtoValidationException;
 import eu.innowise.moviereviewproject.exceptions.user.UserAlreadyExistsException;
 import eu.innowise.moviereviewproject.exceptions.user.UserNotFoundException;
@@ -30,8 +31,9 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User getMovieById(UUID id) {
+    public UserDTO getUserById(UUID id) {
         return userRepository.findById(id)
+                .map(userMapper::toSummaryDTO)
                 .orElseThrow(() -> new UserNotFoundException("User with ID " + id + " not found"));
     }
 

@@ -1,7 +1,6 @@
 package eu.innowise.moviereviewproject.repository.impl;
 
 import eu.innowise.moviereviewproject.model.Genre;
-import eu.innowise.moviereviewproject.model.Movie;
 import eu.innowise.moviereviewproject.repository.GenreRepository;
 import eu.innowise.moviereviewproject.utils.JpaUtil;
 import jakarta.persistence.EntityManager;
@@ -14,13 +13,40 @@ import java.util.Optional;
 public class GenreRepositoryImpl implements GenreRepository {
 
     @Override
+    public Genre save(Genre genre) {
+        return executeInTransaction(entityManager -> {
+            entityManager.persist(genre);
+            return genre;
+        });
+    }
+
+    @Override
+    public void update(Genre genre) {
+        executeInTransaction(entityManager -> {
+            entityManager.merge(genre);
+            return null;
+        });
+    }
+
+    @Override
+    public Optional<Genre> findById(Integer id) {
+        try (EntityManager entityManager = JpaUtil.getEntityManager()) {
+            return Optional.ofNullable(entityManager.find(Genre.class, id));
+        } catch (Exception e) {
+            log.error("Error occurred while finding genre by ID: {}", id, e);
+            throw new RuntimeException("Error occurred while finding genre by ID", e);
+        }
+    }
+
+    @Override
     public Optional<Genre> findByName(String name) {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            return entityManager.createQuery(
+            return Optional.ofNullable(entityManager.createQuery(
                             "SELECT g FROM Genre g WHERE g.name = :name", Genre.class)
                     .setParameter("name", name)
-                    .getResultStream()
-                    .findFirst();
+                    .getSingleResultOrNull()
+            );
+
         } catch (Exception e) {
             log.error("Error occurred while fetching genre by name: {}", name, e);
             throw new RuntimeException("Error occurred while fetching genre by name", e);
@@ -31,31 +57,23 @@ public class GenreRepositoryImpl implements GenreRepository {
     public List<Genre> findAll() {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
             return entityManager.createQuery("SELECT g FROM Genre g", Genre.class).getResultList();
+        } catch (Exception e) {
+            log.error("Error occurred while fetching all genres", e);
+            throw new RuntimeException("Error occurred while fetching all genres", e);
         }
     }
 
     @Override
-    public Genre saveIfNotExists(String name) {
-        try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            entityManager.getTransaction().begin();
-
-            Optional<Genre> existingGenre = findByName(name);
-
-            Genre genre;
-            if (existingGenre.isPresent()) {
-                genre = existingGenre.get();
+    public void deleteById(Integer id) {
+        executeInTransaction(entityManager -> {
+            Genre genre = entityManager.find(Genre.class, id);
+            if (genre != null) {
+                entityManager.remove(genre);
+                log.info("Genre deleted successfully with ID: {}", id);
             } else {
-                genre = new Genre();
-                genre.setName(name);
-                entityManager.persist(genre);
-                log.info("New genre saved: {}", genre.getName());
+                log.warn("Genre with ID: {} not found for deletion", id);
             }
-
-            entityManager.getTransaction().commit();
-            return genre;
-        } catch (Exception e) {
-            log.error("Error occurred while saving genre: {}", name, e);
-            throw new RuntimeException("Error occurred while saving genre", e);
-        }
+            return null;
+        });
     }
 }

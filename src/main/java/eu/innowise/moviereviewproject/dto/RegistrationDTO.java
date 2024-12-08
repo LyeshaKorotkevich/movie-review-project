@@ -1,6 +1,6 @@
 package eu.innowise.moviereviewproject.dto;
 
-import eu.innowise.moviereviewproject.validator.PasswordMatch;
+import eu.innowise.moviereviewproject.validator.annotation.PasswordMatch;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

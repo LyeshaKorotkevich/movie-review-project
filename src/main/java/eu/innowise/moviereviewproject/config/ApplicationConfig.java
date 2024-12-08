@@ -4,14 +4,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.innowise.moviereviewproject.repository.GenreRepository;
 import eu.innowise.moviereviewproject.repository.MovieRepository;
 import eu.innowise.moviereviewproject.repository.PersonRepository;
+import eu.innowise.moviereviewproject.repository.ReviewRepository;
+import eu.innowise.moviereviewproject.repository.UserRepository;
 import eu.innowise.moviereviewproject.repository.impl.GenreRepositoryImpl;
 import eu.innowise.moviereviewproject.repository.impl.MovieRepositoryImpl;
 import eu.innowise.moviereviewproject.repository.impl.PersonRepositoryImpl;
+import eu.innowise.moviereviewproject.repository.impl.ReviewRepositoryImpl;
 import eu.innowise.moviereviewproject.repository.impl.UserRepositoryImpl;
 import eu.innowise.moviereviewproject.service.ApiService;
 import eu.innowise.moviereviewproject.service.AuthenticationService;
 import eu.innowise.moviereviewproject.service.GenreService;
 import eu.innowise.moviereviewproject.service.MovieService;
+import eu.innowise.moviereviewproject.service.ReviewService;
 import eu.innowise.moviereviewproject.service.UserService;
 import lombok.Getter;
 
@@ -27,7 +31,8 @@ public final class ApplicationConfig {
     private static final MovieRepository movieRepository = new MovieRepositoryImpl();
     private static final GenreRepository genreRepository = new GenreRepositoryImpl();
     private static final PersonRepository personRepository = new PersonRepositoryImpl();
-    private static final UserRepositoryImpl userRepository = new UserRepositoryImpl();
+    private static final UserRepository userRepository = new UserRepositoryImpl();
+    private static final ReviewRepository reviewRepository = new ReviewRepositoryImpl();
 
     @Getter
     private static final ApiService apiService = new ApiService(httpClient, objectMapper, movieRepository, personRepository, genreRepository);
@@ -43,4 +48,7 @@ public final class ApplicationConfig {
 
     @Getter
     private static final AuthenticationService authenticationService = new AuthenticationService(userRepository);
+
+    @Getter
+    private static final ReviewService reviewService = new ReviewService(reviewRepository, userRepository, movieRepository);
 }
