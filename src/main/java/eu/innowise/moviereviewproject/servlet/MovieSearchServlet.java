@@ -1,7 +1,7 @@
 package eu.innowise.moviereviewproject.servlet;
 
 import eu.innowise.moviereviewproject.config.ApplicationConfig;
-import eu.innowise.moviereviewproject.model.Movie;
+import eu.innowise.moviereviewproject.dto.MovieDTO;
 import eu.innowise.moviereviewproject.service.MovieService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -28,7 +28,7 @@ public class MovieSearchServlet extends HttpServlet {
         String query = req.getParameter("query");
         int page = parseInteger(req.getParameter("page"), 1, 1, Integer.MAX_VALUE);
 
-        List<Movie> movies = movieService.searchMovies(page, query);
+        List<MovieDTO> movies = movieService.searchMovies(page, query);
 
         req.setAttribute("movies", movies);
         req.setAttribute("currentPage", page);

@@ -9,6 +9,7 @@ import eu.innowise.moviereviewproject.repository.impl.MovieRepositoryImpl;
 import eu.innowise.moviereviewproject.repository.impl.PersonRepositoryImpl;
 import eu.innowise.moviereviewproject.repository.impl.UserRepositoryImpl;
 import eu.innowise.moviereviewproject.service.ApiService;
+import eu.innowise.moviereviewproject.service.AuthenticationService;
 import eu.innowise.moviereviewproject.service.GenreService;
 import eu.innowise.moviereviewproject.service.MovieService;
 import eu.innowise.moviereviewproject.service.UserService;
@@ -39,4 +40,7 @@ public final class ApplicationConfig {
 
     @Getter
     private static final UserService userService = new UserService(userRepository);
+
+    @Getter
+    private static final AuthenticationService authenticationService = new AuthenticationService(userRepository);
 }

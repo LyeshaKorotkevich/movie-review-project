@@ -1,8 +1,8 @@
-<%@ page import="eu.innowise.moviereviewproject.model.Movie" %>
-<%@ page import="eu.innowise.moviereviewproject.model.Genre" %>
-<%@ page import="eu.innowise.moviereviewproject.model.Person" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="eu.innowise.moviereviewproject.dto.MovieDTO" %>
+<%@ page import="eu.innowise.moviereviewproject.dto.PersonDTO" %>
+<%@ page import="eu.innowise.moviereviewproject.dto.GenreDTO" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
@@ -16,26 +16,26 @@
 <div class="container py-5">
 
     <%
-        Movie movie = (Movie) request.getAttribute("movie");
-        Map<String, List<Person>> filteredPersons = (Map<String, List<Person>>) request.getAttribute("filteredPersons");
+        MovieDTO movie = (MovieDTO) request.getAttribute("movie");
+        Map<String, List<PersonDTO>> filteredPersons = (Map<String, List<PersonDTO>>) request.getAttribute("filteredPersons");
         if (movie != null) {
     %>
-    <h1 class="text-center mb-4"><%= movie.getTitle() %></h1>
+    <h1 class="text-center mb-4"><%= movie.title() %></h1>
 
     <div class="row">
         <div class="col-md-6">
-            <img src="<%= movie.getPosterUrl() != null ? movie.getPosterUrl() : "https://via.placeholder.com/300x450" %>" class="img-fluid" alt="Постер фильма">
+            <img src="<%= movie.posterUrl() != null ? movie.posterUrl() : "https://via.placeholder.com/300x450" %>" class="img-fluid" alt="Постер фильма">
         </div>
         <div class="col-md-6">
-            <p><strong>Год:</strong> <%= movie.getReleaseYear() %></p>
-            <p><strong>Описание:</strong> <%= movie.getDescription() %></p>
-            <p><strong>Рейтинг:</strong> <%= movie.getRating() %></p>
+            <p><strong>Год:</strong> <%= movie.releaseYear() %></p>
+            <p><strong>Описание:</strong> <%= movie.description() %></p>
+            <p><strong>Рейтинг:</strong> <%= movie.rating() %></p>
             <p><strong>Жанры:</strong>
                 <%
-                    if (movie.getGenres() != null && !movie.getGenres().isEmpty()) {
-                        for (Genre genre : movie.getGenres()) {
+                    if (movie.genres() != null && !movie.genres().isEmpty()) {
+                        for (GenreDTO genre : movie.genres()) {
                 %>
-                <span class="badge badge-secondary"><%= genre.getName() %></span>
+                <span class="badge badge-secondary"><%= genre.name() %></span>
                 <%
                     }
                 } else {
@@ -47,20 +47,20 @@
             </p>
             <%
                 if (filteredPersons != null && !filteredPersons.isEmpty()) {
-                    for (Map.Entry<String, List<Person>> entry : filteredPersons.entrySet()) {
+                    for (Map.Entry<String, List<PersonDTO>> entry : filteredPersons.entrySet()) {
                         String profession = entry.getKey();
-                        List<Person> persons = entry.getValue();
+                        List<PersonDTO> persons = entry.getValue();
             %>
             <div class="mb-4">
                 <h5 class="text-primary"><%= profession != null ? profession : "Не указана профессия" %></h5>
                 <div class="row">
                     <%
-                        for (Person person : persons) {
-                            String displayName = person.getName() != null ? person.getName() : person.getEnName();
+                        for (PersonDTO person : persons) {
+                            String displayName = person.name() != null ? person.name() : person.enName();
                     %>
                     <div class="col-6 col-sm-4 col-md-3 mb-3 person-card">
                         <div class="card">
-                            <img src="<%= person.getPhotoUrl() != null ? person.getPhotoUrl() : "https://via.placeholder.com/100" %>"
+                            <img src="<%= person.photoUrl() != null ? person.photoUrl() : "https://via.placeholder.com/100" %>"
                                  class="card-img-top rounded-circle"
                                  style="height: 100px; object-fit: cover;"
                                  alt="<%= displayName %>">

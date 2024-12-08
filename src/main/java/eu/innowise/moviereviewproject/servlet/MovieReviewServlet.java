@@ -28,29 +28,29 @@ public class MovieReviewServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        try {
-            UUID movieId = ServletsUtil.extractUuidFromPath(req, resp, 2, 1);
-
-            String ratingString = req.getParameter("rating");
-            String reviewText = req.getParameter("review");
-
-            //int rating = Integer.parseInt(ratingString);
-
-            Movie movie = movieService.getMovieById(movieId);
-
-            if (movie == null) {
-
-            }
-            // Create Review
-
-            //reviewService.saveReview(review);
-
-            log.info("Successfully added review for movie: {} by user", movie.getTitle());
-
-            // forward to /movie/{id}
-
-        } catch (Exception e) {
-            log.error("Error occurred while processing review for movie.", e);
-        }
+//        try {
+//            UUID movieId = ServletsUtil.extractUuidFromPath(req, resp, 2, 1);
+//
+//            String ratingString = req.getParameter("rating");
+//            String reviewText = req.getParameter("review");
+//
+//            //int rating = Integer.parseInt(ratingString);
+//
+//            //Movie movie = movieService.getMovieById(movieId);
+//
+//            //if (movie == null) {
+//
+//            //}
+//            // Create Review
+//
+//            //reviewService.saveReview(review);
+//
+//            log.info("Successfully added review for movie: {} by user", movie.getTitle());
+//
+//            // forward to /movie/{id}
+//
+//        } catch (Exception e) {
+//            log.error("Error occurred while processing review for movie.", e);
+//        }
     }
 }

@@ -1,7 +1,7 @@
-<%@ page import="eu.innowise.moviereviewproject.model.Movie" %>
 <%@ page import="java.util.List" %>
-<%@ page import="eu.innowise.moviereviewproject.model.Genre" %>
-<%@ page import="eu.innowise.moviereviewproject.model.User" %>
+<%@ page import="eu.innowise.moviereviewproject.dto.GenreDTO" %>
+<%@ page import="eu.innowise.moviereviewproject.dto.UserDTO" %>
+<%@ page import="eu.innowise.moviereviewproject.dto.MovieDTO" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
@@ -47,13 +47,13 @@
 
                 <ul class="navbar-nav ml-auto">
                     <%
-                        User user = (User) session.getAttribute("user");
+                        UserDTO user = (UserDTO) session.getAttribute("user");
                         if (user != null) {
                     %>
 
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <%= user.getUsername() %>
+                            <%= user.username() %>
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <a class="dropdown-item" href="<%= request.getContextPath() %>/auth/logout">Выйти</a>
@@ -84,11 +84,11 @@
                     <select id="genre" class="form-control form-control-sm" name="genre">
                         <option value="">Все жанры</option>
                         <%
-                            List<Genre> genres = (List<Genre>) request.getAttribute("genres");
+                            List<GenreDTO> genres = (List<GenreDTO>) request.getAttribute("genres");
                             if (genres != null) {
-                                for (Genre genre : genres) {
+                                for (GenreDTO genre : genres) {
                         %>
-                        <option value="<%= genre.getName() %>"><%= genre.getName() %></option>
+                        <option value="<%= genre.name() %>"><%= genre.name() %></option>
                         <%
                                 }
                             }
@@ -115,19 +115,19 @@
 
     <div class="row">
         <%
-            List<Movie> movies = (List<Movie>) request.getAttribute("movies");
+            List<MovieDTO> movies = (List<MovieDTO>) request.getAttribute("movies");
             int currentPage = (int) request.getAttribute("currentPage");
             if (movies != null && !movies.isEmpty()) {
-                for (Movie movie : movies) {
+                for (MovieDTO movie : movies) {
         %>
         <div class="col-md-4 mb-4">
             <div class="card h-100">
-                <a href="<%= request.getContextPath() + "/movies/" + movie.getId() %>" class="movie-link">
-                    <img src="<%= movie.getPosterUrl() != null ? movie.getPosterUrl() : "https://via.placeholder.com/300x450" %>" class="card-img-top" alt="Постер">
+                <a href="<%= request.getContextPath() + "/movies/" + movie.id() %>" class="movie-link">
+                    <img src="<%= movie.posterUrl() != null ? movie.posterUrl() : "https://via.placeholder.com/300x450" %>" class="card-img-top" alt="Постер">
                     <div class="card-body">
-                        <h5 class="card-title text-truncate"><%= movie.getTitle() %></h5>
-                        <p class="card-text">Год: <%= movie.getReleaseYear() %></p>
-                        <small class="text-muted">Рейтинг: <%= movie.getRating() %></small>
+                        <h5 class="card-title text-truncate"><%= movie.title() %></h5>
+                        <p class="card-text">Год: <%= movie.releaseYear() %></p>
+                        <small class="text-muted">Рейтинг: <%= movie.rating() %></small>
                     </div>
                 </a>
             </div>

@@ -2,6 +2,8 @@ package eu.innowise.moviereviewproject.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.innowise.moviereviewproject.dto.MovieDTO;
+import eu.innowise.moviereviewproject.mapper.MovieMapper;
 import eu.innowise.moviereviewproject.model.Genre;
 import eu.innowise.moviereviewproject.model.Movie;
 import eu.innowise.moviereviewproject.model.MovieType;
@@ -10,6 +12,7 @@ import eu.innowise.moviereviewproject.repository.GenreRepository;
 import eu.innowise.moviereviewproject.repository.MovieRepository;
 import eu.innowise.moviereviewproject.repository.PersonRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.mapstruct.factory.Mappers;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -34,6 +37,7 @@ public class ApiService {
     private final MovieRepository movieRepository;
     private final PersonRepository personRepository;
     private final GenreRepository genreRepository;
+    private final MovieMapper movieMapper;
 
     public ApiService(HttpClient httpClient, ObjectMapper objectMapper, MovieRepository movieRepository, PersonRepository personRepository, GenreRepository genreRepository) {
         this.httpClient = httpClient;
@@ -41,19 +45,20 @@ public class ApiService {
         this.movieRepository = movieRepository;
         this.personRepository = personRepository;
         this.genreRepository = genreRepository;
+        this.movieMapper = Mappers.getMapper(MovieMapper.class);
     }
 
-    public List<Movie> fetchMoviesFromApi(int page, int typeNumber) throws Exception {
+    public List<MovieDTO> fetchMoviesFromApi(int page, int typeNumber) throws Exception {
         String url = buildMoviesUrl(page, typeNumber);
         return fetchMoviesFromApi(url);
     }
 
-    public List<Movie> fetchMoviesFromSearchFromApi(int page, String query) throws Exception {
+    public List<MovieDTO> fetchMoviesFromSearchFromApi(int page, String query) throws Exception {
         String url = buildSearchUrl(page, query);
         return fetchMoviesFromApi(url);
     }
 
-    private List<Movie> fetchMoviesFromApi(String url) throws Exception {
+    private List<MovieDTO> fetchMoviesFromApi(String url) throws Exception {
         HttpResponse<String> response = sendApiRequest(url);
 
         if (response.statusCode() != 200) {
@@ -75,7 +80,7 @@ public class ApiService {
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    private List<Movie> parseMoviesFromResponse(String responseBody) throws Exception {
+    private List<MovieDTO> parseMoviesFromResponse(String responseBody) throws Exception {
         JsonNode rootNode = objectMapper.readTree(responseBody);
         JsonNode moviesNode = rootNode.get("docs");
         List<Movie> movies = new ArrayList<>();
@@ -91,7 +96,7 @@ public class ApiService {
                 movies.add(movie);
             }
         }
-        return movies;
+        return movies.stream().map(movieMapper::toSummaryDTO).toList();
     }
 
     private String buildMoviesUrl(int page, int typeNumber) {

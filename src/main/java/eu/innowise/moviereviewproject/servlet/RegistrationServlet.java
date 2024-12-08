@@ -1,7 +1,9 @@
 package eu.innowise.moviereviewproject.servlet;
 
 import eu.innowise.moviereviewproject.config.ApplicationConfig;
-import eu.innowise.moviereviewproject.model.User;
+import eu.innowise.moviereviewproject.dto.RegistrationDTO;
+import eu.innowise.moviereviewproject.exceptions.DtoValidationException;
+import eu.innowise.moviereviewproject.exceptions.user.UserAlreadyExistsException;
 import eu.innowise.moviereviewproject.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -27,17 +29,27 @@ public class RegistrationServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String username = req.getParameter("username");
-        String email = req.getParameter("email");
-        String password = req.getParameter("password");
+        RegistrationDTO registrationDTO = new RegistrationDTO(
+                req.getParameter("username"),
+                req.getParameter("email"),
+                req.getParameter("password"),
+                req.getParameter("confirmPassword")
+        );
 
-        User user = new User();
-        user.setUsername(username);
-        user.setEmail(email);
-        user.setPassword(password);
-
-        userService.saveUser(user);
-
-        req.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(req, resp);
+        try {
+            userService.registerUser(registrationDTO);
+            resp.sendRedirect(req.getContextPath() + "/auth/login");
+        } catch (DtoValidationException e) {
+            req.setAttribute("errors", e.getErrors());
+            req.setAttribute("registrationDTO", registrationDTO);
+            req.getRequestDispatcher("/WEB-INF/views/register.jsp").forward(req, resp);
+        } catch (UserAlreadyExistsException e) {
+            req.setAttribute("userAlreadyExists", "Username or email is already taken");
+            req.setAttribute("registrationDTO", registrationDTO);
+            req.getRequestDispatcher("/WEB-INF/views/register.jsp").forward(req, resp);
+        } catch (Exception e) {
+            throw new ServletException("Error occurred during registration", e);
+        }
     }
+
 }

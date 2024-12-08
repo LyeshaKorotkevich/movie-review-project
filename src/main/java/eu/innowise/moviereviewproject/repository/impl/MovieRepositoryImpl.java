@@ -6,7 +6,6 @@ import eu.innowise.moviereviewproject.model.MovieType;
 import eu.innowise.moviereviewproject.repository.MovieRepository;
 import eu.innowise.moviereviewproject.utils.JpaUtil;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -52,6 +51,7 @@ public class MovieRepositoryImpl implements MovieRepository {
         }
     }
 
+    @Override
     public Optional<Movie> findById(UUID id) {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
             String jpql = "SELECT m FROM Movie m LEFT JOIN FETCH m.persons LEFT JOIN FETCH m.genres WHERE m.id = :id";
@@ -63,17 +63,19 @@ public class MovieRepositoryImpl implements MovieRepository {
         }
     }
 
+    @Override
     public List<Movie> findAll() {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
             return entityManager.createQuery("SELECT m FROM Movie m", Movie.class).getResultList();
         }
     }
 
+    @Override
     public List<Movie> findAll(int page, int typeNumber) {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
             int firstResult = (page - 1) * PAGE_SIZE;
             MovieType movieType = MovieType.fromTypeNumber(typeNumber);
-            return entityManager.createQuery("SELECT m FROM Movie m WHERE m.movieType = :movieType", Movie.class)
+            return entityManager.createQuery("SELECT m FROM Movie m  WHERE m.movieType = :movieType", Movie.class)
                     .setParameter("movieType", movieType)
                     .setFirstResult(firstResult)
                     .setMaxResults(PAGE_SIZE)
@@ -130,7 +132,6 @@ public class MovieRepositoryImpl implements MovieRepository {
             query.setMaxResults(PAGE_SIZE);
 
             return query.getResultList();
-
         }
     }
 

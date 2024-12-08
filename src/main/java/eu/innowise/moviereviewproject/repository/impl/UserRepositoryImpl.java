@@ -1,11 +1,16 @@
 package eu.innowise.moviereviewproject.repository.impl;
 
+import eu.innowise.moviereviewproject.exceptions.user.UserAlreadyExistsException;
 import eu.innowise.moviereviewproject.model.User;
 import eu.innowise.moviereviewproject.repository.UserRepository;
 import eu.innowise.moviereviewproject.utils.JpaUtil;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.PersistenceException;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,13 +19,25 @@ import java.util.UUID;
 public class UserRepositoryImpl implements UserRepository {
     @Override
     public User save(User entity) {
-        try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            entityManager.getTransaction().begin();
+        EntityManager entityManager = JpaUtil.getEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+
+        try {
+            transaction.begin();
             entityManager.persist(entity);
-            entityManager.getTransaction().commit();
-        } catch (Exception e) {
+            transaction.commit();
+        } catch (PersistenceException e) {
+            if (e.getCause() instanceof org.hibernate.exception.ConstraintViolationException) {
+                log.error("Username or email is already taken: {}", e.getMessage());
+                throw new UserAlreadyExistsException("Username or email is already taken", e);
+            }
             log.error("Error occurred while saving user: {}", entity.getEmail(), e);
+            transaction.rollback();
             throw new RuntimeException("Error occurred while saving the user", e);
+        } finally {
+            if (entityManager.isOpen()) {
+                entityManager.close();
+            }
         }
         return entity;
     }
@@ -49,7 +66,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> findUserByUsername(String username) {
+    public Optional<User> findByUsername(String username) {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
             String jpql = "SELECT u FROM User u WHERE u.username = :username";
             User user = entityManager.createQuery(jpql, User.class)
@@ -85,26 +102,20 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean existsByUsername(String username) {
+    public boolean existsById(UUID id) {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            String jpql = "SELECT 1 FROM User u WHERE u.username = :username";
+            String jpql = "SELECT 1 FROM User u WHERE u.id = :id";
             List result = entityManager.createQuery(jpql)
-                    .setParameter("username", username)
+                    .setParameter("id", id)
                     .setMaxResults(1)
                     .getResultList();
             return !result.isEmpty();
         }
     }
 
-    @Override
-    public boolean existsByEmail(String email) {
-        try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            String jpql = "SELECT 1 FROM User u WHERE u.email = :email";
-            List result = entityManager.createQuery(jpql)
-                    .setParameter("email", email)
-                    .setMaxResults(1)
-                    .getResultList();
-            return !result.isEmpty();
-        }
+    private boolean isUniqueConstraintViolation(Exception e) {
+        Throwable cause = e.getCause();
+        return cause instanceof SQLIntegrityConstraintViolationException
+                || (cause != null && cause.getMessage().contains("unique constraint"));
     }
 }

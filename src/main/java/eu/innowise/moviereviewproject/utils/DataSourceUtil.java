@@ -6,15 +6,12 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class DataSourceUtil {
+public final class DataSourceUtil {
+
+    private DataSourceUtil () {}
 
     public static DataSource getDataSource() throws NamingException {
         InitialContext context = new InitialContext();
         return (DataSource) context.lookup("java:/comp/env/jdbc/MyLocalDB");
-    }
-
-    public static Connection getConnection() throws NamingException, SQLException {
-        DataSource dataSource = getDataSource();
-        return dataSource.getConnection();
     }
 }

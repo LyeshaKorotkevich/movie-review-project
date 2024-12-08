@@ -1,5 +1,5 @@
-<%@ page import="eu.innowise.moviereviewproject.model.Movie" %>
 <%@ page import="java.util.List" %>
+<%@ page import="eu.innowise.moviereviewproject.dto.MovieDTO" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
@@ -14,24 +14,24 @@
 
     <%
         String query = request.getParameter("query");
-        List<Movie> movies = (List<Movie>) request.getAttribute("movies");
+        List<MovieDTO> movies = (List<MovieDTO>) request.getAttribute("movies");
         int currentPage = (int) request.getAttribute("currentPage");
 
         if (movies != null && !movies.isEmpty()) {
     %>
     <ul class="list-group">
         <%
-            for (Movie movie : movies) {
+            for (MovieDTO movie : movies) {
         %>
         <li class="list-group-item d-flex align-items-center">
-            <img src="<%= movie.getPosterUrl() != null ? movie.getPosterUrl() : "https://via.placeholder.com/80x120" %>"
+            <img src="<%= movie.posterUrl() != null ? movie.posterUrl() : "https://via.placeholder.com/80x120" %>"
                  alt="Постер" class="img-thumbnail mr-3" style="width: 80px; height: 120px;">
             <div>
-                <h5><%= movie.getTitle() %></h5>
-                <p class="mb-1">Год: <%= movie.getReleaseYear() %></p>
-                <small class="text-muted">Рейтинг: <%= movie.getRating() %></small>
+                <h5><%= movie.title() %></h5>
+                <p class="mb-1">Год: <%= movie.releaseYear() %></p>
+                <small class="text-muted">Рейтинг: <%= movie.rating() %></small>
             </div>
-            <a href="<%= request.getContextPath() + "/movies/" + movie.getId() %>" class="btn btn-link ml-auto">Подробнее</a>
+            <a href="<%= request.getContextPath() + "/movies/" + movie.id() %>" class="btn btn-link ml-auto">Подробнее</a>
         </li>
         <%
             }

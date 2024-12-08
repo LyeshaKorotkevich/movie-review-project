@@ -1,8 +1,8 @@
 package eu.innowise.moviereviewproject.servlet;
 
 import eu.innowise.moviereviewproject.config.ApplicationConfig;
-import eu.innowise.moviereviewproject.model.Movie;
-import eu.innowise.moviereviewproject.model.Person;
+import eu.innowise.moviereviewproject.dto.MovieDTO;
+import eu.innowise.moviereviewproject.dto.PersonDTO;
 import eu.innowise.moviereviewproject.service.MovieService;
 import eu.innowise.moviereviewproject.utils.ServletsUtil;
 import jakarta.servlet.ServletException;
@@ -34,9 +34,9 @@ public class MovieDetailsServlet extends HttpServlet {
 
             log.info("Extracted movieId={}", movieId);
 
-            Movie movie = movieService.getMovieById(movieId);
+            MovieDTO movie = movieService.getMovieById(movieId);
 
-            Map<String, List<Person>> filteredPersons = filterAndLimitPersons(movie);
+            Map<String, List<PersonDTO>> filteredPersons = filterAndLimitPersons(movie);
 
             req.setAttribute("movie", movie);
             req.setAttribute("filteredPersons", filteredPersons);
@@ -50,13 +50,13 @@ public class MovieDetailsServlet extends HttpServlet {
         }
     }
 
-    private Map<String, List<Person>> filterAndLimitPersons(Movie movie) {
-        return movie.getPersons()
+    private Map<String, List<PersonDTO>> filterAndLimitPersons(MovieDTO movie) {
+        return movie.persons()
                 .stream()
-                .filter(person -> isValidName(person.getName()) || isValidName(person.getEnName()))
-                .filter(person -> "актеры".equalsIgnoreCase(person.getProfession()) || "режиссеры".equalsIgnoreCase(person.getProfession()))
+                .filter(person -> isValidName(person.name()) || isValidName(person.enName()))
+                .filter(person -> "актеры".equalsIgnoreCase(person.profession()) || "режиссеры".equalsIgnoreCase(person.profession()))
                 .collect(Collectors.groupingBy(
-                        Person::getProfession,
+                        person -> person.profession(),
                         Collectors.collectingAndThen(
                                 Collectors.toList(),
                                 list -> list.stream().limit(4).collect(Collectors.toList())

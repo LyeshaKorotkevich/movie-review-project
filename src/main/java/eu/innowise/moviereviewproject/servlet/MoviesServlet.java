@@ -1,7 +1,8 @@
 package eu.innowise.moviereviewproject.servlet;
 
 import eu.innowise.moviereviewproject.config.ApplicationConfig;
-import eu.innowise.moviereviewproject.model.Movie;
+import eu.innowise.moviereviewproject.dto.GenreDTO;
+import eu.innowise.moviereviewproject.dto.MovieDTO;
 import eu.innowise.moviereviewproject.service.GenreService;
 import eu.innowise.moviereviewproject.service.MovieService;
 import jakarta.servlet.ServletException;
@@ -38,12 +39,13 @@ public class MoviesServlet extends HttpServlet {
 
             log.info("Parsed request parameters: page={}, typeNumber={}", page, typeNumber);
 
-            List<Movie> movies = movieService.getAllMovies(page, typeNumber);
+            List<MovieDTO> movies = movieService.getAllMovies(page, typeNumber);
+            List<GenreDTO> genres = genreService.getAll();
 
             req.setAttribute("movies", movies);
             req.setAttribute("currentPage", page);
             req.setAttribute("currentTypeNumber", typeNumber);
-            req.setAttribute("genres", genreService.getAll());
+            req.setAttribute("genres", genres);
 
             log.info("Movies fetched successfully. Forwarding to JSP.");
 

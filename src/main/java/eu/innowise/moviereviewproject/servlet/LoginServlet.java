@@ -1,8 +1,10 @@
 package eu.innowise.moviereviewproject.servlet;
 
 import eu.innowise.moviereviewproject.config.ApplicationConfig;
-import eu.innowise.moviereviewproject.model.User;
-import eu.innowise.moviereviewproject.service.UserService;
+import eu.innowise.moviereviewproject.dto.LoginDTO;
+import eu.innowise.moviereviewproject.dto.UserDTO;
+import eu.innowise.moviereviewproject.exceptions.user.UserNotFoundException;
+import eu.innowise.moviereviewproject.service.AuthenticationService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -10,9 +12,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
-import org.mindrot.jbcrypt.BCrypt;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -20,10 +19,10 @@ import java.io.IOException;
 @WebServlet("/auth/login")
 public class LoginServlet extends HttpServlet {
 
-    private final UserService userService;
+    private final AuthenticationService authenticationService;
 
     public LoginServlet() {
-        this.userService = ApplicationConfig.getUserService();
+        this.authenticationService = ApplicationConfig.getAuthenticationService();
     }
 
     @Override
@@ -33,27 +32,25 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String username = req.getParameter("username");
-        String password = req.getParameter("password");
+        LoginDTO loginDTO = new LoginDTO(req.getParameter("username"), req.getParameter("password"));
 
         try {
-            User user = userService.getUserByUsername(username);
+            UserDTO authenticatedUser = authenticationService.authenticate(loginDTO);
 
-            if (BCrypt.checkpw(password, user.getPassword())) {
-                log.info("Authentication successful for user {}", username);
+            log.info("Authentication successful for user {}", loginDTO.username());
 
-                HttpSession session = req.getSession();
-                session.setAttribute("user", user);
+            HttpSession session = req.getSession();
+            session.setAttribute("user", authenticatedUser);
 
-                log.debug("Redirecting user {} to /movies", username);
-                resp.sendRedirect(req.getContextPath() + "/movies");
-            } else {
-                req.setAttribute("errorMessage", "Неверный логин или пароль");
-                req.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(req, resp);
-            }
-        } catch (Exception e) {
-            log.error("Error occurred while processing login for user {}", username, e);
+            log.debug("Redirecting user {} to /movies",  loginDTO.username());
+            resp.sendRedirect(req.getContextPath() + "/movies");
+        } catch (UserNotFoundException | IllegalArgumentException e) {
+            log.warn("Authentication failed for user {}",  loginDTO.username(), e);
             req.setAttribute("errorMessage", "Неверный логин или пароль");
+            req.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(req, resp);
+        } catch (Exception e) {
+            log.error("Unexpected error during login process", e);
+            req.setAttribute("errorMessage", "Произошла ошибка, попробуйте позже");
             req.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(req, resp);
         }
     }

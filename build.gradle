@@ -38,7 +38,8 @@ dependencies {
     implementation 'javax.xml.bind:jaxb-api:2.3.1'
     implementation 'com.sun.xml.bind:jaxb-impl:2.3.1'
     implementation 'org.mindrot:jbcrypt:0.4'
-
+    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 
     runtimeOnly 'org.postgresql:postgresql:42.7.3'
     runtimeOnly 'org.flywaydb:flyway-database-postgresql:11.0.0'

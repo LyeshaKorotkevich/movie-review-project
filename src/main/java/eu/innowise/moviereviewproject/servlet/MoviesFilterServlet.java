@@ -1,7 +1,7 @@
 package eu.innowise.moviereviewproject.servlet;
 
 import eu.innowise.moviereviewproject.config.ApplicationConfig;
-import eu.innowise.moviereviewproject.model.Movie;
+import eu.innowise.moviereviewproject.dto.MovieDTO;
 import eu.innowise.moviereviewproject.service.GenreService;
 import eu.innowise.moviereviewproject.service.MovieService;
 import jakarta.servlet.ServletException;
@@ -45,7 +45,7 @@ public class MoviesFilterServlet extends HttpServlet {
             log.info("Parsed filter parameters: genre={}, startYear={}, endYear={}, minRating={}, maxRating={}, typeNumber={}, page={}",
                     genre, startYear, endYear, minRating, maxRating, typeNumber, page);
 
-            List<Movie> filteredMovies = movieService.getFilteredMovies(page, typeNumber, genre, startYear, endYear, minRating, maxRating);
+            List<MovieDTO> filteredMovies = movieService.getFilteredMovies(page, typeNumber, genre, startYear, endYear, minRating, maxRating);
 
             req.setAttribute("movies", filteredMovies);
             req.setAttribute("currentPage", page);
