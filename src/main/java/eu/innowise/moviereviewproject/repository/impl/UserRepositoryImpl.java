@@ -7,7 +7,6 @@ import eu.innowise.moviereviewproject.utils.JpaUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.PersistenceException;
-import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -69,12 +68,13 @@ public class UserRepositoryImpl implements UserRepository {
     public Optional<User> findByUsername(String username) {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
             String jpql = "SELECT u FROM User u WHERE u.username = :username";
-            User user = entityManager.createQuery(jpql, User.class)
+            List<User> users = entityManager.createQuery(jpql, User.class)
                     .setParameter("username", username)
-                    .getSingleResult();
-            return Optional.ofNullable(user);
+                    .getResultList();
+            return users.isEmpty() ? Optional.empty() : Optional.of(users.get(0));
         }
     }
+
 
     @Override
     public List<User> findAll() {

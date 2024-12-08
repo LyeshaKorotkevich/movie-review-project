@@ -1,4 +1,4 @@
-package eu.innowise.moviereviewproject.servlet;
+package eu.innowise.moviereviewproject.servlet.auth;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;

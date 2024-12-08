@@ -12,7 +12,6 @@ import eu.innowise.moviereviewproject.validator.DtoValidator;
 import org.mapstruct.factory.Mappers;
 import org.mindrot.jbcrypt.BCrypt;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.UUID;
 

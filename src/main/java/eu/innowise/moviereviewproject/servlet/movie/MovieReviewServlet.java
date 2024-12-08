@@ -1,9 +1,7 @@
-package eu.innowise.moviereviewproject.servlet;
+package eu.innowise.moviereviewproject.servlet.movie;
 
 import eu.innowise.moviereviewproject.config.ApplicationConfig;
-import eu.innowise.moviereviewproject.model.Movie;
 import eu.innowise.moviereviewproject.service.MovieService;
-import eu.innowise.moviereviewproject.utils.ServletsUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -12,7 +10,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.util.UUID;
 
 @Slf4j
 @WebServlet(value = "/movies/*/review")

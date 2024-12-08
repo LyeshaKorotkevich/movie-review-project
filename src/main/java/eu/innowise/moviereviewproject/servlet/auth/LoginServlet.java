@@ -1,8 +1,10 @@
-package eu.innowise.moviereviewproject.servlet;
+package eu.innowise.moviereviewproject.servlet.auth;
 
 import eu.innowise.moviereviewproject.config.ApplicationConfig;
 import eu.innowise.moviereviewproject.dto.LoginDTO;
 import eu.innowise.moviereviewproject.dto.UserDTO;
+import eu.innowise.moviereviewproject.exceptions.DtoValidationException;
+import eu.innowise.moviereviewproject.exceptions.user.InvalidPasswordException;
 import eu.innowise.moviereviewproject.exceptions.user.UserNotFoundException;
 import eu.innowise.moviereviewproject.service.AuthenticationService;
 import jakarta.servlet.ServletException;
@@ -42,11 +44,14 @@ public class LoginServlet extends HttpServlet {
             HttpSession session = req.getSession();
             session.setAttribute("user", authenticatedUser);
 
-            log.debug("Redirecting user {} to /movies",  loginDTO.username());
+            log.debug("Redirecting user {} to /movies", loginDTO.username());
             resp.sendRedirect(req.getContextPath() + "/movies");
-        } catch (UserNotFoundException | IllegalArgumentException e) {
-            log.warn("Authentication failed for user {}",  loginDTO.username(), e);
-            req.setAttribute("errorMessage", "Неверный логин или пароль");
+        } catch (DtoValidationException e) {
+            req.setAttribute("errors", e.getErrors());
+            req.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(req, resp);
+        } catch (UserNotFoundException | InvalidPasswordException e) {
+            log.warn("Authentication failed for user {}",  loginDTO.username());
+            req.setAttribute("userNotExists", "Неверный логин или пароль");
             req.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(req, resp);
         } catch (Exception e) {
             log.error("Unexpected error during login process", e);

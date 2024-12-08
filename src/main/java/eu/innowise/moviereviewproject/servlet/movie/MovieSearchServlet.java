@@ -1,4 +1,4 @@
-package eu.innowise.moviereviewproject.servlet;
+package eu.innowise.moviereviewproject.servlet.movie;
 
 import eu.innowise.moviereviewproject.config.ApplicationConfig;
 import eu.innowise.moviereviewproject.dto.MovieDTO;
