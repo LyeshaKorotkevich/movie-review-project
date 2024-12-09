@@ -1,8 +1,5 @@
 package eu.innowise.moviereviewproject.dto.response;
 
-import eu.innowise.moviereviewproject.dto.MovieDTO;
-import eu.innowise.moviereviewproject.dto.UserDTO;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -12,7 +9,7 @@ public record ReviewResponse(
         int rate,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
-        UserDTO user
+        UserResponse user
         //MovieDTO movie
 ) {
 }

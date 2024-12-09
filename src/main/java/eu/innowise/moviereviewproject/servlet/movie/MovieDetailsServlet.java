@@ -1,9 +1,9 @@
 package eu.innowise.moviereviewproject.servlet.movie;
 
 import eu.innowise.moviereviewproject.config.ApplicationConfig;
-import eu.innowise.moviereviewproject.dto.MovieDTO;
-import eu.innowise.moviereviewproject.dto.PersonDTO;
-import eu.innowise.moviereviewproject.dto.UserDTO;
+import eu.innowise.moviereviewproject.dto.response.UserResponse;
+import eu.innowise.moviereviewproject.dto.response.MovieResponse;
+import eu.innowise.moviereviewproject.dto.response.PersonResponse;
 import eu.innowise.moviereviewproject.dto.response.ReviewResponse;
 import eu.innowise.moviereviewproject.service.MovieService;
 import eu.innowise.moviereviewproject.service.ReviewService;
@@ -42,10 +42,10 @@ public class MovieDetailsServlet extends HttpServlet {
 
             log.info("Extracted movieId={}", movieId);
 
-            MovieDTO movie = movieService.getMovieById(movieId);
-            Map<String, List<PersonDTO>> filteredPersons = filterAndLimitPersons(movie);
+            MovieResponse movie = movieService.getMovieById(movieId);
+            Map<String, List<PersonResponse>> filteredPersons = filterAndLimitPersons(movie);
 
-            UserDTO user = (UserDTO) req.getSession().getAttribute("user");
+            UserResponse user = (UserResponse) req.getSession().getAttribute("user");
             ReviewResponse existingReview = null;
             if (user != null) {
                 existingReview = reviewService.getReviewByUserAndMovie(user.id(), movieId);
@@ -67,13 +67,13 @@ public class MovieDetailsServlet extends HttpServlet {
         }
     }
 
-    private Map<String, List<PersonDTO>> filterAndLimitPersons(MovieDTO movie) {
+    private Map<String, List<PersonResponse>> filterAndLimitPersons(MovieResponse movie) {
         return movie.persons()
                 .stream()
                 .filter(person -> isValidName(person.name()) || isValidName(person.enName()))
                 .filter(person -> "актеры".equalsIgnoreCase(person.profession()) || "режиссеры".equalsIgnoreCase(person.profession()))
                 .collect(Collectors.groupingBy(
-                        PersonDTO::profession,
+                        PersonResponse::profession,
                         Collectors.collectingAndThen(
                                 Collectors.toList(),
                                 list -> list.stream().limit(4).collect(Collectors.toList())

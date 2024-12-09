@@ -1,8 +1,8 @@
 package eu.innowise.moviereviewproject.servlet.auth;
 
 import eu.innowise.moviereviewproject.config.ApplicationConfig;
-import eu.innowise.moviereviewproject.dto.LoginDTO;
-import eu.innowise.moviereviewproject.dto.UserDTO;
+import eu.innowise.moviereviewproject.dto.response.UserResponse;
+import eu.innowise.moviereviewproject.dto.request.LoginRequest;
 import eu.innowise.moviereviewproject.exceptions.DtoValidationException;
 import eu.innowise.moviereviewproject.exceptions.user.InvalidPasswordException;
 import eu.innowise.moviereviewproject.exceptions.user.UserNotFoundException;
@@ -34,23 +34,23 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        LoginDTO loginDTO = new LoginDTO(req.getParameter("username"), req.getParameter("password"));
+        LoginRequest loginRequest = new LoginRequest(req.getParameter("username"), req.getParameter("password"));
 
         try {
-            UserDTO authenticatedUser = authenticationService.authenticate(loginDTO);
+            UserResponse authenticatedUser = authenticationService.authenticate(loginRequest);
 
-            log.info("Authentication successful for user {}", loginDTO.username());
+            log.info("Authentication successful for user {}", loginRequest.username());
 
             HttpSession session = req.getSession();
             session.setAttribute("user", authenticatedUser);
 
-            log.debug("Redirecting user {} to /movies", loginDTO.username());
+            log.debug("Redirecting user {} to /movies", loginRequest.username());
             resp.sendRedirect(req.getContextPath() + "/movies");
         } catch (DtoValidationException e) {
             req.setAttribute("errors", e.getErrors());
             req.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(req, resp);
         } catch (UserNotFoundException | InvalidPasswordException e) {
-            log.warn("Authentication failed for user {}",  loginDTO.username());
+            log.warn("Authentication failed for user {}",  loginRequest.username());
             req.setAttribute("userNotExists", "Неверный логин или пароль");
             req.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(req, resp);
         } catch (Exception e) {

@@ -1,4 +1,4 @@
-package eu.innowise.moviereviewproject.dto;
+package eu.innowise.moviereviewproject.dto.request;
 
 import eu.innowise.moviereviewproject.validator.annotation.PasswordMatch;
 import jakarta.validation.constraints.Email;
@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 @PasswordMatch
-public record RegistrationDTO(
+public record RegistrationRequest(
 
         @NotBlank(message = "Имя пользователя не может быть пустым.")
         @Size(min = 3, max = 255, message = "Имя пользователя должно содержать минимум 3 символа и максимум 255.")

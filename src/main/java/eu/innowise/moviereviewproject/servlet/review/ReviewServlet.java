@@ -1,11 +1,9 @@
 package eu.innowise.moviereviewproject.servlet.review;
 
 import eu.innowise.moviereviewproject.config.ApplicationConfig;
-import eu.innowise.moviereviewproject.dto.UserDTO;
+import eu.innowise.moviereviewproject.dto.response.UserResponse;
 import eu.innowise.moviereviewproject.dto.request.ReviewRequest;
-import eu.innowise.moviereviewproject.model.User;
 import eu.innowise.moviereviewproject.service.ReviewService;
-import eu.innowise.moviereviewproject.utils.ServletsUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -31,7 +29,7 @@ public class ReviewServlet extends HttpServlet{
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            UserDTO user = (UserDTO) req.getSession().getAttribute("user");
+            UserResponse user = (UserResponse) req.getSession().getAttribute("user");
             UUID movieId = UUID.fromString(req.getParameter("movieId"));
             log.info("Received movieId for update: {}", movieId);
 

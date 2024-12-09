@@ -1,6 +1,6 @@
 package eu.innowise.moviereviewproject.service;
 
-import eu.innowise.moviereviewproject.dto.MovieDTO;
+import eu.innowise.moviereviewproject.dto.response.MovieResponse;
 import eu.innowise.moviereviewproject.exceptions.movie.MovieNotFoundException;
 import eu.innowise.moviereviewproject.mapper.MovieMapper;
 import eu.innowise.moviereviewproject.model.Movie;
@@ -26,12 +26,12 @@ public class MovieService {
         this.movieMapper = Mappers.getMapper(MovieMapper.class);
     }
 
-    public List<MovieDTO> getAllMovies() {
-        return movieRepository.findAll().stream().map(movieMapper::toSummaryDTO).toList();
+    public List<MovieResponse> getAllMovies() {
+        return movieRepository.findAll().stream().map(movieMapper::toSummaryResponse).toList();
     }
 
-    public List<MovieDTO> getAllMovies(int page, int typeNumber) {
-        List<MovieDTO> movies = movieRepository.findAll(page, typeNumber).stream().map(movieMapper::toSummaryDTO).toList();
+    public List<MovieResponse> getAllMovies(int page, int typeNumber) {
+        List<MovieResponse> movies = movieRepository.findAll(page, typeNumber).stream().map(movieMapper::toSummaryResponse).toList();
         if (!movies.isEmpty()) {
             log.info("Movies loaded from the database.");
             return movies;
@@ -47,7 +47,7 @@ public class MovieService {
         return movies;
     }
 
-    public List<MovieDTO> searchMovies(int page, String query) {
+    public List<MovieResponse> searchMovies(int page, String query) {
 
         String encodedQuery = URLEncoder.encode(query.trim(), StandardCharsets.UTF_8);
 
@@ -58,17 +58,17 @@ public class MovieService {
         }
     }
 
-    public MovieDTO getMovieById(UUID id) {
-        return movieRepository.findById(id).map(movieMapper::toDetailedDTO)
+    public MovieResponse getMovieById(UUID id) {
+        return movieRepository.findById(id).map(movieMapper::toDetailedResponse)
                 .orElseThrow(() -> new MovieNotFoundException("Movie with ID " + id + " not found"));
     }
 
-    public List<MovieDTO> getFilteredMovies(int page, Integer typeNumber, String genre, Integer startYear, Integer endYear, Integer minRating, Integer maxRating) {
+    public List<MovieResponse> getFilteredMovies(int page, Integer typeNumber, String genre, Integer startYear, Integer endYear, Integer minRating, Integer maxRating) {
         log.info("Fetching filtered movies: page={}, typeNumber={}, genre={}, startYear={}, endYear={}, minRating={}, maxRating={}",
                 page, typeNumber, genre, startYear, endYear, minRating, maxRating);
 
         return movieRepository.findFilteredMovies(page, typeNumber, genre, startYear, endYear, minRating, maxRating)
-                .stream().map(movieMapper::toSummaryDTO).toList();
+                .stream().map(movieMapper::toSummaryResponse).toList();
     }
 
 

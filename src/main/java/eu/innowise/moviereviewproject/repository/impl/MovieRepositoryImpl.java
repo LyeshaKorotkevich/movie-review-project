@@ -56,6 +56,20 @@ public class MovieRepositoryImpl implements MovieRepository {
     }
 
     @Override
+    public Optional<Movie> findByExternalId(Long externalId) {
+        try (EntityManager entityManager = JpaUtil.getEntityManager()) {
+            String jpql = "SELECT m FROM Movie m WHERE m.externalId = :externalId";
+            Movie movie = entityManager.createQuery(jpql, Movie.class)
+                    .setParameter("externalId", externalId)
+                    .getSingleResultOrNull();
+            return Optional.ofNullable(movie);
+        } catch (Exception e) {
+            log.error("Error occurred while finding movie by externalId: {}", externalId, e);
+            throw new RuntimeException("Error occurred while finding movie", e);
+        }
+    }
+
+    @Override
     public List<Movie> findAll() {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
             return entityManager.createQuery("SELECT m FROM Movie m", Movie.class).getResultList();

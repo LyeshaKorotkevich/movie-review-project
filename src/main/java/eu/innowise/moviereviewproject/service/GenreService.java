@@ -1,6 +1,6 @@
 package eu.innowise.moviereviewproject.service;
 
-import eu.innowise.moviereviewproject.dto.GenreDTO;
+import eu.innowise.moviereviewproject.dto.response.GenreResponse;
 import eu.innowise.moviereviewproject.mapper.GenreMapper;
 import eu.innowise.moviereviewproject.repository.GenreRepository;
 import org.mapstruct.factory.Mappers;
@@ -17,9 +17,9 @@ public class GenreService {
         this.genreMapper = Mappers.getMapper(GenreMapper.class);
     }
 
-    public List<GenreDTO> getAll() {
+    public List<GenreResponse> getAll() {
         return genreRepository.findAll().stream()
-                .map(genreMapper::toDTO)
+                .map(genreMapper::toResponse)
                 .toList();
     }
 }

@@ -1,8 +1,8 @@
 package eu.innowise.moviereviewproject.servlet.movie;
 
 import eu.innowise.moviereviewproject.config.ApplicationConfig;
-import eu.innowise.moviereviewproject.dto.GenreDTO;
-import eu.innowise.moviereviewproject.dto.MovieDTO;
+import eu.innowise.moviereviewproject.dto.response.MovieResponse;
+import eu.innowise.moviereviewproject.dto.response.GenreResponse;
 import eu.innowise.moviereviewproject.service.GenreService;
 import eu.innowise.moviereviewproject.service.MovieService;
 import jakarta.servlet.ServletException;
@@ -39,8 +39,8 @@ public class MoviesServlet extends HttpServlet {
 
             log.info("Parsed request parameters: page={}, typeNumber={}", page, typeNumber);
 
-            List<MovieDTO> movies = movieService.getAllMovies(page, typeNumber);
-            List<GenreDTO> genres = genreService.getAll();
+            List<MovieResponse> movies = movieService.getAllMovies(page, typeNumber);
+            List<GenreResponse> genres = genreService.getAll();
 
             req.setAttribute("movies", movies);
             req.setAttribute("currentPage", page);

@@ -1,9 +1,9 @@
-package eu.innowise.moviereviewproject.dto;
+package eu.innowise.moviereviewproject.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public record LoginDTO(
+public record LoginRequest(
         @NotBlank(message = "Имя пользователя не может быть пустым.")
         @Size(min = 3, max = 255, message = "Имя пользователя должно содержать минимум 3 символа и максимум 255.")
         String username,

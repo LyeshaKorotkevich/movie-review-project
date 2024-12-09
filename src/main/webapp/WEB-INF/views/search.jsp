@@ -1,5 +1,5 @@
 <%@ page import="java.util.List" %>
-<%@ page import="eu.innowise.moviereviewproject.dto.MovieDTO" %>
+<%@ page import="eu.innowise.moviereviewproject.dto.response.MovieResponse" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
@@ -14,14 +14,14 @@
 
     <%
         String query = request.getParameter("query");
-        List<MovieDTO> movies = (List<MovieDTO>) request.getAttribute("movies");
+        List<MovieResponse> movies = (List<MovieResponse>) request.getAttribute("movies");
         int currentPage = (int) request.getAttribute("currentPage");
 
         if (movies != null && !movies.isEmpty()) {
     %>
     <ul class="list-group">
         <%
-            for (MovieDTO movie : movies) {
+            for (MovieResponse movie : movies) {
         %>
         <li class="list-group-item d-flex align-items-center">
             <img src="<%= movie.posterUrl() != null ? movie.posterUrl() : "https://via.placeholder.com/80x120" %>"

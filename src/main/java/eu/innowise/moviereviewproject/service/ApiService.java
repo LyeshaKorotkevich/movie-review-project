@@ -2,7 +2,7 @@ package eu.innowise.moviereviewproject.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.innowise.moviereviewproject.dto.MovieDTO;
+import eu.innowise.moviereviewproject.dto.response.MovieResponse;
 import eu.innowise.moviereviewproject.mapper.MovieMapper;
 import eu.innowise.moviereviewproject.model.Genre;
 import eu.innowise.moviereviewproject.model.Movie;
@@ -48,17 +48,17 @@ public class ApiService {
         this.movieMapper = Mappers.getMapper(MovieMapper.class);
     }
 
-    public List<MovieDTO> fetchMoviesFromApi(int page, int typeNumber) throws Exception {
+    public List<MovieResponse> fetchMoviesFromApi(int page, int typeNumber) throws Exception {
         String url = buildMoviesUrl(page, typeNumber);
         return fetchMoviesFromApi(url);
     }
 
-    public List<MovieDTO> fetchMoviesFromSearchFromApi(int page, String query) throws Exception {
+    public List<MovieResponse> fetchMoviesFromSearchFromApi(int page, String query) throws Exception {
         String url = buildSearchUrl(page, query);
         return fetchMoviesFromApi(url);
     }
 
-    private List<MovieDTO> fetchMoviesFromApi(String url) throws Exception {
+    private List<MovieResponse> fetchMoviesFromApi(String url) throws Exception {
         HttpResponse<String> response = sendApiRequest(url);
 
         if (response.statusCode() != 200) {
@@ -80,23 +80,22 @@ public class ApiService {
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    private List<MovieDTO> parseMoviesFromResponse(String responseBody) throws Exception {
+    private List<MovieResponse> parseMoviesFromResponse(String responseBody) throws Exception {
         JsonNode rootNode = objectMapper.readTree(responseBody);
         JsonNode moviesNode = rootNode.get("docs");
-        List<Movie> movies = new ArrayList<>();
+        List<MovieResponse> movieResponses = new ArrayList<>();
 
         if (moviesNode != null && moviesNode.isArray()) {
             for (JsonNode movieNode : moviesNode) {
-                Movie movie = mapToMovie(movieNode);
+                Movie mappedMovie = mapToMovie(movieNode);
 
-                if (!movieRepository.existsByExternalId(movie.getExternalId())) {
-                    movieRepository.save(movie);
-                }
+                Movie movie = movieRepository.findByExternalId(mappedMovie.getExternalId())
+                        .orElseGet(() -> movieRepository.save(mappedMovie));
 
-                movies.add(movie);
+                movieResponses.add(movieMapper.toSummaryResponse(movie));
             }
         }
-        return movies.stream().map(movieMapper::toSummaryDTO).toList();
+        return movieResponses;
     }
 
     private String buildMoviesUrl(int page, int typeNumber) {

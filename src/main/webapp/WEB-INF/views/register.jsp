@@ -1,4 +1,5 @@
 <%@ page import="java.util.Map" %>
+<%@ page import="eu.innowise.moviereviewproject.dto.request.RegistrationRequest" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page pageEncoding="UTF-8" %>
 <!DOCTYPE html>
@@ -36,8 +37,8 @@
                                     name="username"
                                     class="form-control"
                                     placeholder="Введите логин"
-                                    value="<%= request.getAttribute("registrationDTO") != null
-                                        ? ((eu.innowise.moviereviewproject.dto.RegistrationDTO) request.getAttribute("registrationDTO")).username()
+                                    value="<%= request.getAttribute("registrationRequest") != null
+                                        ? ((RegistrationRequest) request.getAttribute("registrationRequest")).username()
                                         : "" %>">
                             <%
                                 Map<String, String> errors = (Map<String, String>) request.getAttribute("errors");
@@ -57,8 +58,8 @@
                                     name="email"
                                     class="form-control"
                                     placeholder="Введите ваш email"
-                                    value="<%= request.getAttribute("registrationDTO") != null
-                                        ? ((eu.innowise.moviereviewproject.dto.RegistrationDTO) request.getAttribute("registrationDTO")).email()
+                                    value="<%= request.getAttribute("registrationRequest") != null
+                                        ? ((RegistrationRequest) request.getAttribute("registrationRequest")).email()
                                         : "" %>">
                             <%
                                 if (errors != null && errors.containsKey("email")) {

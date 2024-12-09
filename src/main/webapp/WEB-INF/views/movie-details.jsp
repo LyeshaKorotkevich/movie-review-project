@@ -1,9 +1,12 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
-<%@ page import="eu.innowise.moviereviewproject.dto.MovieDTO" %>
-<%@ page import="eu.innowise.moviereviewproject.dto.PersonDTO" %>
-<%@ page import="eu.innowise.moviereviewproject.dto.GenreDTO" %>
+<%@ page import="eu.innowise.moviereviewproject.dto.response.MovieResponse" %>
+<%@ page import="eu.innowise.moviereviewproject.dto.response.PersonResponse" %>
+<%@ page import="eu.innowise.moviereviewproject.dto.response.GenreResponse" %>
 <%@ page import="eu.innowise.moviereviewproject.dto.response.ReviewResponse" %>
+<%@ page import="eu.innowise.moviereviewproject.dto.response.GenreResponse" %>
+<%@ page import="eu.innowise.moviereviewproject.dto.response.PersonResponse" %>
+<%@ page import="eu.innowise.moviereviewproject.dto.response.MovieResponse" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
@@ -17,10 +20,10 @@
 <div class="container py-5">
 
     <%
-        MovieDTO movie = (MovieDTO) request.getAttribute("movie");
+        MovieResponse movie = (MovieResponse) request.getAttribute("movie");
         int currentPage = (int) request.getAttribute("page");
         ReviewResponse existingReview = (ReviewResponse) request.getAttribute("existingReview");
-        Map<String, List<PersonDTO>> filteredPersons = (Map<String, List<PersonDTO>>) request.getAttribute("filteredPersons");
+        Map<String, List<PersonResponse>> filteredPersons = (Map<String, List<PersonResponse>>) request.getAttribute("filteredPersons");
         if (movie != null) {
     %>
     <h1 class="text-center mb-4"><%= movie.title() %></h1>
@@ -36,7 +39,7 @@
             <p><strong>Жанры:</strong>
                 <%
                     if (movie.genres() != null && !movie.genres().isEmpty()) {
-                        for (GenreDTO genre : movie.genres()) {
+                        for (GenreResponse genre : movie.genres()) {
                 %>
                 <span class="badge badge-secondary"><%= genre.name() %></span>
                 <%
@@ -50,15 +53,15 @@
             </p>
             <%
                 if (filteredPersons != null && !filteredPersons.isEmpty()) {
-                    for (Map.Entry<String, List<PersonDTO>> entry : filteredPersons.entrySet()) {
+                    for (Map.Entry<String, List<PersonResponse>> entry : filteredPersons.entrySet()) {
                         String profession = entry.getKey();
-                        List<PersonDTO> persons = entry.getValue();
+                        List<PersonResponse> persons = entry.getValue();
             %>
             <div class="mb-4">
                 <h5 class="text-primary"><%= profession != null ? profession : "Не указана профессия" %></h5>
                 <div class="row">
                     <%
-                        for (PersonDTO person : persons) {
+                        for (PersonResponse person : persons) {
                             String displayName = person.name() != null ? person.name() : person.enName();
                     %>
                     <div class="col-6 col-sm-4 col-md-3 mb-3 person-card">

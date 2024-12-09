@@ -1,7 +1,7 @@
 package eu.innowise.moviereviewproject.service;
 
-import eu.innowise.moviereviewproject.dto.RegistrationDTO;
-import eu.innowise.moviereviewproject.dto.UserDTO;
+import eu.innowise.moviereviewproject.dto.request.RegistrationRequest;
+import eu.innowise.moviereviewproject.dto.response.UserResponse;
 import eu.innowise.moviereviewproject.exceptions.DtoValidationException;
 import eu.innowise.moviereviewproject.exceptions.user.UserAlreadyExistsException;
 import eu.innowise.moviereviewproject.exceptions.user.UserNotFoundException;
@@ -31,9 +31,9 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public UserDTO getUserById(UUID id) {
+    public UserResponse getUserById(UUID id) {
         return userRepository.findById(id)
-                .map(userMapper::toSummaryDTO)
+                .map(userMapper::toSummaryResponse)
                 .orElseThrow(() -> new UserNotFoundException("User with ID " + id + " not found"));
     }
 
@@ -42,7 +42,7 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("User with username " + username + " not found"));
     }
 
-    public void registerUser(RegistrationDTO dto) throws DtoValidationException {
+    public void registerUser(RegistrationRequest dto) throws DtoValidationException {
         DtoValidator.validate(dto);
 
         User user = userMapper.toUser(dto);

@@ -1,7 +1,7 @@
 package eu.innowise.moviereviewproject.service;
 
-import eu.innowise.moviereviewproject.dto.LoginDTO;
-import eu.innowise.moviereviewproject.dto.UserDTO;
+import eu.innowise.moviereviewproject.dto.response.UserResponse;
+import eu.innowise.moviereviewproject.dto.request.LoginRequest;
 import eu.innowise.moviereviewproject.exceptions.user.InvalidPasswordException;
 import eu.innowise.moviereviewproject.exceptions.user.UserNotFoundException;
 import eu.innowise.moviereviewproject.mapper.UserMapper;
@@ -21,16 +21,16 @@ public class AuthenticationService {
         this.userMapper = Mappers.getMapper(UserMapper.class);
     }
 
-    public UserDTO authenticate(LoginDTO loginDTO) throws InvalidPasswordException {
-        DtoValidator.validate(loginDTO);
+    public UserResponse authenticate(LoginRequest loginRequest) throws InvalidPasswordException {
+        DtoValidator.validate(loginRequest);
 
-        User user = userRepository.findByUsername(loginDTO.username())
-                .orElseThrow(() -> new UserNotFoundException("User with username " + loginDTO.username() + " not found"));
+        User user = userRepository.findByUsername(loginRequest.username())
+                .orElseThrow(() -> new UserNotFoundException("User with username " + loginRequest.username() + " not found"));
 
-        if (!BCrypt.checkpw(loginDTO.password(), user.getPassword())) {
+        if (!BCrypt.checkpw(loginRequest.password(), user.getPassword())) {
             throw new InvalidPasswordException("Invalid password");
         }
 
-        return userMapper.toSummaryDTO(user);
+        return userMapper.toSummaryResponse(user);
     }
 }

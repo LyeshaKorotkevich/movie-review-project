@@ -1,7 +1,10 @@
 <%@ page import="java.util.List" %>
-<%@ page import="eu.innowise.moviereviewproject.dto.GenreDTO" %>
-<%@ page import="eu.innowise.moviereviewproject.dto.UserDTO" %>
-<%@ page import="eu.innowise.moviereviewproject.dto.MovieDTO" %>
+<%@ page import="eu.innowise.moviereviewproject.dto.response.GenreResponse" %>
+<%@ page import="eu.innowise.moviereviewproject.dto.response.UserResponse" %>
+<%@ page import="eu.innowise.moviereviewproject.dto.response.MovieResponse" %>
+<%@ page import="eu.innowise.moviereviewproject.dto.response.GenreResponse" %>
+<%@ page import="eu.innowise.moviereviewproject.dto.response.MovieResponse" %>
+<%@ page import="eu.innowise.moviereviewproject.dto.response.UserResponse" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
@@ -47,7 +50,7 @@
 
                 <ul class="navbar-nav ml-auto">
                     <%
-                        UserDTO user = (UserDTO) session.getAttribute("user");
+                        UserResponse user = (UserResponse) session.getAttribute("user");
                         if (user != null) {
                     %>
 
@@ -84,9 +87,9 @@
                     <select id="genre" class="form-control form-control-sm" name="genre">
                         <option value="">Все жанры</option>
                         <%
-                            List<GenreDTO> genres = (List<GenreDTO>) request.getAttribute("genres");
+                            List<GenreResponse> genres = (List<GenreResponse>) request.getAttribute("genres");
                             if (genres != null) {
-                                for (GenreDTO genre : genres) {
+                                for (GenreResponse genre : genres) {
                         %>
                         <option value="<%= genre.name() %>"><%= genre.name() %></option>
                         <%
@@ -115,10 +118,10 @@
 
     <div class="row">
         <%
-            List<MovieDTO> movies = (List<MovieDTO>) request.getAttribute("movies");
+            List<MovieResponse> movies = (List<MovieResponse>) request.getAttribute("movies");
             int currentPage = (int) request.getAttribute("currentPage");
             if (movies != null && !movies.isEmpty()) {
-                for (MovieDTO movie : movies) {
+                for (MovieResponse movie : movies) {
         %>
         <div class="col-md-4 mb-4">
             <div class="card h-100">

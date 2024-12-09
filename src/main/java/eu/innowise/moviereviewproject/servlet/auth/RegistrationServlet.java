@@ -1,7 +1,7 @@
 package eu.innowise.moviereviewproject.servlet.auth;
 
 import eu.innowise.moviereviewproject.config.ApplicationConfig;
-import eu.innowise.moviereviewproject.dto.RegistrationDTO;
+import eu.innowise.moviereviewproject.dto.request.RegistrationRequest;
 import eu.innowise.moviereviewproject.exceptions.DtoValidationException;
 import eu.innowise.moviereviewproject.exceptions.user.UserAlreadyExistsException;
 import eu.innowise.moviereviewproject.service.UserService;
@@ -29,7 +29,7 @@ public class RegistrationServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        RegistrationDTO registrationDTO = new RegistrationDTO(
+        RegistrationRequest registrationRequest = new RegistrationRequest(
                 req.getParameter("username"),
                 req.getParameter("email"),
                 req.getParameter("password"),
@@ -37,15 +37,15 @@ public class RegistrationServlet extends HttpServlet {
         );
 
         try {
-            userService.registerUser(registrationDTO);
+            userService.registerUser(registrationRequest);
             resp.sendRedirect(req.getContextPath() + "/auth/login");
         } catch (DtoValidationException e) {
             req.setAttribute("errors", e.getErrors());
-            req.setAttribute("registrationDTO", registrationDTO);
+            req.setAttribute("registrationDTO", registrationRequest);
             req.getRequestDispatcher("/WEB-INF/views/register.jsp").forward(req, resp);
         } catch (UserAlreadyExistsException e) {
             req.setAttribute("userAlreadyExists", "Username or email is already taken");
-            req.setAttribute("registrationDTO", registrationDTO);
+            req.setAttribute("registrationDTO", registrationRequest);
             req.getRequestDispatcher("/WEB-INF/views/register.jsp").forward(req, resp);
         } catch (Exception e) {
             throw new ServletException("Error occurred during registration", e);

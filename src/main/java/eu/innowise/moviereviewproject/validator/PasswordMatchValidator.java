@@ -1,14 +1,14 @@
 package eu.innowise.moviereviewproject.validator;
 
-import eu.innowise.moviereviewproject.dto.RegistrationDTO;
+import eu.innowise.moviereviewproject.dto.request.RegistrationRequest;
 import eu.innowise.moviereviewproject.validator.annotation.PasswordMatch;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class PasswordMatchValidator implements ConstraintValidator<PasswordMatch, RegistrationDTO> {
+public class PasswordMatchValidator implements ConstraintValidator<PasswordMatch, RegistrationRequest> {
 
     @Override
-    public boolean isValid(RegistrationDTO dto, ConstraintValidatorContext context) {
+    public boolean isValid(RegistrationRequest dto, ConstraintValidatorContext context) {
         if (dto.password().equals(dto.confirmPassword())) {
             return true;
         } else {

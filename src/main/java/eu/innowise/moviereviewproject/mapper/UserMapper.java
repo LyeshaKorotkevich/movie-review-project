@@ -1,7 +1,7 @@
 package eu.innowise.moviereviewproject.mapper;
 
-import eu.innowise.moviereviewproject.dto.RegistrationDTO;
-import eu.innowise.moviereviewproject.dto.UserDTO;
+import eu.innowise.moviereviewproject.dto.request.RegistrationRequest;
+import eu.innowise.moviereviewproject.dto.response.UserResponse;
 import eu.innowise.moviereviewproject.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -12,9 +12,9 @@ public interface UserMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "userRole", ignore = true)
-    User toUser(RegistrationDTO dto);
+    User toUser(RegistrationRequest dto);
 
-    //UserDTO toDetailedDTO(User user);
+    //UserDTO toDetailedResponse(User user);
 
-    UserDTO toSummaryDTO(User user);
+    UserResponse toSummaryResponse(User user);
 }
