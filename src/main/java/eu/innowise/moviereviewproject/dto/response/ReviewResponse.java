@@ -12,7 +12,7 @@ public record ReviewResponse(
         int rate,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
-        UserDTO user,
-        MovieDTO movie
+        UserDTO user
+        //MovieDTO movie
 ) {
 }

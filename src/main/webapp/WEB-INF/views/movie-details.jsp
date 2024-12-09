@@ -3,6 +3,7 @@
 <%@ page import="eu.innowise.moviereviewproject.dto.MovieDTO" %>
 <%@ page import="eu.innowise.moviereviewproject.dto.PersonDTO" %>
 <%@ page import="eu.innowise.moviereviewproject.dto.GenreDTO" %>
+<%@ page import="eu.innowise.moviereviewproject.dto.response.ReviewResponse" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
@@ -17,6 +18,8 @@
 
     <%
         MovieDTO movie = (MovieDTO) request.getAttribute("movie");
+        int currentPage = (int) request.getAttribute("page");
+        ReviewResponse existingReview = (ReviewResponse) request.getAttribute("existingReview");
         Map<String, List<PersonDTO>> filteredPersons = (Map<String, List<PersonDTO>>) request.getAttribute("filteredPersons");
         if (movie != null) {
     %>
@@ -88,13 +91,14 @@
     <div class="mt-5">
         <h3>Оставьте вашу рецензию</h3>
         <form action="<%= request.getContextPath() + "/review" %>" method="post">
-        <div class="form-group">
+            <div class="form-group">
                 <label>Рейтинг:</label>
                 <div class="star-rating">
                     <%
                         for (int i = 10; i >= 1; i--) {
+                            boolean isChecked = (existingReview != null && existingReview.rate() == i);
                     %>
-                    <input type="radio" id="star-<%= i %>" name="rating" value="<%= i %>">
+                    <input type="radio" id="star-<%= i %>" name="rating" value="<%= i %>" <%= isChecked ? "checked" : "" %> required>
                     <label for="star-<%= i %>"><i class="fas fa-star"></i></label>
                     <%
                         }
@@ -103,11 +107,65 @@
             </div>
             <div class="form-group">
                 <label for="review">Рецензия:</label>
-                <textarea class="form-control" id="review" name="review" rows="5" placeholder="Напишите вашу рецензию здесь..."></textarea>
+                <textarea class="form-control" id="review" name="review" rows="5" placeholder="Напишите вашу рецензию здесь..."><%= existingReview != null ? existingReview.content() : "" %></textarea>
             </div>
+            <%
+                if (existingReview != null) {
+            %>
+                <input type="hidden" name="reviewId" value="<%= existingReview.id() %>">
+            <%
+                }
+            %>
             <input type="hidden" name="movieId" value="<%= movie.id() %>">
             <button type="submit" class="btn btn-primary">Отправить</button>
         </form>
+    </div>
+
+    <div class="mt-5">
+        <h3>Рецензии:</h3>
+
+        <%
+            List<ReviewResponse> reviews = (List<ReviewResponse>) request.getAttribute("reviews");
+            if (reviews != null && !reviews.isEmpty()) {
+                for (ReviewResponse review : reviews) {
+        %>
+        <div class="review-item mb-4">
+            <div class="card shadow-sm border-light rounded">
+                <div class="card-body">
+                    <h5 class="card-title d-flex align-items-center">
+                        <strong class="text-warning me-3">Рейтинг:</strong>
+                        <span class="badge bg-info fs-5"><%= review.rate() %> / 10</span>
+                    </h5>
+
+                    <p class="card-text mb-3">
+                        <%= review.content() != null ? review.content() : "Нет текста рецензии" %>
+                    </p>
+
+                    <footer class="blockquote-footer text-end">
+                        <small class="text-muted">Автор: <%= review.user().username() %></small>
+                    </footer>
+                </div>
+            </div>
+        </div>
+        <%
+            }
+        } else {
+        %>
+        <p>Рецензий еще нет.</p>
+        <% } %>
+
+        <nav aria-label="Навигация по страницам">
+            <ul class="pagination justify-content-center">
+                <% if (currentPage > 1) { %>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<%= currentPage - 1 %>">Предыдущая</a>
+                </li>
+                <% } %>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<%= currentPage + 1 %>">Следующая</a>
+                </li>
+            </ul>
+        </nav>
     </div>
 
     <%

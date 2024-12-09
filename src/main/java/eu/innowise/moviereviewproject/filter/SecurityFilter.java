@@ -1,5 +1,6 @@
 package eu.innowise.moviereviewproject.filter;
 
+import eu.innowise.moviereviewproject.dto.UserDTO;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebFilter;
@@ -9,11 +10,18 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebFilter(filterName = "SecurityFilter", urlPatterns = "/*")
+@WebFilter(filterName = "SecurityFilter", urlPatterns = "/review")
 public class SecurityFilter extends HttpFilter {
 
     @Override
     protected void doFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
-        super.doFilter(req, res, chain);
+        UserDTO userDTO = (UserDTO) req.getSession().getAttribute("user");
+
+        if (userDTO == null) {
+            res.sendRedirect(req.getContextPath() + "/auth/login");
+            return;
+        }
+
+        chain.doFilter(req, res);
     }
 }

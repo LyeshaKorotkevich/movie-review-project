@@ -33,13 +33,22 @@ public class ReviewServlet extends HttpServlet{
         try {
             UserDTO user = (UserDTO) req.getSession().getAttribute("user");
             UUID movieId = UUID.fromString(req.getParameter("movieId"));
+            log.info("Received movieId for update: {}", movieId);
 
             Integer rating = parseInteger(req.getParameter("rating"), null, 1, 10);
             String review = req.getParameter("review");
 
             ReviewRequest reviewRequest = new ReviewRequest(review, rating, user.id(), movieId);
 
-            reviewService.saveReview(reviewRequest);
+            String reviewIdParam = req.getParameter("reviewId");
+            if (reviewIdParam == null) {
+                log.info("Saving new review");
+                reviewService.saveReview(reviewRequest);
+            } else {
+                log.info("Updating review");
+                UUID reviewId = UUID.fromString(reviewIdParam);
+                reviewService.updateReview(reviewRequest, reviewId);
+            }
 
             log.info("Successfully added review for movie with id: {} by user", movieId);
 

@@ -20,7 +20,7 @@ import java.util.UUID;
 
 @Data
 @Entity
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "entityCache")
+//@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "entityCache")
 public class Movie {
 
     @Id
@@ -62,21 +62,11 @@ public class Movie {
     )
     private Set<Person> persons = new HashSet<>();
 
-    public double getRating() {
-        return rateCount == 0 ? 0 : (double) rateSum / rateCount;
-    }
-
     @Column(name = "movie_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private MovieType movieType;
 
-    public void addRating(int rating) {
-        this.rateSum += rating;
-        this.rateCount++;
-    }
-
-    public void removeRating(int rating) {
-        this.rateSum -= rating;
-        this.rateCount--;
+    public double getRating() {
+        return rateCount == 0 ? 0 : (double) rateSum / rateCount;
     }
 }

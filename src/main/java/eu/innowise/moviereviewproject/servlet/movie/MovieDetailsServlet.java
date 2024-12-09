@@ -3,7 +3,10 @@ package eu.innowise.moviereviewproject.servlet.movie;
 import eu.innowise.moviereviewproject.config.ApplicationConfig;
 import eu.innowise.moviereviewproject.dto.MovieDTO;
 import eu.innowise.moviereviewproject.dto.PersonDTO;
+import eu.innowise.moviereviewproject.dto.UserDTO;
+import eu.innowise.moviereviewproject.dto.response.ReviewResponse;
 import eu.innowise.moviereviewproject.service.MovieService;
+import eu.innowise.moviereviewproject.service.ReviewService;
 import eu.innowise.moviereviewproject.utils.ServletsUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -17,29 +20,43 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static eu.innowise.moviereviewproject.utils.ServletsUtil.parseInteger;
+
 @Slf4j
 @WebServlet("/movies/*")
 public class MovieDetailsServlet extends HttpServlet {
 
     private final MovieService movieService;
+    private final ReviewService reviewService;
 
     public MovieDetailsServlet() {
         this.movieService = ApplicationConfig.getMovieService();
+        this.reviewService = ApplicationConfig.getReviewService();
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
         try {
+            int page = parseInteger(req.getParameter("page"), 1, 1, Integer.MAX_VALUE);
             UUID movieId = ServletsUtil.extractUuidFromPath(req, resp, 2, 2);
 
             log.info("Extracted movieId={}", movieId);
 
             MovieDTO movie = movieService.getMovieById(movieId);
-
             Map<String, List<PersonDTO>> filteredPersons = filterAndLimitPersons(movie);
+
+            UserDTO user = (UserDTO) req.getSession().getAttribute("user");
+            ReviewResponse existingReview = null;
+            if (user != null) {
+                existingReview = reviewService.getReviewByUserAndMovie(user.id(), movieId);
+            }
+            List<ReviewResponse> reviewResponses = reviewService.getAllReviews(page, movieId);
 
             req.setAttribute("movie", movie);
             req.setAttribute("filteredPersons", filteredPersons);
+            req.setAttribute("reviews", reviewResponses);
+            req.setAttribute("page", page);
+            req.setAttribute("existingReview", existingReview);
 
             log.info("Forwarding to JSP.");
 
@@ -56,7 +73,7 @@ public class MovieDetailsServlet extends HttpServlet {
                 .filter(person -> isValidName(person.name()) || isValidName(person.enName()))
                 .filter(person -> "актеры".equalsIgnoreCase(person.profession()) || "режиссеры".equalsIgnoreCase(person.profession()))
                 .collect(Collectors.groupingBy(
-                        person -> person.profession(),
+                        PersonDTO::profession,
                         Collectors.collectingAndThen(
                                 Collectors.toList(),
                                 list -> list.stream().limit(4).collect(Collectors.toList())

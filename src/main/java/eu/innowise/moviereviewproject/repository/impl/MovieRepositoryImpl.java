@@ -46,7 +46,7 @@ public class MovieRepositoryImpl implements MovieRepository {
             String jpql = "SELECT m FROM Movie m LEFT JOIN FETCH m.persons LEFT JOIN FETCH m.genres WHERE m.id = :id";
             Movie movie = entityManager.createQuery(jpql, Movie.class)
                     .setParameter("id", id)
-                    .setHint("org.hibernate.cacheable", true)
+                    //.setHint("org.hibernate.cacheable", true)
                     .getSingleResultOrNull();
             return Optional.ofNullable(movie);
         } catch (Exception e) {
