@@ -13,6 +13,7 @@ import jakarta.persistence.ManyToMany;
 import lombok.Data;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Formula;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -48,6 +49,9 @@ public class Movie {
     @Column(name = "rate_count", nullable = false)
     private int rateCount;
 
+    @Column(nullable = false)
+    private Double rating;
+
     @ManyToMany
     @JoinTable(name = "movie_genre",
             joinColumns = @JoinColumn(name = "movie_id"),
@@ -65,8 +69,4 @@ public class Movie {
     @Column(name = "movie_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private MovieType movieType;
-
-    public double getRating() {
-        return rateCount == 0 ? 0 : (double) rateSum / rateCount;
-    }
 }

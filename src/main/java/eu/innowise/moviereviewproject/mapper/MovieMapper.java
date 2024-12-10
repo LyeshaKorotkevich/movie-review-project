@@ -9,11 +9,9 @@ import org.mapstruct.Named;
 @Mapper
 public interface MovieMapper {
 
-    @Mapping(target = "rating", expression = "java(movie.getRating())")
     MovieResponse toDetailedResponse(Movie movie);
 
     @Named("toSummaryResponse")
-    @Mapping(target = "rating", expression = "java(movie.getRating())")
     @Mapping(target = "persons", ignore = true)
     @Mapping(target = "genres", ignore = true)
     MovieResponse toSummaryResponse(Movie movie);
