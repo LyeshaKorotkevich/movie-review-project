@@ -16,3 +16,12 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
     restart: unless-stopped
+
+  app:
+    build: .
+    container_name: movie-review-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgresDB
+    restart: unless-stopped
