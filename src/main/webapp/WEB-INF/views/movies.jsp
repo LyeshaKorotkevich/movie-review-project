@@ -59,6 +59,7 @@
                             <%= user.username() %>
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="<%= request.getContextPath() %>/watchlist">Список для просмотра</a>
                             <a class="dropdown-item" href="<%= request.getContextPath() %>/auth/logout">Выйти</a>
                         </div>
                     </li>

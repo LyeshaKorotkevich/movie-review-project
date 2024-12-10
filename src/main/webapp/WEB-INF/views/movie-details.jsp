@@ -30,7 +30,15 @@
 
     <div class="row">
         <div class="col-md-6">
-            <img src="<%= movie.posterUrl() != null ? movie.posterUrl() : "https://via.placeholder.com/300x450" %>" class="img-fluid" alt="Постер фильма">
+            <div class="text-center">
+                <img src="<%= movie.posterUrl() != null ? movie.posterUrl() : "https://via.placeholder.com/300x450" %>" class="img-fluid" alt="Постер фильма">
+                <form action="<%= request.getContextPath() + "/watchlist" %>" method="post" class="mt-4">
+                    <input type="hidden" name="movieId" value="<%= movie.id() %>">
+                    <button type="submit" class="btn btn-success btn-lg w-100">
+                        <i class="fas fa-plus-circle"></i> Добавить в список для просмотра
+                    </button>
+                </form>
+            </div>
         </div>
         <div class="col-md-6">
             <p><strong>Год:</strong> <%= movie.releaseYear() %></p>

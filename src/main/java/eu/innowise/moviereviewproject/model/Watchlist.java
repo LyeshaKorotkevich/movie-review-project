@@ -7,7 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.PrePersist;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -34,4 +34,10 @@ public class Watchlist {
 
     @Column(name = "is_watched", nullable = false)
     private boolean isWatched;
+
+    @PrePersist
+    protected void onCreate() {
+        addedAt = LocalDateTime.now();
+        isWatched = false;
+    }
 }

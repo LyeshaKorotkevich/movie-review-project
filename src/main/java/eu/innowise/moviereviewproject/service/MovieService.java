@@ -71,7 +71,6 @@ public class MovieService {
                 .stream().map(movieMapper::toSummaryResponse).toList();
     }
 
-
     public void saveMovie(Movie movie) {
         movieRepository.save(movie);
     }

@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebFilter(filterName = "SecurityFilter", urlPatterns = "/review")
+@WebFilter(filterName = "SecurityFilter", urlPatterns = {"/review", "/watchlist"})
 public class SecurityFilter extends HttpFilter {
 
     @Override

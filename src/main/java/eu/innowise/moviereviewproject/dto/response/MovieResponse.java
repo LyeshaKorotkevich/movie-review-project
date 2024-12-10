@@ -11,5 +11,6 @@ public record MovieResponse(
         String description,
         double rating,
         Set<GenreResponse>genres,
-        Set<PersonResponse> persons ) {
+        Set<PersonResponse> persons
+) {
 }

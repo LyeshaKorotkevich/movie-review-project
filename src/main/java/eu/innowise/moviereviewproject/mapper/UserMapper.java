@@ -14,7 +14,7 @@ public interface UserMapper {
     @Mapping(target = "userRole", ignore = true)
     User toUser(RegistrationRequest dto);
 
-    //UserDTO toDetailedResponse(User user);
+    //UserResponse toDetailedResponse(User user);
 
     UserResponse toSummaryResponse(User user);
 }
