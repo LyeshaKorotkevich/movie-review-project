@@ -55,7 +55,6 @@ public class LoginServlet extends HttpServlet {
             req.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(req, resp);
         } catch (Exception e) {
             log.error("Unexpected error during login process", e);
-            req.setAttribute("errorMessage", "Произошла ошибка, попробуйте позже");
             req.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(req, resp);
         }
     }

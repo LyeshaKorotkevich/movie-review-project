@@ -53,4 +53,11 @@ public class WatchlistService {
                 .map(watchlistMapper::toResponse)
                 .toList();
     }
+
+    public void removeMovieFromUserWatchlist(UUID userId, UUID movieId) {
+        Watchlist watchlist = watchlistRepository.findByUserIdAndMovieId(userId, movieId)
+                .orElseThrow(() -> new MovieAlreadyInWatchlist("Movie already in watchlist"));
+
+        watchlistRepository.deleteById(watchlist.getId());
+    }
 }
