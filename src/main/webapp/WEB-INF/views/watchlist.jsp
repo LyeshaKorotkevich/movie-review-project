@@ -29,21 +29,35 @@
                 <h5><%= watchlistMovie.movie().title() %></h5>
                 <p class="mb-1">Год: <%= watchlistMovie.movie().releaseYear() %></p>
                 <small class="text-muted">Рейтинг: <%= watchlistMovie.movie().rating() %></small>
+                <%
+                    if (watchlistMovie.isWatched()) {
+                %>
+                <p class="text-success"><strong>Фильм просмотрен</strong></p>
+                <%
+                } else {
+                %>
+                <p class="text-warning"><strong>Фильм не просмотрен</strong></p>
+                <%
+                    }
+                %>
             </div>
 
-            <form action="<%= request.getContextPath() + "/watchlist/mark-watched" %>" method="post" class="ml-auto">
-                <input type="hidden" name="movieId" value="<%= watchlistMovie.movie().id() %>">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-check-circle"></i> Отметить как просмотренное
-                </button>
-            </form>
+            <div class="ml-auto d-flex">
+                <form action="<%= request.getContextPath() + "/watchlist/mark-watched" %>" method="post" style="display: <%= watchlistMovie.isWatched() ? "none" : "inline-block" %>;">
+                    <input type="hidden" name="movieId" value="<%= watchlistMovie.movie().id() %>">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-check-circle"></i> Отметить как просмотренное
+                    </button>
+                </form>
 
-            <form action="<%= request.getContextPath() + "/watchlist/remove" %>" method="post" class="ml-2">
-                <input type="hidden" name="movieId" value="<%= watchlistMovie.movie().id() %>">
-                <button type="submit" class="btn btn-danger">
-                    <i class="fas fa-trash-alt"></i> Удалить
-                </button>
-            </form>
+                <form action="<%= request.getContextPath() + "/watchlist/remove" %>" method="post" class="ml-2">
+                    <input type="hidden" name="movieId" value="<%= watchlistMovie.movie().id() %>">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash-alt"></i> Удалить
+                    </button>
+                </form>
+            </div>
+
         </li>
         <%
             }

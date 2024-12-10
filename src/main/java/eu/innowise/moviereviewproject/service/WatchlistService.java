@@ -56,8 +56,16 @@ public class WatchlistService {
 
     public void removeMovieFromUserWatchlist(UUID userId, UUID movieId) {
         Watchlist watchlist = watchlistRepository.findByUserIdAndMovieId(userId, movieId)
-                .orElseThrow(() -> new MovieAlreadyInWatchlist("Movie already in watchlist"));
+                .orElseThrow(() -> new RuntimeException("Watchlist not found"));
 
         watchlistRepository.deleteById(watchlist.getId());
+    }
+
+    public void markAsWatched(UUID userId, UUID movieId) {
+        Watchlist watchlist = watchlistRepository.findByUserIdAndMovieId(userId, movieId)
+                .orElseThrow(() -> new RuntimeException("Watchlist not found"));
+
+        watchlist.setWatched(true);
+        watchlistRepository.update(watchlist);
     }
 }

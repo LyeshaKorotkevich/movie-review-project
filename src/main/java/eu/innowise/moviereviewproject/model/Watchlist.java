@@ -33,11 +33,11 @@ public class Watchlist {
     private LocalDateTime addedAt;
 
     @Column(name = "is_watched", nullable = false)
-    private boolean isWatched;
+    private boolean watched;
 
     @PrePersist
     protected void onCreate() {
         addedAt = LocalDateTime.now();
-        isWatched = false;
+        watched = false;
     }
 }

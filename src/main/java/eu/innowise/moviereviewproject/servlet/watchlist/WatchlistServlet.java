@@ -32,6 +32,10 @@ public class WatchlistServlet extends HttpServlet {
 
         List<WatchlistResponse> watchlist = watchlistService.getUserWatchlist(currentUser.id());
 
+        for (WatchlistResponse watchlistResponse : watchlist) {
+            log.info("Watchlist response: {}", watchlistResponse.isWatched());
+        }
+
         req.setAttribute("watchlist", watchlist);
 
         req.getRequestDispatcher("/WEB-INF/views/watchlist.jsp").forward(req, resp);

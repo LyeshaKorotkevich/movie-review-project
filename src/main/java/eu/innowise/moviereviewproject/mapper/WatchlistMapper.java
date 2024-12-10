@@ -8,6 +8,7 @@ import org.mapstruct.Mapping;
 @Mapper(uses = MovieMapper.class)
 public interface WatchlistMapper {
 
+    @Mapping(target = "isWatched", source = "watched")
     @Mapping(target = "movie", source = "watchlist.movie", qualifiedByName = "toSummaryResponse")
     WatchlistResponse toResponse(Watchlist watchlist);
 }
