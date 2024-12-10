@@ -1,9 +1,33 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_2.xsd"
-             version="3.2">
-    <persistence-unit name="default">
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+                 http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+             version="2.1">
 
+    <persistence-unit name="movieReviewUnit">
+
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <non-jta-data-source>java:/comp/env/jdbc/MyLocalDB</non-jta-data-source>
+
+        <class>eu.innowise.moviereviewproject.model.Movie</class>
+        <class>eu.innowise.moviereviewproject.model.Genre</class>
+        <class>eu.innowise.moviereviewproject.model.Review</class>
+        <class>eu.innowise.moviereviewproject.model.User</class>
+        <class>eu.innowise.moviereviewproject.model.Watchlist</class>
+        <class>eu.innowise.moviereviewproject.model.Person</class>
+
+        <properties>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+            <property name="hibernate.hbm2ddl.auto" value="validate"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+
+            <property name="hibernate.cache.use_second_level_cache" value="true"/>
+            <property name="hibernate.cache.use_query_cache" value="true"/>
+            <property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.jcache.JCacheRegionFactory"/>
+            <property name="javax.cache.provider" value="org.ehcache.jsr107.EhcacheCachingProvider"/>
+            <property name="hibernate.javax.cache.uri" value="ehcache.xml"/>
+        </properties>
     </persistence-unit>
 </persistence>

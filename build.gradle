@@ -1,10 +1,11 @@
 plugins {
     id 'java'
     id 'war'
+    id 'io.freefair.lombok' version '8.3'
 }
 
 group 'eu.innowise'
-version '1.0-SNAPSHOT'
+version '1.0'
 
 repositories {
     mavenCentral()
@@ -13,9 +14,6 @@ repositories {
 ext {
     junitVersion = '5.11.0-M2'
 }
-
-sourceCompatibility = '17'
-targetCompatibility = '17'
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
@@ -26,6 +24,22 @@ dependencies {
     implementation('org.hibernate:hibernate-core:7.0.0.Alpha3')
     implementation('org.glassfish.jaxb:jaxb-runtime:4.0.5')
     implementation('org.hibernate.validator:hibernate-validator:8.0.1.Final')
+    implementation 'org.flywaydb:flyway-core:11.0.0'
+    implementation 'org.slf4j:slf4j-api:2.0.7'
+    implementation 'ch.qos.logback:logback-classic:1.4.12'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.2'
+    implementation 'org.hibernate.orm:hibernate-jcache:7.0.0.Beta2'
+    implementation 'org.ehcache:ehcache:3.10.8'
+    implementation 'org.hibernate.orm:hibernate-ehcache:6.0.0.Alpha7'
+    implementation 'com.sun.xml.bind:jaxb-core:2.3.0.1'
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+    implementation 'com.sun.xml.bind:jaxb-impl:2.3.1'
+    implementation 'org.mindrot:jbcrypt:0.4'
+    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+
+    runtimeOnly 'org.postgresql:postgresql:42.7.3'
+    runtimeOnly 'org.flywaydb:flyway-database-postgresql:11.0.0'
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
