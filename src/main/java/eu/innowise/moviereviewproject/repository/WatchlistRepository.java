@@ -10,5 +10,5 @@ public interface WatchlistRepository extends CrudRepository<Watchlist, UUID> {
 
     Optional<Watchlist> findByUserIdAndMovieId(UUID userId, UUID movieId);
 
-    List<Watchlist> findByUserId(UUID userId);
+    List<Watchlist> findByUserId(int page, UUID userId);
 }

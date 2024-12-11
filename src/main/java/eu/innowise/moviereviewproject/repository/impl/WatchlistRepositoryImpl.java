@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static eu.innowise.moviereviewproject.utils.Constants.WATCHLIST_PAGE_SIZE;
+
 @Slf4j
 public class WatchlistRepositoryImpl implements WatchlistRepository {
 
@@ -80,11 +82,14 @@ public class WatchlistRepositoryImpl implements WatchlistRepository {
     }
 
     @Override
-    public List<Watchlist> findByUserId(UUID userId) {
+    public List<Watchlist> findByUserId(int page, UUID userId) {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
             String jpql = "SELECT w FROM Watchlist w LEFT JOIN FETCH w.movie WHERE w.user.id = :userId ORDER BY w.addedAt DESC";
+            int firstResult = (page - 1) * WATCHLIST_PAGE_SIZE;
             return entityManager.createQuery(jpql, Watchlist.class)
                     .setParameter("userId", userId)
+                    .setFirstResult(firstResult)
+                    .setMaxResults(WATCHLIST_PAGE_SIZE)
                     .getResultList();
         } catch (Exception e) {
             log.error("Error occurred while finding watchlist for user: {}", userId);

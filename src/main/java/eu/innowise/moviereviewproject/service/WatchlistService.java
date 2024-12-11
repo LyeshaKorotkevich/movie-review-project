@@ -47,8 +47,8 @@ public class WatchlistService {
         watchlistRepository.save(watchlist);
     }
 
-    public List<WatchlistResponse> getUserWatchlist(UUID userId) {
-        return watchlistRepository.findByUserId(userId)
+    public List<WatchlistResponse> getUserWatchlist(int page, UUID userId) {
+        return watchlistRepository.findByUserId(page, userId)
                 .stream()
                 .map(watchlistMapper::toResponse)
                 .toList();

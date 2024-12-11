@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+import static eu.innowise.moviereviewproject.utils.ServletsUtil.parseInteger;
+
 @Slf4j
 @WebServlet("/watchlist")
 public class WatchlistServlet extends HttpServlet {
@@ -29,13 +31,15 @@ public class WatchlistServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         UserResponse currentUser = (UserResponse) req.getSession().getAttribute("user");
+        int page = parseInteger(req.getParameter("page"), 1, 1, Integer.MAX_VALUE);
 
-        List<WatchlistResponse> watchlist = watchlistService.getUserWatchlist(currentUser.id());
+        List<WatchlistResponse> watchlist = watchlistService.getUserWatchlist(page, currentUser.id());
 
         for (WatchlistResponse watchlistResponse : watchlist) {
             log.info("Watchlist response: {}", watchlistResponse.isWatched());
         }
 
+        req.setAttribute("page", page);
         req.setAttribute("watchlist", watchlist);
 
         req.getRequestDispatcher("/WEB-INF/views/watchlist.jsp").forward(req, resp);
@@ -52,7 +56,7 @@ public class WatchlistServlet extends HttpServlet {
 
             res.sendRedirect(req.getContextPath() + "/movies/" + movieId);
         } catch (Exception e) {
-            log.error("Ошибка при добавлении фильма в список для просмотра: {}", e.getMessage());
+            log.error("Error during adding movie to watchlist: {}", e.getMessage());
             res.sendRedirect(req.getContextPath() + "/movies");
         }
     }

@@ -8,4 +8,5 @@ public final class Constants {
 
     public static final int MOVIE_PAGE_SIZE = 12;
     public static final int REVIEW_PAGE_SIZE = 10;
+    public static final int WATCHLIST_PAGE_SIZE = 20;
 }
