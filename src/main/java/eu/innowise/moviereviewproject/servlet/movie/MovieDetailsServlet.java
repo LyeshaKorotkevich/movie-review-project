@@ -1,10 +1,10 @@
 package eu.innowise.moviereviewproject.servlet.movie;
 
 import eu.innowise.moviereviewproject.config.ApplicationConfig;
-import eu.innowise.moviereviewproject.dto.response.UserResponse;
 import eu.innowise.moviereviewproject.dto.response.MovieResponse;
 import eu.innowise.moviereviewproject.dto.response.PersonResponse;
 import eu.innowise.moviereviewproject.dto.response.ReviewResponse;
+import eu.innowise.moviereviewproject.dto.response.UserResponse;
 import eu.innowise.moviereviewproject.service.MovieService;
 import eu.innowise.moviereviewproject.service.ReviewService;
 import eu.innowise.moviereviewproject.utils.ServletsUtil;
@@ -26,10 +26,11 @@ import static eu.innowise.moviereviewproject.utils.ServletsUtil.parseInteger;
 @WebServlet("/movies/*")
 public class MovieDetailsServlet extends HttpServlet {
 
-    private final MovieService movieService;
-    private final ReviewService reviewService;
+    private MovieService movieService;
+    private ReviewService reviewService;
 
-    public MovieDetailsServlet() {
+    @Override
+    public void init() throws ServletException {
         this.movieService = ApplicationConfig.getMovieService();
         this.reviewService = ApplicationConfig.getReviewService();
     }

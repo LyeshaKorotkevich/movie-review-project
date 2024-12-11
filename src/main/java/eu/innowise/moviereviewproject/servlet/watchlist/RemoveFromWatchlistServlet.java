@@ -17,9 +17,10 @@ import java.util.UUID;
 @WebServlet("/watchlist/remove")
 public class RemoveFromWatchlistServlet extends HttpServlet {
 
-    private final WatchlistService watchlistService;
+    private WatchlistService watchlistService;
 
-    public RemoveFromWatchlistServlet() {
+    @Override
+    public void init() throws ServletException {
         this.watchlistService = ApplicationConfig.getWatchlistService();
     }
 

@@ -3,7 +3,6 @@ package eu.innowise.moviereviewproject.servlet.watchlist;
 import eu.innowise.moviereviewproject.config.ApplicationConfig;
 import eu.innowise.moviereviewproject.dto.response.UserResponse;
 import eu.innowise.moviereviewproject.dto.response.WatchlistResponse;
-import eu.innowise.moviereviewproject.model.Watchlist;
 import eu.innowise.moviereviewproject.service.WatchlistService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -22,9 +21,10 @@ import static eu.innowise.moviereviewproject.utils.ServletsUtil.parseInteger;
 @WebServlet("/watchlist")
 public class WatchlistServlet extends HttpServlet {
 
-    private final WatchlistService watchlistService;
+    private WatchlistService watchlistService;
 
-    public WatchlistServlet() {
+    @Override
+    public void init() throws ServletException {
         this.watchlistService = ApplicationConfig.getWatchlistService();
     }
 

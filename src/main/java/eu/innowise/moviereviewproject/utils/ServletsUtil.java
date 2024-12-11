@@ -25,7 +25,7 @@ public final class ServletsUtil {
 
         UUID id;
         try {
-            id = UUID.fromString(pathParts[idPosition-1]);
+            id = UUID.fromString(pathParts[idPosition - 1]);
         } catch (IllegalArgumentException e) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             log.error("UUID is not a valid UUID");

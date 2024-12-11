@@ -27,7 +27,8 @@ import java.net.http.HttpClient;
 
 public final class ApplicationConfig {
 
-    private ApplicationConfig(){}
+    private ApplicationConfig() {
+    }
 
     private static final HttpClient httpClient = HttpClient.newHttpClient();
     private static final ObjectMapper objectMapper = new ObjectMapper();

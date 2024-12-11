@@ -18,9 +18,10 @@ import java.util.List;
 @WebServlet("/recommendations")
 public class RecommendationsServlet extends HttpServlet {
 
-    private final RecommendationService recommendationService;
+    private RecommendationService recommendationService;
 
-    public RecommendationsServlet() {
+    @Override
+    public void init() throws ServletException {
         this.recommendationService = ApplicationConfig.getRecommendationService();
     }
 

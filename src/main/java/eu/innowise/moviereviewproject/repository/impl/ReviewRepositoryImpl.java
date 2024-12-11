@@ -1,7 +1,6 @@
 package eu.innowise.moviereviewproject.repository.impl;
 
 import eu.innowise.moviereviewproject.model.Review;
-import eu.innowise.moviereviewproject.model.User;
 import eu.innowise.moviereviewproject.repository.ReviewRepository;
 import eu.innowise.moviereviewproject.utils.JpaUtil;
 import jakarta.persistence.EntityManager;

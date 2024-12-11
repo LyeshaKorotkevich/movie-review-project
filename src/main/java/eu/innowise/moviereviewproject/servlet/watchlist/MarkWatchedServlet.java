@@ -18,7 +18,8 @@ import java.util.UUID;
 public class MarkWatchedServlet extends HttpServlet {
     private WatchlistService watchlistService;
 
-    public MarkWatchedServlet() {
+    @Override
+    public void init() throws ServletException {
         this.watchlistService = ApplicationConfig.getWatchlistService();
     }
 

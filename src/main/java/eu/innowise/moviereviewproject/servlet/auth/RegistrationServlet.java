@@ -16,9 +16,10 @@ import java.io.IOException;
 @WebServlet("/auth/register")
 public class RegistrationServlet extends HttpServlet {
 
-    private final UserService userService;
+    private UserService userService;
 
-    public RegistrationServlet() {
+    @Override
+    public void init() throws ServletException {
         this.userService = ApplicationConfig.getUserService();
     }
 

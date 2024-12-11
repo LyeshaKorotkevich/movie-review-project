@@ -1,8 +1,8 @@
 package eu.innowise.moviereviewproject.servlet.review;
 
 import eu.innowise.moviereviewproject.config.ApplicationConfig;
-import eu.innowise.moviereviewproject.dto.response.UserResponse;
 import eu.innowise.moviereviewproject.dto.request.ReviewRequest;
+import eu.innowise.moviereviewproject.dto.response.UserResponse;
 import eu.innowise.moviereviewproject.service.ReviewService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -18,11 +18,12 @@ import static eu.innowise.moviereviewproject.utils.ServletsUtil.parseInteger;
 
 @Slf4j
 @WebServlet(value = "/review")
-public class ReviewServlet extends HttpServlet{
+public class ReviewServlet extends HttpServlet {
 
-    private final ReviewService reviewService;
+    private ReviewService reviewService;
 
-    public ReviewServlet() {
+    @Override
+    public void init() throws ServletException {
         this.reviewService = ApplicationConfig.getReviewService();
     }
 
