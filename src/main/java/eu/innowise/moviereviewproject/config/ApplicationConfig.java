@@ -17,6 +17,7 @@ import eu.innowise.moviereviewproject.service.ApiService;
 import eu.innowise.moviereviewproject.service.AuthenticationService;
 import eu.innowise.moviereviewproject.service.GenreService;
 import eu.innowise.moviereviewproject.service.MovieService;
+import eu.innowise.moviereviewproject.service.RecommendationService;
 import eu.innowise.moviereviewproject.service.ReviewService;
 import eu.innowise.moviereviewproject.service.UserService;
 import eu.innowise.moviereviewproject.service.WatchlistService;
@@ -58,4 +59,7 @@ public final class ApplicationConfig {
 
     @Getter
     private static final WatchlistService watchlistService = new WatchlistService(watchlistRepository, userRepository, movieRepository);
+
+    @Getter
+    private static final RecommendationService recommendationService = new RecommendationService(userRepository, reviewRepository, movieRepository);
 }

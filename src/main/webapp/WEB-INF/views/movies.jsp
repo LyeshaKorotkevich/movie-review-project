@@ -24,6 +24,9 @@
                         String currentType = request.getParameter("typeNumber");
                         currentType = currentType != null ? currentType : "0";
                     %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<%= request.getContextPath() %>/recommendations">Для тебя</a>
+                    </li>
                     <li class="nav-item <%= "0".equals(currentType) ? "active" : "" %>">
                         <a class="nav-link" href="?typeNumber=0">Все</a>
                     </li>

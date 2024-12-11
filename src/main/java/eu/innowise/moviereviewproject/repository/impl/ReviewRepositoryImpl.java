@@ -77,6 +77,16 @@ public class ReviewRepositoryImpl implements ReviewRepository {
     }
 
     @Override
+    public List<Review> findByUserId(UUID userId) {
+        try (EntityManager entityManager = JpaUtil.getEntityManager()) {
+            String jpql = "SELECT r FROM Review r LEFT JOIN FETCH r.movie WHERE r.user.id = :userId";
+            return entityManager.createQuery(jpql, Review.class)
+                    .setParameter("userId", userId)
+                    .getResultList();
+        }
+    }
+
+    @Override
     public void deleteById(UUID id) {
         executeInTransaction(entityManager -> {
             Review review = entityManager.find(Review.class, id);
