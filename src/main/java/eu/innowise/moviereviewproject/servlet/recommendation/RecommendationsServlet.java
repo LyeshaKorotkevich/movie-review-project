@@ -3,7 +3,7 @@ package eu.innowise.moviereviewproject.servlet.recommendation;
 import eu.innowise.moviereviewproject.config.ApplicationConfig;
 import eu.innowise.moviereviewproject.dto.response.MovieResponse;
 import eu.innowise.moviereviewproject.dto.response.UserResponse;
-import eu.innowise.moviereviewproject.service.RecommendationService;
+import eu.innowise.moviereviewproject.service.recommendation.RecommendationService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;

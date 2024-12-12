@@ -4,6 +4,8 @@ public final class Constants {
     private Constants() {
     }
 
+    public static final String REVIEWS_CSV_FILE_PATH = "data/ratings.csv";
+
     public static final String API_URL = "https://api.kinopoisk.dev/v1.4/movie";
     public static final String API_KEY = "2GM61NX-6RV4E74-KGHP0K9-XEB3D4V";
 

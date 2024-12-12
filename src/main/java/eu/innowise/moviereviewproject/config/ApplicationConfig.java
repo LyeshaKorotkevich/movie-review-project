@@ -17,10 +17,12 @@ import eu.innowise.moviereviewproject.service.ApiService;
 import eu.innowise.moviereviewproject.service.AuthenticationService;
 import eu.innowise.moviereviewproject.service.GenreService;
 import eu.innowise.moviereviewproject.service.MovieService;
-import eu.innowise.moviereviewproject.service.RecommendationService;
+import eu.innowise.moviereviewproject.service.recommendation.RecommendationEngine;
+import eu.innowise.moviereviewproject.service.recommendation.RecommendationService;
 import eu.innowise.moviereviewproject.service.ReviewService;
 import eu.innowise.moviereviewproject.service.UserService;
 import eu.innowise.moviereviewproject.service.WatchlistService;
+import eu.innowise.moviereviewproject.utils.CsvExporter;
 import lombok.Getter;
 
 import java.net.http.HttpClient;
@@ -39,6 +41,8 @@ public final class ApplicationConfig {
     private static final UserRepository userRepository = new UserRepositoryImpl();
     private static final ReviewRepository reviewRepository = new ReviewRepositoryImpl();
     private static final WatchlistRepository watchlistRepository = new WatchlistRepositoryImpl();
+
+    private static final RecommendationEngine recommendationEngine = new RecommendationEngine();
 
     @Getter
     private static final ApiService apiService = new ApiService(httpClient, objectMapper, movieRepository, personRepository, genreRepository);
@@ -62,5 +66,5 @@ public final class ApplicationConfig {
     private static final WatchlistService watchlistService = new WatchlistService(watchlistRepository, userRepository, movieRepository);
 
     @Getter
-    private static final RecommendationService recommendationService = new RecommendationService(userRepository, reviewRepository, movieRepository);
+    private static final RecommendationService recommendationService = new RecommendationService(movieRepository, userRepository, reviewRepository, recommendationEngine);
 }
