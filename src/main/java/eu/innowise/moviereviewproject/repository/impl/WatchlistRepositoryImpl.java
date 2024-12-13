@@ -4,6 +4,7 @@ import eu.innowise.moviereviewproject.model.Watchlist;
 import eu.innowise.moviereviewproject.repository.WatchlistRepository;
 import eu.innowise.moviereviewproject.utils.JpaUtil;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -94,6 +95,20 @@ public class WatchlistRepositoryImpl implements WatchlistRepository {
         } catch (Exception e) {
             log.error("Error occurred while finding watchlist for user: {}", userId);
             throw new RuntimeException("Error occurred while finding watchlist", e);
+        }
+    }
+
+    @Override
+    public boolean existsByUserIdAndMovieId(UUID userId, UUID movieId) {
+        try (EntityManager entityManager = JpaUtil.getEntityManager()) {
+            return (Boolean) entityManager
+                    .createNativeQuery("SELECT EXISTS (SELECT 1 FROM watchlist WHERE user_id = :userId AND movie_id = :movieId)")
+                    .setParameter("userId", userId)
+                    .setParameter("movieId", movieId)
+                    .getSingleResult();
+        } catch (Exception e) {
+            log.error("Error occurred while checking if watchlist exists for user: {} and movie: {}", userId, movieId);
+            throw new RuntimeException("Error occurred while checking if watchlist exists", e);
         }
     }
 }

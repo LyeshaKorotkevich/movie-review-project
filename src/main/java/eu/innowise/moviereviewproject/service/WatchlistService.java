@@ -68,4 +68,8 @@ public class WatchlistService {
         watchlist.setWatched(true);
         watchlistRepository.update(watchlist);
     }
+
+    public boolean checkIfWatchlistExists(UUID userId, UUID movieId) {
+        return watchlistRepository.existsByUserIdAndMovieId(userId, movieId);
+    }
 }

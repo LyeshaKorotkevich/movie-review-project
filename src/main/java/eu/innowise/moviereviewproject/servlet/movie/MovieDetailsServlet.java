@@ -7,6 +7,7 @@ import eu.innowise.moviereviewproject.dto.response.ReviewResponse;
 import eu.innowise.moviereviewproject.dto.response.UserResponse;
 import eu.innowise.moviereviewproject.service.MovieService;
 import eu.innowise.moviereviewproject.service.ReviewService;
+import eu.innowise.moviereviewproject.service.WatchlistService;
 import eu.innowise.moviereviewproject.utils.ServletsUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -28,11 +29,13 @@ public class MovieDetailsServlet extends HttpServlet {
 
     private MovieService movieService;
     private ReviewService reviewService;
+    private WatchlistService watchlistService;
 
     @Override
     public void init() throws ServletException {
         this.movieService = ApplicationConfig.getMovieService();
         this.reviewService = ApplicationConfig.getReviewService();
+        this.watchlistService = ApplicationConfig.getWatchlistService();
     }
 
     @Override
@@ -48,8 +51,10 @@ public class MovieDetailsServlet extends HttpServlet {
 
             UserResponse user = (UserResponse) req.getSession().getAttribute("user");
             ReviewResponse existingReview = null;
+            boolean isInWatchlist = false;
             if (user != null) {
                 existingReview = reviewService.getReviewByUserAndMovie(user.id(), movieId);
+                isInWatchlist = watchlistService.checkIfWatchlistExists(user.id(), movieId);
             }
             List<ReviewResponse> reviewResponses = reviewService.getAllReviews(page, movieId);
 
@@ -58,6 +63,7 @@ public class MovieDetailsServlet extends HttpServlet {
             req.setAttribute("reviews", reviewResponses);
             req.setAttribute("page", page);
             req.setAttribute("existingReview", existingReview);
+            req.setAttribute("isInWatchlist", isInWatchlist);
 
             log.info("Forwarding to JSP.");
 
