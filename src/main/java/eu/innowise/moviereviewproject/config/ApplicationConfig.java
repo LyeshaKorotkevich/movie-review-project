@@ -1,12 +1,14 @@
 package eu.innowise.moviereviewproject.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.innowise.moviereviewproject.repository.ComplaintRepository;
 import eu.innowise.moviereviewproject.repository.GenreRepository;
 import eu.innowise.moviereviewproject.repository.MovieRepository;
 import eu.innowise.moviereviewproject.repository.PersonRepository;
 import eu.innowise.moviereviewproject.repository.ReviewRepository;
 import eu.innowise.moviereviewproject.repository.UserRepository;
 import eu.innowise.moviereviewproject.repository.WatchlistRepository;
+import eu.innowise.moviereviewproject.repository.impl.ComplaintRepositoryImpl;
 import eu.innowise.moviereviewproject.repository.impl.GenreRepositoryImpl;
 import eu.innowise.moviereviewproject.repository.impl.MovieRepositoryImpl;
 import eu.innowise.moviereviewproject.repository.impl.PersonRepositoryImpl;
@@ -15,6 +17,7 @@ import eu.innowise.moviereviewproject.repository.impl.UserRepositoryImpl;
 import eu.innowise.moviereviewproject.repository.impl.WatchlistRepositoryImpl;
 import eu.innowise.moviereviewproject.service.ApiService;
 import eu.innowise.moviereviewproject.service.AuthenticationService;
+import eu.innowise.moviereviewproject.service.ComplaintService;
 import eu.innowise.moviereviewproject.service.GenreService;
 import eu.innowise.moviereviewproject.service.MovieService;
 import eu.innowise.moviereviewproject.service.recommendation.RecommendationEngine;
@@ -41,6 +44,7 @@ public final class ApplicationConfig {
     private static final UserRepository userRepository = new UserRepositoryImpl();
     private static final ReviewRepository reviewRepository = new ReviewRepositoryImpl();
     private static final WatchlistRepository watchlistRepository = new WatchlistRepositoryImpl();
+    private static final ComplaintRepository complaintRepository = new ComplaintRepositoryImpl();
 
     private static final RecommendationEngine recommendationEngine = new RecommendationEngine();
 
@@ -67,4 +71,7 @@ public final class ApplicationConfig {
 
     @Getter
     private static final RecommendationService recommendationService = new RecommendationService(movieRepository, userRepository, reviewRepository, recommendationEngine);
+
+    @Getter
+    private static final ComplaintService complaintService = new ComplaintService(complaintRepository, userRepository, reviewRepository);
 }

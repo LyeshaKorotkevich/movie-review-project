@@ -155,9 +155,42 @@
                     <footer class="blockquote-footer text-end">
                         <small class="text-muted">Автор: <%= review.user().username() %></small>
                     </footer>
+
+                    <button type="button" class="btn btn-link text-danger p-0 mt-2"
+                            data-toggle="modal"
+                            data-target="#complaintModal-<%= review.id() %>">
+                        <i class="fas fa-exclamation-circle"></i> Пожаловаться
+                    </button>
                 </div>
             </div>
         </div>
+
+        <div class="modal fade" id="complaintModal-<%= review.id() %>" tabindex="-1" role="dialog" aria-labelledby="complaintModalLabel-<%= review.id() %>" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="complaintModalLabel-<%= review.id() %>">Пожаловаться на отзыв</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form method="post" action="<%= request.getContextPath() + "/make-complaint" %>">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="complaintReason-<%= review.id() %>">Причина жалобы:</label>
+                                <textarea class="form-control" id="complaintReason-<%= review.id() %>" name="reason" rows="4" placeholder="Опишите причину жалобы..." required></textarea>
+                            </div>
+                            <input type="hidden" name="reviewId" value="<%= review.id() %>">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                            <button type="submit" class="btn btn-danger">Отправить жалобу</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <%
             }
         } else {
@@ -187,5 +220,7 @@
         }
     %>
 </div>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
