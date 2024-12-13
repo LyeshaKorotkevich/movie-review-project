@@ -17,9 +17,10 @@ import static eu.innowise.moviereviewproject.utils.ServletsUtil.parseInteger;
 @WebServlet("/movies/search")
 public class MovieSearchServlet extends HttpServlet {
 
-    private final MovieService movieService;
+    private MovieService movieService;
 
-    public MovieSearchServlet() {
+    @Override
+    public void init() throws ServletException {
         this.movieService = ApplicationConfig.getMovieService();
     }
 

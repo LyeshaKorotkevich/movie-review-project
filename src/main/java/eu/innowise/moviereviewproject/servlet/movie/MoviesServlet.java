@@ -1,8 +1,9 @@
 package eu.innowise.moviereviewproject.servlet.movie;
 
 import eu.innowise.moviereviewproject.config.ApplicationConfig;
-import eu.innowise.moviereviewproject.dto.response.MovieResponse;
+import eu.innowise.moviereviewproject.dto.request.MovieFilterRequest;
 import eu.innowise.moviereviewproject.dto.response.GenreResponse;
+import eu.innowise.moviereviewproject.dto.response.MovieResponse;
 import eu.innowise.moviereviewproject.service.GenreService;
 import eu.innowise.moviereviewproject.service.MovieService;
 import jakarta.servlet.ServletException;
@@ -14,16 +15,18 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+import static eu.innowise.moviereviewproject.utils.ServletsUtil.getMovieFilterRequest;
 import static eu.innowise.moviereviewproject.utils.ServletsUtil.parseInteger;
 
 @Slf4j
 @WebServlet("/movies")
 public class MoviesServlet extends HttpServlet {
 
-    private final MovieService movieService;
-    private final GenreService genreService;
+    private MovieService movieService;
+    private GenreService genreService;
 
-    public MoviesServlet() {
+    @Override
+    public void init() throws ServletException {
         this.movieService = ApplicationConfig.getMovieService();
         this.genreService = ApplicationConfig.getGenreService();
     }
@@ -31,20 +34,24 @@ public class MoviesServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
         try {
-            log.info("Received request for movies with parameters: page={}, typeNumber={}",
-                    req.getParameter("page"), req.getParameter("typeNumber"));
+            MovieFilterRequest movieFilterRequest = getMovieFilterRequest(req);
 
-            int page = parseInteger(req.getParameter("page"), 1, 1, Integer.MAX_VALUE);
-            int typeNumber = parseInteger(req.getParameter("typeNumber"), 0, 0, 5);
+            log.info("Parsed request parameters: {}", movieFilterRequest);
 
-            log.info("Parsed request parameters: page={}, typeNumber={}", page, typeNumber);
-
-            List<MovieResponse> movies = movieService.getAllMovies(page, typeNumber);
+            List<MovieResponse> movies;
+            if (movieFilterRequest.genre() != null || movieFilterRequest.startYear() != null || movieFilterRequest.endYear() != null ||
+                    movieFilterRequest.minRating() != null || movieFilterRequest.maxRating() != null) {
+                movies = movieService.getFilteredMovies(movieFilterRequest);
+                log.info("Applied filters and fetched filtered movies.");
+            } else {
+                movies = movieService.getAllMovies(movieFilterRequest.page(), movieFilterRequest.typeNumber());
+                log.info("No filters applied. Fetched all movies.");
+            }
             List<GenreResponse> genres = genreService.getAll();
 
             req.setAttribute("movies", movies);
-            req.setAttribute("currentPage", page);
-            req.setAttribute("currentTypeNumber", typeNumber);
+            req.setAttribute("currentPage", movieFilterRequest.page());
+            req.setAttribute("typeNumber", movieFilterRequest.typeNumber());
             req.setAttribute("genres", genres);
 
             log.info("Movies fetched successfully. Forwarding to JSP.");

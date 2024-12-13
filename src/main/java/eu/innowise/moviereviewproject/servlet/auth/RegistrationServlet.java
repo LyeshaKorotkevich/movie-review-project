@@ -13,12 +13,16 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
+import static eu.innowise.moviereviewproject.utils.Constants.AUTH_LOGIN_URL;
+import static eu.innowise.moviereviewproject.utils.ServletsUtil.getRegistrationRequest;
+
 @WebServlet("/auth/register")
 public class RegistrationServlet extends HttpServlet {
 
-    private final UserService userService;
+    private UserService userService;
 
-    public RegistrationServlet() {
+    @Override
+    public void init() throws ServletException {
         this.userService = ApplicationConfig.getUserService();
     }
 
@@ -29,16 +33,11 @@ public class RegistrationServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        RegistrationRequest registrationRequest = new RegistrationRequest(
-                req.getParameter("username"),
-                req.getParameter("email"),
-                req.getParameter("password"),
-                req.getParameter("confirmPassword")
-        );
+        RegistrationRequest registrationRequest = getRegistrationRequest(req);
 
         try {
             userService.registerUser(registrationRequest);
-            resp.sendRedirect(req.getContextPath() + "/auth/login");
+            resp.sendRedirect(req.getContextPath() + AUTH_LOGIN_URL);
         } catch (DtoValidationException e) {
             req.setAttribute("errors", e.getErrors());
             req.setAttribute("registrationDTO", registrationRequest);
@@ -51,5 +50,4 @@ public class RegistrationServlet extends HttpServlet {
             throw new ServletException("Error occurred during registration", e);
         }
     }
-
 }

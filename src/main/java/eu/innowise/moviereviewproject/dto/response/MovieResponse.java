@@ -10,7 +10,7 @@ public record MovieResponse(
         int releaseYear,
         String description,
         double rating,
-        Set<GenreResponse>genres,
+        Set<GenreResponse> genres,
         Set<PersonResponse> persons
 ) {
 }

@@ -1,8 +1,9 @@
 package eu.innowise.moviereviewproject.repository.impl;
 
+import eu.innowise.moviereviewproject.dto.request.MovieFilterRequest;
 import eu.innowise.moviereviewproject.model.Genre;
 import eu.innowise.moviereviewproject.model.Movie;
-import eu.innowise.moviereviewproject.model.MovieType;
+import eu.innowise.moviereviewproject.model.enums.MovieType;
 import eu.innowise.moviereviewproject.repository.MovieRepository;
 import eu.innowise.moviereviewproject.utils.JpaUtil;
 import jakarta.persistence.EntityManager;
@@ -10,6 +11,7 @@ import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
@@ -80,15 +82,26 @@ public class MovieRepositoryImpl implements MovieRepository {
     public List<Movie> findAll(int page, int typeNumber) {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
             int firstResult = (page - 1) * MOVIE_PAGE_SIZE;
-            MovieType movieType = MovieType.fromTypeNumber(typeNumber);
-            return entityManager.createQuery("SELECT m FROM Movie m WHERE m.movieType = :movieType", Movie.class)
-                    .setParameter("movieType", movieType)
+
+            Optional<MovieType> optionalMovieType = MovieType.fromTypeNumber(typeNumber);
+
+            StringBuilder queryBuilder = new StringBuilder("SELECT m FROM Movie m");
+            if (optionalMovieType.isPresent()) {
+                queryBuilder.append(" WHERE m.movieType = :movieType");
+            }
+
+            TypedQuery<Movie> query = entityManager.createQuery(queryBuilder.toString(), Movie.class);
+
+            optionalMovieType.ifPresent(movieType -> query.setParameter("movieType", movieType));
+
+            return query
                     .setFirstResult(firstResult)
                     .setMaxResults(MOVIE_PAGE_SIZE)
                     .setHint("org.hibernate.cacheable", true)
                     .getResultList();
         }
     }
+
 
     @Override
     public List<Movie> findMoviesByPartialTitle(String query, int page) {
@@ -104,42 +117,46 @@ public class MovieRepositoryImpl implements MovieRepository {
     }
 
     @Override
-    public List<Movie> findFilteredMovies(int page, Integer typeNumber, String genre, Integer startYear, Integer endYear, Integer minRating, Integer maxRating) {
+    public List<Movie> findFilteredMovies(MovieFilterRequest filterRequest) {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
             CriteriaBuilder cb = entityManager.getCriteriaBuilder();
             CriteriaQuery<Movie> cq = cb.createQuery(Movie.class);
             Root<Movie> movie = cq.from(Movie.class);
-            Join<Movie, Genre> genreJoin = movie.join("genres");
+
+            Join<Movie, Genre> genreJoin = movie.join("genres", JoinType.LEFT);
 
             List<Predicate> predicates = new ArrayList<>();
-            if (genre != null && !genre.isEmpty()) {
-                predicates.add(cb.equal(genreJoin.get("name"), genre));
+
+            if ( filterRequest.genre() != null && !filterRequest.genre().isEmpty()) {
+                predicates.add(cb.equal(genreJoin.get("name"), filterRequest.genre()));
             }
-            if (typeNumber != null && typeNumber != 0) {
-                predicates.add(cb.equal(movie.get("movieType"), MovieType.fromTypeNumber(typeNumber)));
+            if (filterRequest.typeNumber() != null && filterRequest.typeNumber() != 0) {
+                predicates.add(cb.equal(movie.get("movieType"), MovieType.fromTypeNumber(filterRequest.typeNumber())));
             }
-            if (startYear != null) {
-                predicates.add(cb.greaterThanOrEqualTo(movie.get("releaseYear"), startYear));
+            if (filterRequest.startYear() != null) {
+                predicates.add(cb.greaterThanOrEqualTo(movie.get("releaseYear"), filterRequest.startYear()));
             }
-            if (endYear != null) {
-                predicates.add(cb.lessThanOrEqualTo(movie.get("releaseYear"), endYear));
+            if (filterRequest.endYear() != null) {
+                predicates.add(cb.lessThanOrEqualTo(movie.get("releaseYear"), filterRequest.endYear()));
             }
-            if (minRating != null) {
-                predicates.add(cb.greaterThanOrEqualTo(movie.get("rating"), minRating));
+            if (filterRequest.minRating() != null) {
+                predicates.add(cb.greaterThanOrEqualTo(movie.get("rating"), filterRequest.minRating()));
             }
-            if (maxRating != null) {
-                predicates.add(cb.lessThanOrEqualTo(movie.get("rating"), maxRating));
+            if (filterRequest.maxRating() != null) {
+                predicates.add(cb.lessThanOrEqualTo(movie.get("rating"), filterRequest.maxRating()));
             }
 
             cq.select(movie).distinct(true).where(predicates.toArray(new Predicate[0]));
 
             TypedQuery<Movie> query = entityManager.createQuery(cq);
-            query.setFirstResult((page - 1) * MOVIE_PAGE_SIZE);
+
+            query.setFirstResult((filterRequest.page() - 1) * MOVIE_PAGE_SIZE);
             query.setMaxResults(MOVIE_PAGE_SIZE);
 
             return query.getResultList();
         }
     }
+
 
     @Override
     public boolean existsByExternalId(Long externalId) {
@@ -161,7 +178,7 @@ public class MovieRepositoryImpl implements MovieRepository {
                 entityManager.remove(movie);
                 log.info("Movie deleted successfully with ID: {}", id);
             } else {
-                log.warn("Movie with ID: {} not found for deletion", id);
+                log.error("Movie with ID: {} not found for deletion", id);
             }
             return null;
         });

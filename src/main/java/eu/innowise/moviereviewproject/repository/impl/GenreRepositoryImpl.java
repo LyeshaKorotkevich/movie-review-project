@@ -9,6 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.Optional;
 
+import static eu.innowise.moviereviewproject.utils.Constants.SELECT_GENRES;
+import static eu.innowise.moviereviewproject.utils.Constants.SELECT_GENRES_BY_NAME;
+
 @Slf4j
 public class GenreRepositoryImpl implements GenreRepository {
 
@@ -42,7 +45,7 @@ public class GenreRepositoryImpl implements GenreRepository {
     public Optional<Genre> findByName(String name) {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
             return Optional.ofNullable(entityManager.createQuery(
-                            "SELECT g FROM Genre g WHERE g.name = :name", Genre.class)
+                            SELECT_GENRES_BY_NAME, Genre.class)
                     .setParameter("name", name)
                     .getSingleResultOrNull()
             );
@@ -56,7 +59,7 @@ public class GenreRepositoryImpl implements GenreRepository {
     @Override
     public List<Genre> findAll() {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            return entityManager.createQuery("SELECT g FROM Genre g", Genre.class).getResultList();
+            return entityManager.createQuery(SELECT_GENRES, Genre.class).getResultList();
         } catch (Exception e) {
             log.error("Error occurred while fetching all genres", e);
             throw new RuntimeException("Error occurred while fetching all genres", e);

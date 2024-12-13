@@ -1,7 +1,7 @@
 package eu.innowise.moviereviewproject.service;
 
-import eu.innowise.moviereviewproject.dto.response.UserResponse;
 import eu.innowise.moviereviewproject.dto.request.LoginRequest;
+import eu.innowise.moviereviewproject.dto.response.UserResponse;
 import eu.innowise.moviereviewproject.exceptions.user.InvalidPasswordException;
 import eu.innowise.moviereviewproject.exceptions.user.UserNotFoundException;
 import eu.innowise.moviereviewproject.mapper.UserMapper;

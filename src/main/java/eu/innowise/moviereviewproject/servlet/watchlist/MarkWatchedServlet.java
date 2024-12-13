@@ -11,14 +11,19 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.UUID;
+
+import static eu.innowise.moviereviewproject.utils.Constants.WATCHLIST_URL;
 
 @Slf4j
 @WebServlet("/watchlist/mark-watched")
 public class MarkWatchedServlet extends HttpServlet {
+
     private WatchlistService watchlistService;
 
-    public MarkWatchedServlet() {
+    @Override
+    public void init() throws ServletException {
         this.watchlistService = ApplicationConfig.getWatchlistService();
     }
 
@@ -26,14 +31,14 @@ public class MarkWatchedServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         String movieIdParam = req.getParameter("movieId");
 
-        if (movieIdParam != null) {
+        if (Objects.nonNull(movieIdParam)) {
             try {
                 UUID movieId = UUID.fromString(movieIdParam);
                 UserResponse user = (UserResponse) req.getSession().getAttribute("user");
 
                 watchlistService.markAsWatched(user.id(), movieId);
 
-                res.sendRedirect(req.getContextPath() + "/watchlist");
+                res.sendRedirect(req.getContextPath() + WATCHLIST_URL);
             } catch (Exception e) {
                 log.error("Unexpected error during removing from watchlist process", e);
             }

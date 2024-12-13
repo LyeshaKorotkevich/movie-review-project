@@ -8,6 +8,9 @@ import javax.naming.NamingException;
 @Slf4j
 public class FlywayMigrationUtil {
 
+    private FlywayMigrationUtil() {
+    }
+
     public static void runMigrations() {
         log.info("Starting Flyway migrations...");
         try {

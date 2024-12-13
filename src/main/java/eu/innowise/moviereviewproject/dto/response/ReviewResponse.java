@@ -10,6 +10,5 @@ public record ReviewResponse(
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
         UserResponse user
-        //MovieDTO movie
 ) {
 }

@@ -13,13 +13,16 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.util.UUID;
 
+import static eu.innowise.moviereviewproject.utils.Constants.WATCHLIST_URL;
+
 @Slf4j
 @WebServlet("/watchlist/remove")
 public class RemoveFromWatchlistServlet extends HttpServlet {
 
-    private final WatchlistService watchlistService;
+    private WatchlistService watchlistService;
 
-    public RemoveFromWatchlistServlet() {
+    @Override
+    public void init() throws ServletException {
         this.watchlistService = ApplicationConfig.getWatchlistService();
     }
 
@@ -34,7 +37,7 @@ public class RemoveFromWatchlistServlet extends HttpServlet {
 
                 watchlistService.removeMovieFromUserWatchlist(user.id(), movieId);
 
-                res.sendRedirect(req.getContextPath() + "/watchlist");
+                res.sendRedirect(req.getContextPath() + WATCHLIST_URL);
             } catch (Exception e) {
                 log.error("Unexpected error during removing from watchlist process", e);
             }

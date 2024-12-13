@@ -14,7 +14,7 @@
 
     <%
         List<WatchlistResponse> watchlist = (List<WatchlistResponse>) request.getAttribute("watchlist");
-
+        int currentPage = (int) request.getAttribute("page");
         if (watchlist != null && !watchlist.isEmpty()) {
     %>
     <ul class="list-group">
@@ -63,6 +63,19 @@
             }
         %>
     </ul>
+
+    <nav aria-label="Навигация по страницам">
+        <ul class="pagination justify-content-center">
+            <% if (currentPage > 1) { %>
+            <li class="page-item">
+                <a class="page-link" href="?page=<%= currentPage - 1 %>">Предыдущая</a>
+            </li>
+            <% } %>
+            <li class="page-item">
+                <a class="page-link" href="?page=<%= currentPage + 1 %>">Следующая</a>
+            </li>
+        </ul>
+    </nav>
 
     <%
     } else {

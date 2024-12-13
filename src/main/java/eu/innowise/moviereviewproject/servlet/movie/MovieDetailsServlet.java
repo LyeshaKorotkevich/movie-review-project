@@ -1,12 +1,13 @@
 package eu.innowise.moviereviewproject.servlet.movie;
 
 import eu.innowise.moviereviewproject.config.ApplicationConfig;
-import eu.innowise.moviereviewproject.dto.response.UserResponse;
 import eu.innowise.moviereviewproject.dto.response.MovieResponse;
 import eu.innowise.moviereviewproject.dto.response.PersonResponse;
 import eu.innowise.moviereviewproject.dto.response.ReviewResponse;
+import eu.innowise.moviereviewproject.dto.response.UserResponse;
 import eu.innowise.moviereviewproject.service.MovieService;
 import eu.innowise.moviereviewproject.service.ReviewService;
+import eu.innowise.moviereviewproject.service.WatchlistService;
 import eu.innowise.moviereviewproject.utils.ServletsUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -26,12 +27,15 @@ import static eu.innowise.moviereviewproject.utils.ServletsUtil.parseInteger;
 @WebServlet("/movies/*")
 public class MovieDetailsServlet extends HttpServlet {
 
-    private final MovieService movieService;
-    private final ReviewService reviewService;
+    private MovieService movieService;
+    private ReviewService reviewService;
+    private WatchlistService watchlistService;
 
-    public MovieDetailsServlet() {
+    @Override
+    public void init() throws ServletException {
         this.movieService = ApplicationConfig.getMovieService();
         this.reviewService = ApplicationConfig.getReviewService();
+        this.watchlistService = ApplicationConfig.getWatchlistService();
     }
 
     @Override
@@ -47,8 +51,10 @@ public class MovieDetailsServlet extends HttpServlet {
 
             UserResponse user = (UserResponse) req.getSession().getAttribute("user");
             ReviewResponse existingReview = null;
+            boolean isInWatchlist = false;
             if (user != null) {
                 existingReview = reviewService.getReviewByUserAndMovie(user.id(), movieId);
+                isInWatchlist = watchlistService.checkIfWatchlistExists(user.id(), movieId);
             }
             List<ReviewResponse> reviewResponses = reviewService.getAllReviews(page, movieId);
 
@@ -57,6 +63,7 @@ public class MovieDetailsServlet extends HttpServlet {
             req.setAttribute("reviews", reviewResponses);
             req.setAttribute("page", page);
             req.setAttribute("existingReview", existingReview);
+            req.setAttribute("isInWatchlist", isInWatchlist);
 
             log.info("Forwarding to JSP.");
 
@@ -70,18 +77,14 @@ public class MovieDetailsServlet extends HttpServlet {
     private Map<String, List<PersonResponse>> filterAndLimitPersons(MovieResponse movie) {
         return movie.persons()
                 .stream()
-                .filter(person -> isValidName(person.name()) || isValidName(person.enName()))
+                .filter(person -> (!person.name().isBlank()) || !person.enName().isBlank())
                 .filter(person -> "актеры".equalsIgnoreCase(person.profession()) || "режиссеры".equalsIgnoreCase(person.profession()))
                 .collect(Collectors.groupingBy(
                         PersonResponse::profession,
                         Collectors.collectingAndThen(
                                 Collectors.toList(),
-                                list -> list.stream().limit(4).collect(Collectors.toList())
+                                list -> list.stream().limit(4).toList()
                         )
                 ));
-    }
-
-    private boolean isValidName(String name) {
-        return name != null && !name.trim().isEmpty() && !name.equals("null");
     }
 }

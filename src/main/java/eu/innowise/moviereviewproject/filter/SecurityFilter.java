@@ -10,7 +10,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebFilter(filterName = "SecurityFilter", urlPatterns = {"/review", "/watchlist"})
+import static eu.innowise.moviereviewproject.utils.Constants.AUTH_LOGIN_URL;
+
+@WebFilter(filterName = "SecurityFilter", urlPatterns = {"/review", "/watchlist", "/recommendations", "/make-complaint"})
 public class SecurityFilter extends HttpFilter {
 
     @Override
@@ -18,7 +20,7 @@ public class SecurityFilter extends HttpFilter {
         UserResponse userResponse = (UserResponse) req.getSession().getAttribute("user");
 
         if (userResponse == null) {
-            res.sendRedirect(req.getContextPath() + "/auth/login");
+            res.sendRedirect(req.getContextPath() + AUTH_LOGIN_URL);
             return;
         }
 

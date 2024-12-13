@@ -72,7 +72,7 @@ public class PersonRepositoryImpl implements PersonRepository {
                 entityManager.remove(person);
                 log.info("Person deleted successfully with ID: {}", id);
             } else {
-                log.warn("Person with ID: {} not found for deletion", id);
+                log.error("Person with ID: {} not found for deletion", id);
             }
             return null;
         });

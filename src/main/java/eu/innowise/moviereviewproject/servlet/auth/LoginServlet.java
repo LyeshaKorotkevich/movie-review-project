@@ -1,8 +1,8 @@
 package eu.innowise.moviereviewproject.servlet.auth;
 
 import eu.innowise.moviereviewproject.config.ApplicationConfig;
-import eu.innowise.moviereviewproject.dto.response.UserResponse;
 import eu.innowise.moviereviewproject.dto.request.LoginRequest;
+import eu.innowise.moviereviewproject.dto.response.UserResponse;
 import eu.innowise.moviereviewproject.exceptions.DtoValidationException;
 import eu.innowise.moviereviewproject.exceptions.user.InvalidPasswordException;
 import eu.innowise.moviereviewproject.exceptions.user.UserNotFoundException;
@@ -17,13 +17,16 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 
+import static eu.innowise.moviereviewproject.utils.Constants.MOVIES_URL;
+
 @Slf4j
 @WebServlet("/auth/login")
 public class LoginServlet extends HttpServlet {
 
-    private final AuthenticationService authenticationService;
+    private AuthenticationService authenticationService;
 
-    public LoginServlet() {
+    @Override
+    public void init() throws ServletException {
         this.authenticationService = ApplicationConfig.getAuthenticationService();
     }
 
@@ -45,12 +48,12 @@ public class LoginServlet extends HttpServlet {
             session.setAttribute("user", authenticatedUser);
 
             log.debug("Redirecting user {} to /movies", loginRequest.username());
-            resp.sendRedirect(req.getContextPath() + "/movies");
+            resp.sendRedirect(req.getContextPath() + MOVIES_URL);
         } catch (DtoValidationException e) {
             req.setAttribute("errors", e.getErrors());
             req.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(req, resp);
         } catch (UserNotFoundException | InvalidPasswordException e) {
-            log.warn("Authentication failed for user {}",  loginRequest.username());
+            log.error("Authentication failed for user {}", loginRequest.username());
             req.setAttribute("userNotExists", "Неверный логин или пароль");
             req.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(req, resp);
         } catch (Exception e) {

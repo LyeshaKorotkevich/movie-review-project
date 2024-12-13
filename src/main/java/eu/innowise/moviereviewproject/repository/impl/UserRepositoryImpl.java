@@ -1,24 +1,38 @@
 package eu.innowise.moviereviewproject.repository.impl;
 
+import eu.innowise.moviereviewproject.exceptions.user.UserAlreadyExistsException;
 import eu.innowise.moviereviewproject.model.User;
 import eu.innowise.moviereviewproject.repository.UserRepository;
 import eu.innowise.moviereviewproject.utils.JpaUtil;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static eu.innowise.moviereviewproject.utils.Constants.SELECT_USERS;
+import static eu.innowise.moviereviewproject.utils.Constants.SELECT_USER_BY_ID;
+import static eu.innowise.moviereviewproject.utils.Constants.SELECT_USER_BY_USERNAME;
+
 @Slf4j
 public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User save(User entity) {
-        return executeInTransaction(entityManager -> {
-            entityManager.persist(entity);
-            return entity;
-        });
+        try {
+            return executeInTransaction(entityManager -> {
+                entityManager.persist(entity);
+                return entity;
+            });
+        } catch (PersistenceException e) {
+            if (e.getCause() instanceof org.hibernate.exception.ConstraintViolationException) {
+                log.error("Constraint violation while saving user: {}", e.getMessage());
+                throw new UserAlreadyExistsException("User with this username or email already exists", e);
+            }
+            throw e;
+        }
     }
 
     @Override
@@ -32,8 +46,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<User> findById(UUID id) {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            String jpql = "SELECT u FROM User u WHERE u.id = :id";
-            User user = entityManager.createQuery(jpql, User.class)
+            User user = entityManager.createQuery(SELECT_USER_BY_ID, User.class)
                     .setParameter("id", id)
                     .getSingleResultOrNull();
             return Optional.ofNullable(user);
@@ -43,8 +56,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<User> findByUsername(String username) {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            String jpql = "SELECT u FROM User u WHERE u.username = :username";
-            User user = entityManager.createQuery(jpql, User.class)
+            User user = entityManager.createQuery(SELECT_USER_BY_USERNAME, User.class)
                     .setParameter("username", username)
                     .getSingleResultOrNull();
             return Optional.ofNullable(user);
@@ -54,7 +66,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public List<User> findAll() {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            return entityManager.createQuery("SELECT u FROM User u", User.class).getResultList();
+            return entityManager.createQuery(SELECT_USERS, User.class).getResultList();
         }
     }
 

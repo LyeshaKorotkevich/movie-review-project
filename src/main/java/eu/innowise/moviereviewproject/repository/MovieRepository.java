@@ -1,5 +1,6 @@
 package eu.innowise.moviereviewproject.repository;
 
+import eu.innowise.moviereviewproject.dto.request.MovieFilterRequest;
 import eu.innowise.moviereviewproject.model.Movie;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public interface MovieRepository extends CrudRepository<Movie, UUID> {
 
     List<Movie> findMoviesByPartialTitle(String query, int page);
 
-    List<Movie> findFilteredMovies(int page, Integer typeNumber, String genre, Integer startYear, Integer endYear, Integer minRating, Integer maxRating);
+    List<Movie> findFilteredMovies(MovieFilterRequest movieFilterRequest);
 
     Optional<Movie> findByExternalId(Long externalId);
 }

@@ -1,5 +1,6 @@
 package eu.innowise.moviereviewproject.model;
 
+import eu.innowise.moviereviewproject.model.enums.MovieType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,18 +11,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import lombok.Data;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Formula;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@Data
 @Entity
-//@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "entityCache")
+@Getter
+@Setter
 public class Movie {
 
     @Id

@@ -6,8 +6,8 @@ import eu.innowise.moviereviewproject.dto.response.MovieResponse;
 import eu.innowise.moviereviewproject.mapper.MovieMapper;
 import eu.innowise.moviereviewproject.model.Genre;
 import eu.innowise.moviereviewproject.model.Movie;
-import eu.innowise.moviereviewproject.model.MovieType;
 import eu.innowise.moviereviewproject.model.Person;
+import eu.innowise.moviereviewproject.model.enums.MovieType;
 import eu.innowise.moviereviewproject.repository.GenreRepository;
 import eu.innowise.moviereviewproject.repository.MovieRepository;
 import eu.innowise.moviereviewproject.repository.PersonRepository;
@@ -137,7 +137,7 @@ public class ApiService {
         movie.setPosterUrl(movieNode.get("poster") != null && movieNode.get("poster").get("url") != null ? movieNode.get("poster").get("url").asText() : "");
         movie.setReleaseYear(movieNode.get("year") != null ? movieNode.get("year").asInt() : 0);
         movie.setDescription(movieNode.get("description") != null ? movieNode.get("description").asText() : "");
-        movie.setMovieType(movieNode.get("typeNumber") != null ? MovieType.fromTypeNumber(movieNode.get("typeNumber").asInt()) : null);
+        movie.setMovieType(movieNode.get("typeNumber") != null ? MovieType.fromTypeNumber(movieNode.get("typeNumber").asInt()).orElse(null) : null);
         movie.setGenres(mapToGenres(movieNode));
 
         JsonNode personsNode = movieNode.get("persons");
