@@ -34,7 +34,7 @@ public interface CrudRepository<T, K> {
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
-            throw new RuntimeException("Transaction failed", e);
+            throw e;
         } finally {
             if (entityManager.isOpen()) {
                 entityManager.close();

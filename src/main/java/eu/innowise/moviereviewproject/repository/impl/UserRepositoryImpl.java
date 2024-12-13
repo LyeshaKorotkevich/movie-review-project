@@ -1,9 +1,11 @@
 package eu.innowise.moviereviewproject.repository.impl;
 
+import eu.innowise.moviereviewproject.exceptions.user.UserAlreadyExistsException;
 import eu.innowise.moviereviewproject.model.User;
 import eu.innowise.moviereviewproject.repository.UserRepository;
 import eu.innowise.moviereviewproject.utils.JpaUtil;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -15,10 +17,18 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User save(User entity) {
-        return executeInTransaction(entityManager -> {
-            entityManager.persist(entity);
-            return entity;
-        });
+        try {
+            return executeInTransaction(entityManager -> {
+                entityManager.persist(entity);
+                return entity;
+            });
+        } catch (PersistenceException e) {
+            if (e.getCause() instanceof org.hibernate.exception.ConstraintViolationException) {
+                log.error("Constraint violation while saving user: {}", e.getMessage());
+                throw new UserAlreadyExistsException("User with this username or email already exists", e);
+            }
+            throw e;
+        }
     }
 
     @Override
