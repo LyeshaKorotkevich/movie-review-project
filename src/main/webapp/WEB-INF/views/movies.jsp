@@ -22,7 +22,7 @@
                 <ul class="navbar-nav mr-auto">
                     <%
                         String currentType = request.getParameter("typeNumber");
-                        currentType = currentType != null ? currentType : "0";
+                        if(currentType == null) currentType = "0";
                     %>
                     <li class="nav-item">
                         <a class="nav-link" href="<%= request.getContextPath() %>/recommendations">Для тебя</a>
@@ -85,7 +85,7 @@
             Фильтры поиска
         </div>
         <div class="card-body">
-            <form class="form-inline d-flex flex-wrap justify-content-start" action="<%= request.getContextPath() %>/movies/filter" method="get" style="gap: 15px;">
+            <form class="form-inline d-flex flex-wrap justify-content-start" action="<%= request.getContextPath() %>/movies" method="get" style="gap: 15px;">
                 <div class="form-group">
                     <label for="genre" class="mr-2">Жанр</label>
                     <select id="genre" class="form-control form-control-sm" name="genre">
@@ -150,16 +150,39 @@
     </div>
 
     <nav aria-label="Навигация по страницам">
-        <ul class="pagination justify-content-center">
-            <% if (currentPage > 1) { %>
-            <li class="page-item">
-                <a class="page-link" href="?page=<%= currentPage - 1 %>&typeNumber=<%= currentType %>">Предыдущая</a>
-            </li>
-            <% } %>
-            <li class="page-item">
-                <a class="page-link" href="?page=<%= currentPage + 1 %>&typeNumber=<%= currentType %>">Следующая</a>
-            </li>
-        </ul>
+
+    <ul class="pagination justify-content-center">
+        <%
+            StringBuilder filterUrl = new StringBuilder();
+
+            filterUrl.append("&typeNumber=").append(currentType);
+
+            if (request.getParameter("genre") != null && !request.getParameter("genre").isEmpty()) {
+                filterUrl.append("&genre=").append(request.getParameter("genre"));
+            }
+            if (request.getParameter("startYear") != null && !request.getParameter("startYear").isEmpty()) {
+                filterUrl.append("&startYear=").append(request.getParameter("startYear"));
+            }
+            if (request.getParameter("endYear") != null && !request.getParameter("endYear").isEmpty()) {
+                filterUrl.append("&endYear=").append(request.getParameter("endYear"));
+            }
+            if (request.getParameter("minRating") != null && !request.getParameter("minRating").isEmpty()) {
+                filterUrl.append("&minRating=").append(request.getParameter("minRating"));
+            }
+            if (request.getParameter("maxRating") != null && !request.getParameter("maxRating").isEmpty()) {
+                filterUrl.append("&maxRating=").append(request.getParameter("maxRating"));
+            }
+        %>
+        <% if (currentPage > 1) { %>
+        <li class="page-item">
+            <a class="page-link" href="?page=<%= currentPage - 1 %><%= filterUrl%>">Предыдущая</a>
+        </li>
+        <% } %>
+        <li class="page-item">
+            <a class="page-link" href="?page=<%= currentPage + 1 %><%= filterUrl%>">Следующая</a>
+        </li>
+    </ul>
+
     </nav>
 </div>
 

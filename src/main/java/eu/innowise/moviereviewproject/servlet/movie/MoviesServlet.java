@@ -32,20 +32,36 @@ public class MoviesServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
         try {
-            log.info("Received request for movies with parameters: page={}, typeNumber={}",
-                    req.getParameter("page"), req.getParameter("typeNumber"));
+            log.info("Received request for movies with parameters: page={}, typeNumber={}, genre={}, startYear={}, endYear={}, minRating={}, maxRating={}",
+                    req.getParameter("page"), req.getParameter("typeNumber"), req.getParameter("genre"),
+                    req.getParameter("startYear"), req.getParameter("endYear"),
+                    req.getParameter("minRating"), req.getParameter("maxRating"));
 
             int page = parseInteger(req.getParameter("page"), 1, 1, Integer.MAX_VALUE);
             int typeNumber = parseInteger(req.getParameter("typeNumber"), 0, 0, 5);
 
-            log.info("Parsed request parameters: page={}, typeNumber={}", page, typeNumber);
+            String genre = req.getParameter("genre");
+            Integer startYear = parseInteger(req.getParameter("startYear"), null, 1895, 2100);
+            Integer endYear = parseInteger(req.getParameter("endYear"), null, 1895, 2100);
+            Integer minRating = parseInteger(req.getParameter("minRating"), null, 1, 10);
+            Integer maxRating = parseInteger(req.getParameter("maxRating"), null, 1, 10);
 
-            List<MovieResponse> movies = movieService.getAllMovies(page, typeNumber);
+            log.info("Parsed request parameters: page={}, typeNumber={}, genre={}, startYear={}, endYear={}, minRating={}, maxRating={}",
+                    page, typeNumber, genre, startYear, endYear, minRating, maxRating);
+
+            List<MovieResponse> movies;
+            if (genre != null || startYear != null || endYear != null || minRating != null || maxRating != null) {
+                movies = movieService.getFilteredMovies(page, typeNumber, genre, startYear, endYear, minRating, maxRating);
+                log.info("Applied filters and fetched filtered movies.");
+            } else {
+                movies = movieService.getAllMovies(page, typeNumber);
+                log.info("No filters applied. Fetched all movies.");
+            }
             List<GenreResponse> genres = genreService.getAll();
 
             req.setAttribute("movies", movies);
             req.setAttribute("currentPage", page);
-            req.setAttribute("currentTypeNumber", typeNumber);
+            req.setAttribute("typeNumber", typeNumber);
             req.setAttribute("genres", genres);
 
             log.info("Movies fetched successfully. Forwarding to JSP.");

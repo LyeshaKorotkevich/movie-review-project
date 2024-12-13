@@ -27,11 +27,18 @@ public class MovieService {
     }
 
     public List<MovieResponse> getAllMovies() {
-        return movieRepository.findAll().stream().map(movieMapper::toSummaryResponse).toList();
+        return movieRepository.findAll()
+                .stream()
+                .map(movieMapper::toSummaryResponse)
+                .toList();
     }
 
     public List<MovieResponse> getAllMovies(int page, int typeNumber) {
-        List<MovieResponse> movies = movieRepository.findAll(page, typeNumber).stream().map(movieMapper::toSummaryResponse).toList();
+        List<MovieResponse> movies = movieRepository
+                .findAll(page, typeNumber)
+                .stream()
+                .map(movieMapper::toSummaryResponse)
+                .toList();
         if (!movies.isEmpty()) {
             log.info("Movies loaded from the database.");
             return movies;

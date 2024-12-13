@@ -67,7 +67,7 @@ public class ComplaintRepositoryImpl implements ComplaintRepository {
                 entityManager.remove(complaint);
                 log.info("Complaint deleted successfully with ID: {}", id);
             } else {
-                log.warn("Complaint with ID: {} not found for deletion", id);
+                log.error("Complaint with ID: {} not found for deletion", id);
             }
             return null;
         });

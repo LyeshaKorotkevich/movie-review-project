@@ -6,6 +6,7 @@ import eu.innowise.moviereviewproject.model.MovieType;
 import eu.innowise.moviereviewproject.repository.MovieRepository;
 import eu.innowise.moviereviewproject.utils.JpaUtil;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -80,15 +81,26 @@ public class MovieRepositoryImpl implements MovieRepository {
     public List<Movie> findAll(int page, int typeNumber) {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
             int firstResult = (page - 1) * MOVIE_PAGE_SIZE;
-            MovieType movieType = MovieType.fromTypeNumber(typeNumber);
-            return entityManager.createQuery("SELECT m FROM Movie m WHERE m.movieType = :movieType", Movie.class)
-                    .setParameter("movieType", movieType)
+
+            Optional<MovieType> optionalMovieType = MovieType.fromTypeNumber(typeNumber);
+
+            StringBuilder queryBuilder = new StringBuilder("SELECT m FROM Movie m");
+            if (optionalMovieType.isPresent()) {
+                queryBuilder.append(" WHERE m.movieType = :movieType");
+            }
+
+            TypedQuery<Movie> query = entityManager.createQuery(queryBuilder.toString(), Movie.class);
+
+            optionalMovieType.ifPresent(movieType -> query.setParameter("movieType", movieType));
+
+            return query
                     .setFirstResult(firstResult)
                     .setMaxResults(MOVIE_PAGE_SIZE)
                     .setHint("org.hibernate.cacheable", true)
                     .getResultList();
         }
     }
+
 
     @Override
     public List<Movie> findMoviesByPartialTitle(String query, int page) {
@@ -161,7 +173,7 @@ public class MovieRepositoryImpl implements MovieRepository {
                 entityManager.remove(movie);
                 log.info("Movie deleted successfully with ID: {}", id);
             } else {
-                log.warn("Movie with ID: {} not found for deletion", id);
+                log.error("Movie with ID: {} not found for deletion", id);
             }
             return null;
         });

@@ -24,7 +24,7 @@ public enum MovieType {
 
     private final int typeNumber;
 
-    public static MovieType fromTypeNumber(int typeNumber) {
-        return Optional.ofNullable(TYPE_MAP.get(typeNumber)).orElse(MOVIE);
+    public static Optional<MovieType> fromTypeNumber(int typeNumber) {
+        return Optional.ofNullable(TYPE_MAP.get(typeNumber));
     }
 }
