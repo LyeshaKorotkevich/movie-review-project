@@ -77,18 +77,14 @@ public class MovieDetailsServlet extends HttpServlet {
     private Map<String, List<PersonResponse>> filterAndLimitPersons(MovieResponse movie) {
         return movie.persons()
                 .stream()
-                .filter(person -> isValidName(person.name()) || isValidName(person.enName()))
+                .filter(person -> (!person.name().isBlank()) || !person.enName().isBlank())
                 .filter(person -> "актеры".equalsIgnoreCase(person.profession()) || "режиссеры".equalsIgnoreCase(person.profession()))
                 .collect(Collectors.groupingBy(
                         PersonResponse::profession,
                         Collectors.collectingAndThen(
                                 Collectors.toList(),
-                                list -> list.stream().limit(4).collect(Collectors.toList())
+                                list -> list.stream().limit(4).toList()
                         )
                 ));
-    }
-
-    private boolean isValidName(String name) {
-        return name != null && !name.trim().isEmpty() && !name.equals("null");
     }
 }

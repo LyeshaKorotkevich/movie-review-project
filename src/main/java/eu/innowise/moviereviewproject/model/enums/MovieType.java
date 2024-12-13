@@ -1,4 +1,4 @@
-package eu.innowise.moviereviewproject.model;
+package eu.innowise.moviereviewproject.model.enums;
 
 import lombok.RequiredArgsConstructor;
 

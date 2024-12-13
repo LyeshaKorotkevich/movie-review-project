@@ -1,5 +1,6 @@
 package eu.innowise.moviereviewproject.model;
 
+import eu.innowise.moviereviewproject.model.enums.ComplaintStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,13 +11,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Data
 @Entity
+@Getter
+@Setter
 public class Complaint {
 
     @Id

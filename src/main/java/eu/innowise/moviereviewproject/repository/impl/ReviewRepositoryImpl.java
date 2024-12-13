@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static eu.innowise.moviereviewproject.utils.Constants.REVIEW_PAGE_SIZE;
+import static eu.innowise.moviereviewproject.utils.Constants.SELECT_REVIEWS;
 
 @Slf4j
 public class ReviewRepositoryImpl implements ReviewRepository {
@@ -44,7 +45,7 @@ public class ReviewRepositoryImpl implements ReviewRepository {
     @Override
     public List<Review> findAll() {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            return entityManager.createQuery("SELECT r FROM Review r", Review.class).getResultList();
+            return entityManager.createQuery(SELECT_REVIEWS, Review.class).getResultList();
         } catch (Exception e) {
             log.error("Error occurred while fetching all review", e);
             throw new RuntimeException("Error occurred while fetching all reviews", e);
@@ -93,7 +94,7 @@ public class ReviewRepositoryImpl implements ReviewRepository {
                 entityManager.remove(review);
                 log.info("Review deleted successfully with ID: {}", id);
             } else {
-                log.warn("Review with ID: {} not found for deletion", id);
+                log.error("Review with ID: {} not found for deletion", id);
             }
             return null;
         });

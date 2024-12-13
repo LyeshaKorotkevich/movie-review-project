@@ -7,7 +7,7 @@ import eu.innowise.moviereviewproject.exceptions.user.UserAlreadyExistsException
 import eu.innowise.moviereviewproject.exceptions.user.UserNotFoundException;
 import eu.innowise.moviereviewproject.mapper.UserMapper;
 import eu.innowise.moviereviewproject.model.User;
-import eu.innowise.moviereviewproject.model.UserRole;
+import eu.innowise.moviereviewproject.model.enums.UserRole;
 import eu.innowise.moviereviewproject.repository.UserRepository;
 import eu.innowise.moviereviewproject.validator.DtoValidator;
 import org.mapstruct.factory.Mappers;

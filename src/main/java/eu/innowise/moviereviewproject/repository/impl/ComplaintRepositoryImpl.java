@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static eu.innowise.moviereviewproject.utils.Constants.SELECT_COMPLAINTS;
+import static eu.innowise.moviereviewproject.utils.Constants.SELECT_COMPLAINTS_BY_STATUS;
+
 @Slf4j
 public class ComplaintRepositoryImpl implements ComplaintRepository {
 
@@ -42,7 +45,7 @@ public class ComplaintRepositoryImpl implements ComplaintRepository {
     @Override
     public List<Complaint> findAll() {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            return entityManager.createQuery("SELECT c FROM Complaint c", Complaint.class).getResultList();
+            return entityManager.createQuery(SELECT_COMPLAINTS, Complaint.class).getResultList();
         } catch (Exception e) {
             log.error("Error occurred while fetching all complaints", e);
             throw new RuntimeException("Error occurred while fetching all complaints", e);
@@ -52,8 +55,7 @@ public class ComplaintRepositoryImpl implements ComplaintRepository {
     @Override
     public List<Complaint> findByStatus(String status) {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            String jpql = "SELECT c FROM Complaint c WHERE c.status = :status";
-            return entityManager.createQuery(jpql, Complaint.class)
+            return entityManager.createQuery(SELECT_COMPLAINTS_BY_STATUS, Complaint.class)
                     .setParameter("status", status)
                     .getResultList();
         }

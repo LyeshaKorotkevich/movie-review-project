@@ -8,10 +8,15 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.UUID;
 
+import static eu.innowise.moviereviewproject.utils.Constants.COMPLAINTS_URL;
+import static eu.innowise.moviereviewproject.utils.ServletsUtil.getComplaintRequest;
+
+@Slf4j
 @WebServlet("/make-complaint")
 public class MakeComplaintServlet extends HttpServlet {
 
@@ -25,16 +30,12 @@ public class MakeComplaintServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            UUID userId = UUID.fromString(req.getParameter("userId"));
-            UUID reviewId = UUID.fromString(req.getParameter("reviewId"));
-            String reason = req.getParameter("reason");
-
-            ComplaintRequest complaintRequest = new ComplaintRequest(userId, reviewId, reason);
+            ComplaintRequest complaintRequest = getComplaintRequest(req);
             complaintService.saveComplaint(complaintRequest);
 
-            resp.sendRedirect(req.getContextPath() + "/complaints");
+            resp.sendRedirect(req.getContextPath() + COMPLAINTS_URL);
         } catch (Exception e) {
-            req.setAttribute("error", "Error processing complaint: " + e.getMessage());
+            log.error("Error processing complaint: {}", e.getMessage());
             req.getRequestDispatcher("/WEB-INF/views/complaints.jsp").forward(req, resp);
         }
     }

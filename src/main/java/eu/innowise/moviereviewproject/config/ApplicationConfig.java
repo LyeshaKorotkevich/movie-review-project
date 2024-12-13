@@ -20,12 +20,11 @@ import eu.innowise.moviereviewproject.service.AuthenticationService;
 import eu.innowise.moviereviewproject.service.ComplaintService;
 import eu.innowise.moviereviewproject.service.GenreService;
 import eu.innowise.moviereviewproject.service.MovieService;
-import eu.innowise.moviereviewproject.service.recommendation.RecommendationEngine;
-import eu.innowise.moviereviewproject.service.recommendation.RecommendationService;
 import eu.innowise.moviereviewproject.service.ReviewService;
 import eu.innowise.moviereviewproject.service.UserService;
 import eu.innowise.moviereviewproject.service.WatchlistService;
-import eu.innowise.moviereviewproject.utils.CsvExporter;
+import eu.innowise.moviereviewproject.service.recommendation.RecommendationEngine;
+import eu.innowise.moviereviewproject.service.recommendation.RecommendationService;
 import lombok.Getter;
 
 import java.net.http.HttpClient;

@@ -1,5 +1,6 @@
 package eu.innowise.moviereviewproject.service;
 
+import eu.innowise.moviereviewproject.dto.request.MovieFilterRequest;
 import eu.innowise.moviereviewproject.dto.response.MovieResponse;
 import eu.innowise.moviereviewproject.exceptions.movie.MovieNotFoundException;
 import eu.innowise.moviereviewproject.mapper.MovieMapper;
@@ -66,16 +67,18 @@ public class MovieService {
     }
 
     public MovieResponse getMovieById(UUID id) {
-        return movieRepository.findById(id).map(movieMapper::toDetailedResponse)
+        return movieRepository
+                .findById(id)
+                .map(movieMapper::toDetailedResponse)
                 .orElseThrow(() -> new MovieNotFoundException("Movie with ID " + id + " not found"));
     }
 
-    public List<MovieResponse> getFilteredMovies(int page, Integer typeNumber, String genre, Integer startYear, Integer endYear, Integer minRating, Integer maxRating) {
-        log.info("Fetching filtered movies: page={}, typeNumber={}, genre={}, startYear={}, endYear={}, minRating={}, maxRating={}",
-                page, typeNumber, genre, startYear, endYear, minRating, maxRating);
-
-        return movieRepository.findFilteredMovies(page, typeNumber, genre, startYear, endYear, minRating, maxRating)
-                .stream().map(movieMapper::toSummaryResponse).toList();
+    public List<MovieResponse> getFilteredMovies(MovieFilterRequest movieFilterRequest) {
+        return movieRepository
+                .findFilteredMovies(movieFilterRequest)
+                .stream()
+                .map(movieMapper::toSummaryResponse)
+                .toList();
     }
 
     public void saveMovie(Movie movie) {

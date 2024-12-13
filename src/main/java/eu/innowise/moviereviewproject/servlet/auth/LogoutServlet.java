@@ -8,6 +8,9 @@ import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.util.Objects;
+
+import static eu.innowise.moviereviewproject.utils.Constants.MOVIES_URL;
 
 @Slf4j
 @WebServlet("/auth/logout")
@@ -17,12 +20,12 @@ public class LogoutServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
         HttpSession session = req.getSession(false);
 
-        if (session != null) {
+        if (Objects.nonNull(session)) {
             session.invalidate();
         }
 
         try {
-            resp.sendRedirect(req.getContextPath() + "/movies");
+            resp.sendRedirect(req.getContextPath() + MOVIES_URL);
         } catch (IOException e) {
             log.error("Error occurred while processing redirect", e);
         }

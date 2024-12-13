@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+import static eu.innowise.moviereviewproject.utils.Constants.MOVIES_URL;
 import static eu.innowise.moviereviewproject.utils.ServletsUtil.parseInteger;
 
 @Slf4j
@@ -35,10 +36,6 @@ public class WatchlistServlet extends HttpServlet {
 
         List<WatchlistResponse> watchlist = watchlistService.getUserWatchlist(page, currentUser.id());
 
-        for (WatchlistResponse watchlistResponse : watchlist) {
-            log.info("Watchlist response: {}", watchlistResponse.isWatched());
-        }
-
         req.setAttribute("page", page);
         req.setAttribute("watchlist", watchlist);
 
@@ -49,7 +46,6 @@ public class WatchlistServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         try {
             UserResponse currentUser = (UserResponse) req.getSession().getAttribute("user");
-
             UUID movieId = UUID.fromString(req.getParameter("movieId"));
 
             watchlistService.addMovieToWatchlist(currentUser.id(), movieId);
@@ -57,7 +53,7 @@ public class WatchlistServlet extends HttpServlet {
             res.sendRedirect(req.getContextPath() + "/movies/" + movieId);
         } catch (Exception e) {
             log.error("Error during adding movie to watchlist: {}", e.getMessage());
-            res.sendRedirect(req.getContextPath() + "/movies");
+            res.sendRedirect(req.getContextPath() + MOVIES_URL);
         }
     }
 }

@@ -12,6 +12,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static eu.innowise.moviereviewproject.utils.Constants.SELECT_USERS;
+import static eu.innowise.moviereviewproject.utils.Constants.SELECT_USER_BY_ID;
+import static eu.innowise.moviereviewproject.utils.Constants.SELECT_USER_BY_USERNAME;
+
 @Slf4j
 public class UserRepositoryImpl implements UserRepository {
 
@@ -42,8 +46,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<User> findById(UUID id) {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            String jpql = "SELECT u FROM User u WHERE u.id = :id";
-            User user = entityManager.createQuery(jpql, User.class)
+            User user = entityManager.createQuery(SELECT_USER_BY_ID, User.class)
                     .setParameter("id", id)
                     .getSingleResultOrNull();
             return Optional.ofNullable(user);
@@ -53,8 +56,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<User> findByUsername(String username) {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            String jpql = "SELECT u FROM User u WHERE u.username = :username";
-            User user = entityManager.createQuery(jpql, User.class)
+            User user = entityManager.createQuery(SELECT_USER_BY_USERNAME, User.class)
                     .setParameter("username", username)
                     .getSingleResultOrNull();
             return Optional.ofNullable(user);
@@ -64,7 +66,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public List<User> findAll() {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            return entityManager.createQuery("SELECT u FROM User u", User.class).getResultList();
+            return entityManager.createQuery(SELECT_USERS, User.class).getResultList();
         }
     }
 

@@ -11,6 +11,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Objects;
 
+import static eu.innowise.moviereviewproject.utils.Constants.AUTH_LOGIN_URL;
+
 @WebFilter("/admin/*")
 public class RoleCheckFilter extends HttpFilter {
 
@@ -19,8 +21,8 @@ public class RoleCheckFilter extends HttpFilter {
 
         UserResponse userResponse = (UserResponse) req.getSession().getAttribute("user");
 
-        if (userResponse == null || !Objects.equals(userResponse.userRole(), "ADMIN")) {
-            res.sendRedirect(req.getContextPath() + "/auth/login");
+        if (Objects.isNull(userResponse) || !Objects.equals(userResponse.userRole(), "ADMIN")) {
+            res.sendRedirect(req.getContextPath() + AUTH_LOGIN_URL);
             return;
         }
 

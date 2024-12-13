@@ -4,7 +4,6 @@ import eu.innowise.moviereviewproject.model.Watchlist;
 import eu.innowise.moviereviewproject.repository.WatchlistRepository;
 import eu.innowise.moviereviewproject.utils.JpaUtil;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;

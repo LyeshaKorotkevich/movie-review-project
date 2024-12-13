@@ -14,9 +14,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
-import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
+
+import static eu.innowise.moviereviewproject.utils.Constants.MOVIES_URL;
 
 @Slf4j
 @WebServlet("/auth/login")
@@ -47,12 +48,12 @@ public class LoginServlet extends HttpServlet {
             session.setAttribute("user", authenticatedUser);
 
             log.debug("Redirecting user {} to /movies", loginRequest.username());
-            resp.sendRedirect(req.getContextPath() + "/movies");
+            resp.sendRedirect(req.getContextPath() + MOVIES_URL);
         } catch (DtoValidationException e) {
             req.setAttribute("errors", e.getErrors());
             req.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(req, resp);
         } catch (UserNotFoundException | InvalidPasswordException e) {
-            log.warn("Authentication failed for user {}", loginRequest.username());
+            log.error("Authentication failed for user {}", loginRequest.username());
             req.setAttribute("userNotExists", "Неверный логин или пароль");
             req.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(req, resp);
         } catch (Exception e) {

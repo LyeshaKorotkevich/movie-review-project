@@ -30,7 +30,7 @@ public class RecommendationsServlet extends HttpServlet {
         try {
             UserResponse userResponse = (UserResponse) req.getSession().getAttribute("user");
             List<MovieResponse> recommendations = recommendationService.recommendForUser(userResponse);
-            log.info(String.valueOf(recommendations.size()));
+            log.debug(String.valueOf(recommendations.size()));
 
             req.setAttribute("recommendations", recommendations);
             req.getRequestDispatcher("/WEB-INF/views/recommendations.jsp").forward(req, resp);
