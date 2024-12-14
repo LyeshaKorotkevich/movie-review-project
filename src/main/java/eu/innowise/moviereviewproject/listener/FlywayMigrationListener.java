@@ -1,6 +1,6 @@
 package eu.innowise.moviereviewproject.listener;
 
-import eu.innowise.moviereviewproject.utils.FlywayMigrationUtil;
+import eu.innowise.moviereviewproject.utils.db.FlywayMigrationUtil;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;

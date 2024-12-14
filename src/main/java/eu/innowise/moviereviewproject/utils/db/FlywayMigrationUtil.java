@@ -1,4 +1,4 @@
-package eu.innowise.moviereviewproject.utils;
+package eu.innowise.moviereviewproject.utils.db;
 
 import lombok.extern.slf4j.Slf4j;
 import org.flywaydb.core.Flyway;

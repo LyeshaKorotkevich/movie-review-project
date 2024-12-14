@@ -1,6 +1,6 @@
 package eu.innowise.moviereviewproject.listener;
 
-import eu.innowise.moviereviewproject.utils.JpaUtil;
+import eu.innowise.moviereviewproject.utils.db.JpaUtil;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;

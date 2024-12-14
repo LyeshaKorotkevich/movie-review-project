@@ -5,6 +5,7 @@ import eu.innowise.moviereviewproject.dto.response.MovieResponse;
 import eu.innowise.moviereviewproject.exceptions.movie.MovieNotFoundException;
 import eu.innowise.moviereviewproject.mapper.MovieMapper;
 import eu.innowise.moviereviewproject.model.Movie;
+import eu.innowise.moviereviewproject.model.enums.MovieType;
 import eu.innowise.moviereviewproject.repository.MovieRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
@@ -35,8 +36,9 @@ public class MovieService {
     }
 
     public List<MovieResponse> getAllMovies(int page, int typeNumber) {
+        MovieType movieType = MovieType.fromTypeNumber(typeNumber).orElse(null);
         List<MovieResponse> movies = movieRepository
-                .findAll(page, typeNumber)
+                .findAll(page, movieType)
                 .stream()
                 .map(movieMapper::toSummaryResponse)
                 .toList();

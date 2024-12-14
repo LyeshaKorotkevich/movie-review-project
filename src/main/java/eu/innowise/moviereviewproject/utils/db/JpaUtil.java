@@ -1,4 +1,4 @@
-package eu.innowise.moviereviewproject.utils;
+package eu.innowise.moviereviewproject.utils.db;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;

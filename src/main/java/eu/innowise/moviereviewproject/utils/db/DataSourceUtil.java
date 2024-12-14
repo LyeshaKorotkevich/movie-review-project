@@ -1,4 +1,4 @@
-package eu.innowise.moviereviewproject.utils;
+package eu.innowise.moviereviewproject.utils.db;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;

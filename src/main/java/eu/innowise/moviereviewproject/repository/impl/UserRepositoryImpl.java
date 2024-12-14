@@ -3,7 +3,7 @@ package eu.innowise.moviereviewproject.repository.impl;
 import eu.innowise.moviereviewproject.exceptions.user.UserAlreadyExistsException;
 import eu.innowise.moviereviewproject.model.User;
 import eu.innowise.moviereviewproject.repository.UserRepository;
-import eu.innowise.moviereviewproject.utils.JpaUtil;
+import eu.innowise.moviereviewproject.utils.db.JpaUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceException;
 import lombok.extern.slf4j.Slf4j;

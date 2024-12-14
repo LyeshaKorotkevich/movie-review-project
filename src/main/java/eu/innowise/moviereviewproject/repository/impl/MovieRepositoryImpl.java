@@ -5,7 +5,8 @@ import eu.innowise.moviereviewproject.model.Genre;
 import eu.innowise.moviereviewproject.model.Movie;
 import eu.innowise.moviereviewproject.model.enums.MovieType;
 import eu.innowise.moviereviewproject.repository.MovieRepository;
-import eu.innowise.moviereviewproject.utils.JpaUtil;
+import eu.innowise.moviereviewproject.utils.FilterPredicate;
+import eu.innowise.moviereviewproject.utils.db.JpaUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -16,8 +17,8 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -79,20 +80,21 @@ public class MovieRepositoryImpl implements MovieRepository {
     }
 
     @Override
-    public List<Movie> findAll(int page, int typeNumber) {
+    public List<Movie> findAll(int page, MovieType movieType) {
         try (EntityManager entityManager = JpaUtil.getEntityManager()) {
             int firstResult = (page - 1) * MOVIE_PAGE_SIZE;
 
-            Optional<MovieType> optionalMovieType = MovieType.fromTypeNumber(typeNumber);
 
             StringBuilder queryBuilder = new StringBuilder("SELECT m FROM Movie m");
-            if (optionalMovieType.isPresent()) {
+            if (Objects.nonNull(movieType)) {
                 queryBuilder.append(" WHERE m.movieType = :movieType");
             }
 
             TypedQuery<Movie> query = entityManager.createQuery(queryBuilder.toString(), Movie.class);
 
-            optionalMovieType.ifPresent(movieType -> query.setParameter("movieType", movieType));
+            if (Objects.nonNull(movieType)) {
+                query.setParameter("movieType", movieType);
+            }
 
             return query
                     .setFirstResult(firstResult)
@@ -122,32 +124,25 @@ public class MovieRepositoryImpl implements MovieRepository {
             CriteriaBuilder cb = entityManager.getCriteriaBuilder();
             CriteriaQuery<Movie> cq = cb.createQuery(Movie.class);
             Root<Movie> movie = cq.from(Movie.class);
-
             Join<Movie, Genre> genreJoin = movie.join("genres", JoinType.LEFT);
 
-            List<Predicate> predicates = new ArrayList<>();
+            MovieType movieType = MovieType.fromTypeNumber(filterRequest.typeNumber()).orElse(null);
 
-            if ( filterRequest.genre() != null && !filterRequest.genre().isEmpty()) {
-                predicates.add(cb.equal(genreJoin.get("name"), filterRequest.genre()));
-            }
-            if (filterRequest.typeNumber() != null && filterRequest.typeNumber() != 0) {
-                predicates.add(cb.equal(movie.get("movieType"), MovieType.fromTypeNumber(filterRequest.typeNumber())));
-            }
-            if (filterRequest.startYear() != null) {
-                predicates.add(cb.greaterThanOrEqualTo(movie.get("releaseYear"), filterRequest.startYear()));
-            }
-            if (filterRequest.endYear() != null) {
-                predicates.add(cb.lessThanOrEqualTo(movie.get("releaseYear"), filterRequest.endYear()));
-            }
-            if (filterRequest.minRating() != null) {
-                predicates.add(cb.greaterThanOrEqualTo(movie.get("rating"), filterRequest.minRating()));
-            }
-            if (filterRequest.maxRating() != null) {
-                predicates.add(cb.lessThanOrEqualTo(movie.get("rating"), filterRequest.maxRating()));
-            }
+            Predicate predicate = FilterPredicate.builder()
+                    .add(filterRequest.genre(), genre -> cb.equal(genreJoin.get("name"), genre))
+                    .add(movieType, type ->
+                            cb.equal(movie.get("movieType"), type))
+                    .add(filterRequest.startYear(), startYear ->
+                            cb.greaterThanOrEqualTo(movie.get("releaseYear"), startYear))
+                    .add(filterRequest.endYear(), endYear ->
+                            cb.lessThanOrEqualTo(movie.get("releaseYear"), endYear))
+                    .add(filterRequest.minRating(), minRating ->
+                            cb.greaterThanOrEqualTo(movie.get("rating"), minRating))
+                    .add(filterRequest.maxRating(), maxRating ->
+                            cb.lessThanOrEqualTo(movie.get("rating"), maxRating))
+                    .buildAnd(cb);
 
-            cq.select(movie).distinct(true).where(predicates.toArray(new Predicate[0]));
-
+            cq.select(movie).distinct(true).where(predicate);
             TypedQuery<Movie> query = entityManager.createQuery(cq);
 
             query.setFirstResult((filterRequest.page() - 1) * MOVIE_PAGE_SIZE);

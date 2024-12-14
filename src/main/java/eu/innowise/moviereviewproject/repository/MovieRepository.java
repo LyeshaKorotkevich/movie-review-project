@@ -2,6 +2,7 @@ package eu.innowise.moviereviewproject.repository;
 
 import eu.innowise.moviereviewproject.dto.request.MovieFilterRequest;
 import eu.innowise.moviereviewproject.model.Movie;
+import eu.innowise.moviereviewproject.model.enums.MovieType;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +12,7 @@ public interface MovieRepository extends CrudRepository<Movie, UUID> {
 
     boolean existsByExternalId(Long externalId);
 
-    List<Movie> findAll(int page, int typeNumber);
+    List<Movie> findAll(int page, MovieType movieType);
 
     List<Movie> findMoviesByPartialTitle(String query, int page);
 

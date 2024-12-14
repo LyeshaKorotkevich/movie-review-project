@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 
 import static eu.innowise.moviereviewproject.utils.ServletsUtil.getMovieFilterRequest;
-import static eu.innowise.moviereviewproject.utils.ServletsUtil.parseInteger;
 
 @Slf4j
 @WebServlet("/movies")

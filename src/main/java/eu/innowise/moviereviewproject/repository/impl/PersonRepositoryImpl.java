@@ -2,7 +2,7 @@ package eu.innowise.moviereviewproject.repository.impl;
 
 import eu.innowise.moviereviewproject.model.Person;
 import eu.innowise.moviereviewproject.repository.PersonRepository;
-import eu.innowise.moviereviewproject.utils.JpaUtil;
+import eu.innowise.moviereviewproject.utils.db.JpaUtil;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 

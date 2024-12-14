@@ -1,6 +1,6 @@
 package eu.innowise.moviereviewproject.repository;
 
-import eu.innowise.moviereviewproject.utils.JpaUtil;
+import eu.innowise.moviereviewproject.utils.db.JpaUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 
