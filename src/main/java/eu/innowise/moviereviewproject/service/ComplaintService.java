@@ -44,6 +44,7 @@ public class ComplaintService {
         Complaint complaint = complaintMapper.toComplaint(complaintRequest);
         complaint.setUser(user);
         complaint.setReview(review);
+        complaint.setStatus(ComplaintStatus.IN_PROGRESS);
         complaintRepository.save(complaint);
 
         log.info("Complaint saved successfully.");

@@ -27,11 +27,11 @@ public final class ServletsUtil {
     }
 
     public static ComplaintRequest getComplaintRequest(HttpServletRequest req) {
-        UUID userId = UUID.fromString(req.getParameter("userId"));
+        UUID userId = ((UserResponse) req.getSession().getAttribute("user")).id();
         UUID reviewId = UUID.fromString(req.getParameter("reviewId"));
         String reason = req.getParameter("reason");
-
-        return new ComplaintRequest(userId, reviewId, reason);
+        UUID movieId = UUID.fromString(req.getParameter("movieId"));
+        return new ComplaintRequest(userId, reviewId, reason, movieId);
     }
 
     public static ReviewRequest getReviewRequest(HttpServletRequest req) {

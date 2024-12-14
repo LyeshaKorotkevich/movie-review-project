@@ -3,6 +3,7 @@ package eu.innowise.moviereviewproject.servlet.complaint;
 import eu.innowise.moviereviewproject.config.ApplicationConfig;
 import eu.innowise.moviereviewproject.dto.request.ComplaintRequest;
 import eu.innowise.moviereviewproject.service.ComplaintService;
+import eu.innowise.moviereviewproject.service.ReviewService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -31,12 +32,12 @@ public class MakeComplaintServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             ComplaintRequest complaintRequest = getComplaintRequest(req);
+            log.info(complaintRequest.toString());
             complaintService.saveComplaint(complaintRequest);
 
-            resp.sendRedirect(req.getContextPath() + COMPLAINTS_URL);
+            resp.sendRedirect(req.getContextPath() + "/movies/" + complaintRequest.movieId());
         } catch (Exception e) {
             log.error("Error processing complaint: {}", e.getMessage());
-            req.getRequestDispatcher("/WEB-INF/views/complaints.jsp").forward(req, resp);
         }
     }
 }

@@ -194,6 +194,7 @@
                                 <textarea class="form-control" id="complaintReason-<%= review.id() %>" name="reason" rows="4" placeholder="Опишите причину жалобы..." required></textarea>
                             </div>
                             <input type="hidden" name="reviewId" value="<%= review.id() %>">
+                            <input type="hidden" name="movieId" value="<%= movie.id() %>">
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>

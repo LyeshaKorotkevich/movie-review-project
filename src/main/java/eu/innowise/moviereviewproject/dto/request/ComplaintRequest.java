@@ -5,6 +5,7 @@ import java.util.UUID;
 public record ComplaintRequest(
         UUID userId,
         UUID reviewId,
-        String reason
+        String reason,
+        UUID movieId
 ) {
 }
