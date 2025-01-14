@@ -4,6 +4,8 @@ import eu.innowise.moviereviewproject.model.Person;
 import eu.innowise.moviereviewproject.repository.PersonRepository;
 import eu.innowise.moviereviewproject.utils.db.JpaUtil;
 import jakarta.persistence.EntityManager;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -11,7 +13,16 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PersonRepositoryImpl implements PersonRepository {
+
+    private static class SingletonHelper {
+        private static final PersonRepositoryImpl INSTANCE = new PersonRepositoryImpl();
+    }
+
+    public static PersonRepositoryImpl getInstance() {
+        return PersonRepositoryImpl.SingletonHelper.INSTANCE;
+    }
 
     @Override
     public Person save(Person entity) {

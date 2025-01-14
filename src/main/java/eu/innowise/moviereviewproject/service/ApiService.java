@@ -11,6 +11,9 @@ import eu.innowise.moviereviewproject.model.enums.MovieType;
 import eu.innowise.moviereviewproject.repository.GenreRepository;
 import eu.innowise.moviereviewproject.repository.MovieRepository;
 import eu.innowise.moviereviewproject.repository.PersonRepository;
+import eu.innowise.moviereviewproject.repository.impl.GenreRepositoryImpl;
+import eu.innowise.moviereviewproject.repository.impl.MovieRepositoryImpl;
+import eu.innowise.moviereviewproject.repository.impl.PersonRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 
@@ -39,13 +42,27 @@ public class ApiService {
     private final GenreRepository genreRepository;
     private final MovieMapper movieMapper;
 
-    public ApiService(HttpClient httpClient, ObjectMapper objectMapper, MovieRepository movieRepository, PersonRepository personRepository, GenreRepository genreRepository) {
+    private ApiService(HttpClient httpClient, ObjectMapper objectMapper, MovieRepository movieRepository, PersonRepository personRepository, GenreRepository genreRepository) {
         this.httpClient = httpClient;
         this.objectMapper = objectMapper;
         this.movieRepository = movieRepository;
         this.personRepository = personRepository;
         this.genreRepository = genreRepository;
         this.movieMapper = Mappers.getMapper(MovieMapper.class);
+    }
+
+    private static class SingletonHelper {
+        private static final ApiService INSTANCE = new ApiService(
+                HttpClient.newHttpClient(),
+                new ObjectMapper(),
+                MovieRepositoryImpl.getInstance(),
+                PersonRepositoryImpl.getInstance(),
+                GenreRepositoryImpl.getInstance()
+        );
+    }
+
+    public static ApiService getInstance() {
+        return SingletonHelper.INSTANCE;
     }
 
     public List<MovieResponse> fetchMoviesFromApi(int page, int typeNumber) throws Exception {

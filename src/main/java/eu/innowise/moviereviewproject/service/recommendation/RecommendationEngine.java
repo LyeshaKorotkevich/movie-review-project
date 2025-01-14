@@ -1,6 +1,8 @@
 package eu.innowise.moviereviewproject.service.recommendation;
 
 import eu.innowise.moviereviewproject.utils.Constants;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.mahout.cf.taste.impl.model.file.FileDataModel;
 import org.apache.mahout.cf.taste.impl.neighborhood.ThresholdUserNeighborhood;
 import org.apache.mahout.cf.taste.impl.recommender.GenericUserBasedRecommender;
@@ -14,7 +16,16 @@ import org.apache.mahout.cf.taste.similarity.UserSimilarity;
 import java.io.File;
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RecommendationEngine {
+
+    private static class SingletonHelper {
+        private static final RecommendationEngine INSTANCE = new RecommendationEngine();
+    }
+
+    public static RecommendationEngine getInstance() {
+        return SingletonHelper.INSTANCE;
+    }
 
     public List<RecommendedItem> getRecommendations(long userId, int numberOfRecommendations) {
         try {

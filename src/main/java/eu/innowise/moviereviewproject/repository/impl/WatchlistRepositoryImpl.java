@@ -4,6 +4,8 @@ import eu.innowise.moviereviewproject.model.Watchlist;
 import eu.innowise.moviereviewproject.repository.WatchlistRepository;
 import eu.innowise.moviereviewproject.utils.db.JpaUtil;
 import jakarta.persistence.EntityManager;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -13,7 +15,16 @@ import java.util.UUID;
 import static eu.innowise.moviereviewproject.utils.Constants.WATCHLIST_PAGE_SIZE;
 
 @Slf4j
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class WatchlistRepositoryImpl implements WatchlistRepository {
+
+    private static class SingletonHelper {
+        private static final WatchlistRepositoryImpl INSTANCE = new WatchlistRepositoryImpl();
+    }
+
+    public static WatchlistRepositoryImpl getInstance() {
+        return SingletonHelper.INSTANCE;
+    }
 
     @Override
     public Watchlist save(Watchlist entity) {

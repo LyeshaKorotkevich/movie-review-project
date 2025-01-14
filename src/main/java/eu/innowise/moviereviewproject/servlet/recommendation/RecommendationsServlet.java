@@ -1,6 +1,5 @@
 package eu.innowise.moviereviewproject.servlet.recommendation;
 
-import eu.innowise.moviereviewproject.config.ApplicationConfig;
 import eu.innowise.moviereviewproject.dto.response.MovieResponse;
 import eu.innowise.moviereviewproject.dto.response.UserResponse;
 import eu.innowise.moviereviewproject.service.recommendation.RecommendationService;
@@ -22,7 +21,7 @@ public class RecommendationsServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        this.recommendationService = ApplicationConfig.getRecommendationService();
+        this.recommendationService = RecommendationService.getInstance();
     }
 
     @Override

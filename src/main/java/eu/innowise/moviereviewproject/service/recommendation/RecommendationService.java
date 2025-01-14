@@ -10,6 +10,9 @@ import eu.innowise.moviereviewproject.model.User;
 import eu.innowise.moviereviewproject.repository.MovieRepository;
 import eu.innowise.moviereviewproject.repository.ReviewRepository;
 import eu.innowise.moviereviewproject.repository.UserRepository;
+import eu.innowise.moviereviewproject.repository.impl.MovieRepositoryImpl;
+import eu.innowise.moviereviewproject.repository.impl.ReviewRepositoryImpl;
+import eu.innowise.moviereviewproject.repository.impl.UserRepositoryImpl;
 import eu.innowise.moviereviewproject.utils.Constants;
 import eu.innowise.moviereviewproject.utils.CsvExporter;
 import lombok.extern.slf4j.Slf4j;
@@ -34,13 +37,26 @@ public class RecommendationService {
 
     private boolean isCsvUpdated = false;
 
-    public RecommendationService(MovieRepository movieRepository, UserRepository userRepository, ReviewRepository reviewRepository,
+    private RecommendationService(MovieRepository movieRepository, UserRepository userRepository, ReviewRepository reviewRepository,
                                  RecommendationEngine recommendationEngine) {
         this.movieRepository = movieRepository;
         this.userRepository = userRepository;
         this.reviewRepository = reviewRepository;
         this.recommendationEngine = recommendationEngine;
         this.movieMapper = Mappers.getMapper(MovieMapper.class);
+    }
+
+    private static class SingletonHelper {
+        private static final RecommendationService INSTANCE = new RecommendationService(
+                MovieRepositoryImpl.getInstance(),
+                UserRepositoryImpl.getInstance(),
+                ReviewRepositoryImpl.getInstance(),
+                RecommendationEngine.getInstance()
+        );
+    }
+
+    public static RecommendationService getInstance() {
+        return SingletonHelper.INSTANCE;
     }
 
     public List<MovieResponse> recommendForUser(UserResponse userResponse) {

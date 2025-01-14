@@ -7,6 +7,7 @@ import eu.innowise.moviereviewproject.mapper.MovieMapper;
 import eu.innowise.moviereviewproject.model.Movie;
 import eu.innowise.moviereviewproject.model.enums.MovieType;
 import eu.innowise.moviereviewproject.repository.MovieRepository;
+import eu.innowise.moviereviewproject.repository.impl.MovieRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 
@@ -22,10 +23,21 @@ public class MovieService {
     private final ApiService apiService;
     private final MovieMapper movieMapper;
 
-    public MovieService(MovieRepository movieRepository, ApiService apiService) {
+    private MovieService(MovieRepository movieRepository, ApiService apiService) {
         this.movieRepository = movieRepository;
         this.apiService = apiService;
         this.movieMapper = Mappers.getMapper(MovieMapper.class);
+    }
+
+    private static class SingletonHelper {
+        private static final MovieService INSTANCE = new MovieService(
+                MovieRepositoryImpl.getInstance(),
+                ApiService.getInstance()
+        );
+    }
+
+    public static MovieService getInstance() {
+        return SingletonHelper.INSTANCE;
     }
 
     public List<MovieResponse> getAllMovies() {

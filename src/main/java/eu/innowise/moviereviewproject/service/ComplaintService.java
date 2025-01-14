@@ -13,6 +13,9 @@ import eu.innowise.moviereviewproject.model.enums.ComplaintStatus;
 import eu.innowise.moviereviewproject.repository.ComplaintRepository;
 import eu.innowise.moviereviewproject.repository.ReviewRepository;
 import eu.innowise.moviereviewproject.repository.UserRepository;
+import eu.innowise.moviereviewproject.repository.impl.ComplaintRepositoryImpl;
+import eu.innowise.moviereviewproject.repository.impl.ReviewRepositoryImpl;
+import eu.innowise.moviereviewproject.repository.impl.UserRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 
@@ -27,11 +30,23 @@ public class ComplaintService {
     private final ReviewRepository reviewRepository;
     private final ComplaintMapper complaintMapper;
 
-    public ComplaintService(ComplaintRepository complaintRepository, UserRepository userRepository, ReviewRepository reviewRepository) {
+    private ComplaintService(ComplaintRepository complaintRepository, UserRepository userRepository, ReviewRepository reviewRepository) {
         this.complaintRepository = complaintRepository;
         this.userRepository = userRepository;
         this.reviewRepository = reviewRepository;
         this.complaintMapper = Mappers.getMapper(ComplaintMapper.class);
+    }
+
+    private static class SingletonHelper {
+        private static final ComplaintService INSTANCE = new ComplaintService(
+                ComplaintRepositoryImpl.getInstance(),
+                UserRepositoryImpl.getInstance(),
+                ReviewRepositoryImpl.getInstance()
+        );
+    }
+
+    public static ComplaintService getInstance() {
+        return SingletonHelper.INSTANCE;
     }
 
     public void saveComplaint(ComplaintRequest complaintRequest) {

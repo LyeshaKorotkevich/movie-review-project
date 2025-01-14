@@ -15,6 +15,8 @@ import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -25,7 +27,16 @@ import java.util.UUID;
 import static eu.innowise.moviereviewproject.utils.Constants.MOVIE_PAGE_SIZE;
 
 @Slf4j
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MovieRepositoryImpl implements MovieRepository {
+
+    private static class SingletonHelper {
+        private static final MovieRepositoryImpl INSTANCE = new MovieRepositoryImpl();
+    }
+
+    public static MovieRepositoryImpl getInstance() {
+        return SingletonHelper.INSTANCE;
+    }
 
     @Override
     public Movie save(Movie movie) {

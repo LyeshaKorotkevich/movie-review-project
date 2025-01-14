@@ -1,6 +1,5 @@
 package eu.innowise.moviereviewproject.servlet.movie;
 
-import eu.innowise.moviereviewproject.config.ApplicationConfig;
 import eu.innowise.moviereviewproject.dto.response.MovieResponse;
 import eu.innowise.moviereviewproject.dto.response.PersonResponse;
 import eu.innowise.moviereviewproject.dto.response.ReviewResponse;
@@ -33,9 +32,9 @@ public class MovieDetailsServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        this.movieService = ApplicationConfig.getMovieService();
-        this.reviewService = ApplicationConfig.getReviewService();
-        this.watchlistService = ApplicationConfig.getWatchlistService();
+        this.movieService = MovieService.getInstance();
+        this.reviewService = ReviewService.getInstance();
+        this.watchlistService = WatchlistService.getInstance();
     }
 
     @Override

@@ -6,6 +6,8 @@ import eu.innowise.moviereviewproject.repository.UserRepository;
 import eu.innowise.moviereviewproject.utils.db.JpaUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceException;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -17,7 +19,16 @@ import static eu.innowise.moviereviewproject.utils.Constants.SELECT_USER_BY_ID;
 import static eu.innowise.moviereviewproject.utils.Constants.SELECT_USER_BY_USERNAME;
 
 @Slf4j
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserRepositoryImpl implements UserRepository {
+
+    private static class SingletonHelper {
+        private static final UserRepositoryImpl INSTANCE = new UserRepositoryImpl();
+    }
+
+    public static UserRepositoryImpl getInstance() {
+        return SingletonHelper.INSTANCE;
+    }
 
     @Override
     public User save(User entity) {

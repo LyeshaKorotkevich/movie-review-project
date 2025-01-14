@@ -1,6 +1,5 @@
 package eu.innowise.moviereviewproject.servlet.admin.complaint;
 
-import eu.innowise.moviereviewproject.config.ApplicationConfig;
 import eu.innowise.moviereviewproject.service.ComplaintService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -17,7 +16,7 @@ public class ComplaintServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        complaintService = ApplicationConfig.getComplaintService();
+        complaintService = ComplaintService.getInstance();
     }
 
     @Override

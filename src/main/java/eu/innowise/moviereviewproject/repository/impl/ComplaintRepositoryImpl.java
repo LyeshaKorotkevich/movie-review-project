@@ -4,6 +4,8 @@ import eu.innowise.moviereviewproject.model.Complaint;
 import eu.innowise.moviereviewproject.repository.ComplaintRepository;
 import eu.innowise.moviereviewproject.utils.db.JpaUtil;
 import jakarta.persistence.EntityManager;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -14,7 +16,16 @@ import static eu.innowise.moviereviewproject.utils.Constants.SELECT_COMPLAINTS;
 import static eu.innowise.moviereviewproject.utils.Constants.SELECT_COMPLAINTS_BY_STATUS;
 
 @Slf4j
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ComplaintRepositoryImpl implements ComplaintRepository {
+
+    private static class SingletonHelper {
+        private static final ComplaintRepositoryImpl INSTANCE = new ComplaintRepositoryImpl();
+    }
+
+    public static ComplaintRepositoryImpl getInstance() {
+        return SingletonHelper.INSTANCE;
+    }
 
     @Override
     public Complaint save(Complaint entity) {

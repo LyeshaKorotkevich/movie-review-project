@@ -4,6 +4,8 @@ import eu.innowise.moviereviewproject.model.Genre;
 import eu.innowise.moviereviewproject.repository.GenreRepository;
 import eu.innowise.moviereviewproject.utils.db.JpaUtil;
 import jakarta.persistence.EntityManager;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -13,7 +15,16 @@ import static eu.innowise.moviereviewproject.utils.Constants.SELECT_GENRES;
 import static eu.innowise.moviereviewproject.utils.Constants.SELECT_GENRES_BY_NAME;
 
 @Slf4j
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GenreRepositoryImpl implements GenreRepository {
+
+    private static class SingletonHelper {
+        private static final GenreRepositoryImpl INSTANCE = new GenreRepositoryImpl();
+    }
+
+    public static GenreRepositoryImpl getInstance() {
+        return SingletonHelper.INSTANCE;
+    }
 
     @Override
     public Genre save(Genre genre) {

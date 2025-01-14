@@ -1,6 +1,5 @@
 package eu.innowise.moviereviewproject.servlet.watchlist;
 
-import eu.innowise.moviereviewproject.config.ApplicationConfig;
 import eu.innowise.moviereviewproject.dto.response.UserResponse;
 import eu.innowise.moviereviewproject.service.WatchlistService;
 import jakarta.servlet.ServletException;
@@ -23,7 +22,7 @@ public class RemoveFromWatchlistServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        this.watchlistService = ApplicationConfig.getWatchlistService();
+        this.watchlistService = WatchlistService.getInstance();
     }
 
     @Override

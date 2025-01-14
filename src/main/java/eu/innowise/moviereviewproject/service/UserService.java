@@ -9,6 +9,7 @@ import eu.innowise.moviereviewproject.mapper.UserMapper;
 import eu.innowise.moviereviewproject.model.User;
 import eu.innowise.moviereviewproject.model.enums.UserRole;
 import eu.innowise.moviereviewproject.repository.UserRepository;
+import eu.innowise.moviereviewproject.repository.impl.UserRepositoryImpl;
 import eu.innowise.moviereviewproject.validator.DtoValidator;
 import org.mapstruct.factory.Mappers;
 import org.mindrot.jbcrypt.BCrypt;
@@ -19,12 +20,21 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
-
     private final UserMapper userMapper;
 
-    public UserService(UserRepository userRepository) {
+    private UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
         this.userMapper = Mappers.getMapper(UserMapper.class);
+    }
+
+    private static class SingletonHelper {
+        private static final UserService INSTANCE = new UserService(
+                UserRepositoryImpl.getInstance()
+        );
+    }
+
+    public static UserService getInstance() {
+        return SingletonHelper.INSTANCE;
     }
 
     public List<User> getAllUsers() {

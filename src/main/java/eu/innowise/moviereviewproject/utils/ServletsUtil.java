@@ -5,7 +5,6 @@ import eu.innowise.moviereviewproject.dto.request.MovieFilterRequest;
 import eu.innowise.moviereviewproject.dto.request.RegistrationRequest;
 import eu.innowise.moviereviewproject.dto.request.ReviewRequest;
 import eu.innowise.moviereviewproject.dto.response.UserResponse;
-import eu.innowise.moviereviewproject.model.enums.MovieType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;

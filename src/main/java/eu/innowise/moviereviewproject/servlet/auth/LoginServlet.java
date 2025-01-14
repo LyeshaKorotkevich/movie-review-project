@@ -1,6 +1,5 @@
 package eu.innowise.moviereviewproject.servlet.auth;
 
-import eu.innowise.moviereviewproject.config.ApplicationConfig;
 import eu.innowise.moviereviewproject.dto.request.LoginRequest;
 import eu.innowise.moviereviewproject.dto.response.UserResponse;
 import eu.innowise.moviereviewproject.exceptions.DtoValidationException;
@@ -27,7 +26,7 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        this.authenticationService = ApplicationConfig.getAuthenticationService();
+        this.authenticationService = AuthenticationService.getInstance();
     }
 
     @Override

@@ -11,6 +11,9 @@ import eu.innowise.moviereviewproject.model.Watchlist;
 import eu.innowise.moviereviewproject.repository.MovieRepository;
 import eu.innowise.moviereviewproject.repository.UserRepository;
 import eu.innowise.moviereviewproject.repository.WatchlistRepository;
+import eu.innowise.moviereviewproject.repository.impl.MovieRepositoryImpl;
+import eu.innowise.moviereviewproject.repository.impl.UserRepositoryImpl;
+import eu.innowise.moviereviewproject.repository.impl.WatchlistRepositoryImpl;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
@@ -23,11 +26,23 @@ public class WatchlistService {
     private final MovieRepository movieRepository;
     private final WatchlistMapper watchlistMapper;
 
-    public WatchlistService(WatchlistRepository watchlistRepository, UserRepository userRepository, MovieRepository movieRepository) {
+    private WatchlistService(WatchlistRepository watchlistRepository, UserRepository userRepository, MovieRepository movieRepository) {
         this.watchlistRepository = watchlistRepository;
         this.userRepository = userRepository;
         this.movieRepository = movieRepository;
         this.watchlistMapper = Mappers.getMapper(WatchlistMapper.class);
+    }
+
+    private static class SingletonHelper {
+        private static final WatchlistService INSTANCE = new WatchlistService(
+                WatchlistRepositoryImpl.getInstance(),
+                UserRepositoryImpl.getInstance(),
+                MovieRepositoryImpl.getInstance()
+        );
+    }
+
+    public static WatchlistService getInstance() {
+        return SingletonHelper.INSTANCE;
     }
 
     public void addMovieToWatchlist(UUID userId, UUID movieId) {

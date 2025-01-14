@@ -1,6 +1,5 @@
 package eu.innowise.moviereviewproject.servlet.auth;
 
-import eu.innowise.moviereviewproject.config.ApplicationConfig;
 import eu.innowise.moviereviewproject.dto.request.RegistrationRequest;
 import eu.innowise.moviereviewproject.exceptions.DtoValidationException;
 import eu.innowise.moviereviewproject.exceptions.user.UserAlreadyExistsException;
@@ -23,7 +22,7 @@ public class RegistrationServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        this.userService = ApplicationConfig.getUserService();
+        this.userService = UserService.getInstance();
     }
 
     @Override
