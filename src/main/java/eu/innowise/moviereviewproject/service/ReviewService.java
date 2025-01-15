@@ -2,8 +2,7 @@ package eu.innowise.moviereviewproject.service;
 
 import eu.innowise.moviereviewproject.dto.request.ReviewRequest;
 import eu.innowise.moviereviewproject.dto.response.ReviewResponse;
-import eu.innowise.moviereviewproject.exceptions.movie.MovieNotFoundException;
-import eu.innowise.moviereviewproject.exceptions.user.UserNotFoundException;
+import eu.innowise.moviereviewproject.exceptions.EntityNotFoundException;
 import eu.innowise.moviereviewproject.mapper.ReviewMapper;
 import eu.innowise.moviereviewproject.model.Movie;
 import eu.innowise.moviereviewproject.model.Review;
@@ -19,6 +18,9 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 import java.util.UUID;
+
+import static eu.innowise.moviereviewproject.utils.Constants.MOVIE_NOT_FOUND_BY_ID;
+import static eu.innowise.moviereviewproject.utils.Constants.USER_NOT_FOUND_BY_ID;
 
 @Slf4j
 public class ReviewService {
@@ -49,8 +51,10 @@ public class ReviewService {
     }
 
     public void saveReview(ReviewRequest reviewRequest) {
-        User user = userRepository.findById(reviewRequest.userId()).orElseThrow(() -> new UserNotFoundException("User not found"));
-        Movie movie = movieRepository.findById(reviewRequest.movieId()).orElseThrow(() -> new MovieNotFoundException("Movie not found"));
+        User user = userRepository.findById(reviewRequest.userId())
+                .orElseThrow(() -> new EntityNotFoundException(String.format(USER_NOT_FOUND_BY_ID, reviewRequest.userId())));
+        Movie movie = movieRepository.findById(reviewRequest.movieId())
+                .orElseThrow(() -> new EntityNotFoundException(String.format(MOVIE_NOT_FOUND_BY_ID, reviewRequest.movieId())));
 
         Review review = reviewMapper.toReview(reviewRequest);
         review.setUser(user);
@@ -74,8 +78,10 @@ public class ReviewService {
     }
 
     public void updateReview(ReviewRequest reviewRequest, UUID reviewId) {
-        User user = userRepository.findById(reviewRequest.userId()).orElseThrow(() -> new UserNotFoundException("User not found"));
-        Movie movie = movieRepository.findById(reviewRequest.movieId()).orElseThrow(() -> new MovieNotFoundException("Movie not found"));
+        User user = userRepository.findById(reviewRequest.userId())
+                .orElseThrow(() -> new EntityNotFoundException(String.format(USER_NOT_FOUND_BY_ID, reviewRequest.userId())));
+        Movie movie = movieRepository.findById(reviewRequest.movieId())
+                .orElseThrow(() -> new EntityNotFoundException(String.format(MOVIE_NOT_FOUND_BY_ID, reviewRequest.movieId())));
 
         Review review = reviewMapper.toReview(reviewRequest);
         review.setId(reviewId);

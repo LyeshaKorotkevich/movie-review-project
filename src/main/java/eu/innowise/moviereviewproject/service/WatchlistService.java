@@ -1,9 +1,8 @@
 package eu.innowise.moviereviewproject.service;
 
 import eu.innowise.moviereviewproject.dto.response.WatchlistResponse;
+import eu.innowise.moviereviewproject.exceptions.EntityNotFoundException;
 import eu.innowise.moviereviewproject.exceptions.movie.MovieAlreadyInWatchlist;
-import eu.innowise.moviereviewproject.exceptions.movie.MovieNotFoundException;
-import eu.innowise.moviereviewproject.exceptions.user.UserNotFoundException;
 import eu.innowise.moviereviewproject.mapper.WatchlistMapper;
 import eu.innowise.moviereviewproject.model.Movie;
 import eu.innowise.moviereviewproject.model.User;
@@ -18,6 +17,11 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 import java.util.UUID;
+
+import static eu.innowise.moviereviewproject.utils.Constants.MOVIE_ALREADY_IN_WATCHLIST;
+import static eu.innowise.moviereviewproject.utils.Constants.MOVIE_NOT_FOUND_BY_ID;
+import static eu.innowise.moviereviewproject.utils.Constants.MOVIE_NOT_IN_WATCHLIST;
+import static eu.innowise.moviereviewproject.utils.Constants.USER_NOT_FOUND_BY_ID;
 
 public class WatchlistService {
 
@@ -47,12 +51,12 @@ public class WatchlistService {
 
     public void addMovieToWatchlist(UUID userId, UUID movieId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(USER_NOT_FOUND_BY_ID, userId)));
         Movie movie = movieRepository.findById(movieId)
-                .orElseThrow(() -> new MovieNotFoundException("Movie not found"));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(MOVIE_NOT_FOUND_BY_ID, movieId)));
 
         if (watchlistRepository.findByUserIdAndMovieId(userId, movieId).isPresent()) {
-            throw new MovieAlreadyInWatchlist("Movie already in watchlist");
+            throw new MovieAlreadyInWatchlist(String.format(MOVIE_ALREADY_IN_WATCHLIST, movieId, userId));
         }
 
         Watchlist watchlist = new Watchlist();
@@ -71,14 +75,14 @@ public class WatchlistService {
 
     public void removeMovieFromUserWatchlist(UUID userId, UUID movieId) {
         Watchlist watchlist = watchlistRepository.findByUserIdAndMovieId(userId, movieId)
-                .orElseThrow(() -> new RuntimeException("Watchlist not found"));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(MOVIE_NOT_IN_WATCHLIST, movieId, userId)));
 
         watchlistRepository.deleteById(watchlist.getId());
     }
 
     public void markAsWatched(UUID userId, UUID movieId) {
         Watchlist watchlist = watchlistRepository.findByUserIdAndMovieId(userId, movieId)
-                .orElseThrow(() -> new RuntimeException("Watchlist not found"));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(MOVIE_NOT_IN_WATCHLIST, movieId, userId)));
 
         watchlist.setWatched(true);
         watchlistRepository.update(watchlist);

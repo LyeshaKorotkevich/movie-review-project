@@ -3,8 +3,8 @@ package eu.innowise.moviereviewproject.servlet.auth;
 import eu.innowise.moviereviewproject.dto.request.LoginRequest;
 import eu.innowise.moviereviewproject.dto.response.UserResponse;
 import eu.innowise.moviereviewproject.exceptions.DtoValidationException;
+import eu.innowise.moviereviewproject.exceptions.EntityNotFoundException;
 import eu.innowise.moviereviewproject.exceptions.user.InvalidPasswordException;
-import eu.innowise.moviereviewproject.exceptions.user.UserNotFoundException;
 import eu.innowise.moviereviewproject.service.AuthenticationService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -51,7 +51,7 @@ public class LoginServlet extends HttpServlet {
         } catch (DtoValidationException e) {
             req.setAttribute("errors", e.getErrors());
             req.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(req, resp);
-        } catch (UserNotFoundException | InvalidPasswordException e) {
+        } catch (EntityNotFoundException | InvalidPasswordException e) {
             log.error("Authentication failed for user {}", loginRequest.username());
             req.setAttribute("userNotExists", "Неверный логин или пароль");
             req.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(req, resp);

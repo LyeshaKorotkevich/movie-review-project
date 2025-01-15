@@ -4,6 +4,7 @@ import eu.innowise.moviereviewproject.dto.request.MovieFilterRequest;
 import eu.innowise.moviereviewproject.model.Genre;
 import eu.innowise.moviereviewproject.model.Movie;
 import eu.innowise.moviereviewproject.model.enums.MovieType;
+import eu.innowise.moviereviewproject.repository.AbstractHibernateDao;
 import eu.innowise.moviereviewproject.repository.MovieRepository;
 import eu.innowise.moviereviewproject.utils.FilterPredicate;
 import eu.innowise.moviereviewproject.utils.db.JpaUtil;
@@ -15,8 +16,6 @@ import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -27,8 +26,11 @@ import java.util.UUID;
 import static eu.innowise.moviereviewproject.utils.Constants.MOVIE_PAGE_SIZE;
 
 @Slf4j
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class MovieRepositoryImpl implements MovieRepository {
+public class MovieRepositoryImpl extends AbstractHibernateDao<Movie, UUID> implements MovieRepository {
+
+    private MovieRepositoryImpl() {
+        super(Movie.class);
+    }
 
     private static class SingletonHelper {
         private static final MovieRepositoryImpl INSTANCE = new MovieRepositoryImpl();
@@ -36,22 +38,6 @@ public class MovieRepositoryImpl implements MovieRepository {
 
     public static MovieRepositoryImpl getInstance() {
         return SingletonHelper.INSTANCE;
-    }
-
-    @Override
-    public Movie save(Movie movie) {
-        return executeInTransaction(entityManager -> {
-            entityManager.persist(movie);
-            return movie;
-        });
-    }
-
-    @Override
-    public void update(Movie movie) {
-        executeInTransaction(entityManager -> {
-            entityManager.merge(movie);
-            return null;
-        });
     }
 
     @Override
@@ -80,13 +66,6 @@ public class MovieRepositoryImpl implements MovieRepository {
         } catch (Exception e) {
             log.error("Error occurred while finding movie by externalId: {}", externalId, e);
             throw new RuntimeException("Error occurred while finding movie", e);
-        }
-    }
-
-    @Override
-    public List<Movie> findAll() {
-        try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            return entityManager.createQuery("SELECT m FROM Movie m", Movie.class).getResultList();
         }
     }
 
@@ -174,19 +153,5 @@ public class MovieRepositoryImpl implements MovieRepository {
                     .getResultList();
             return !result.isEmpty();
         }
-    }
-
-    @Override
-    public void deleteById(UUID id) {
-        executeInTransaction(entityManager -> {
-            Movie movie = entityManager.find(Movie.class, id);
-            if (movie != null) {
-                entityManager.remove(movie);
-                log.info("Movie deleted successfully with ID: {}", id);
-            } else {
-                log.error("Movie with ID: {} not found for deletion", id);
-            }
-            return null;
-        });
     }
 }

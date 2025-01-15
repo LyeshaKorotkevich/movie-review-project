@@ -1,11 +1,10 @@
 package eu.innowise.moviereviewproject.repository.impl;
 
 import eu.innowise.moviereviewproject.model.Watchlist;
+import eu.innowise.moviereviewproject.repository.AbstractHibernateDao;
 import eu.innowise.moviereviewproject.repository.WatchlistRepository;
 import eu.innowise.moviereviewproject.utils.db.JpaUtil;
 import jakarta.persistence.EntityManager;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -15,8 +14,11 @@ import java.util.UUID;
 import static eu.innowise.moviereviewproject.utils.Constants.WATCHLIST_PAGE_SIZE;
 
 @Slf4j
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class WatchlistRepositoryImpl implements WatchlistRepository {
+public class WatchlistRepositoryImpl extends AbstractHibernateDao<Watchlist, UUID> implements WatchlistRepository {
+
+    private WatchlistRepositoryImpl() {
+        super(Watchlist.class);
+    }
 
     private static class SingletonHelper {
         private static final WatchlistRepositoryImpl INSTANCE = new WatchlistRepositoryImpl();
@@ -24,57 +26,6 @@ public class WatchlistRepositoryImpl implements WatchlistRepository {
 
     public static WatchlistRepositoryImpl getInstance() {
         return SingletonHelper.INSTANCE;
-    }
-
-    @Override
-    public Watchlist save(Watchlist entity) {
-        return executeInTransaction(entityManager -> {
-            entityManager.persist(entity);
-            return entity;
-        });
-    }
-
-    @Override
-    public void update(Watchlist entity) {
-        executeInTransaction(entityManager -> {
-            entityManager.merge(entity);
-            return null;
-        });
-    }
-
-    @Override
-    public Optional<Watchlist> findById(UUID id) {
-        try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            String jpql = "SELECT w FROM Watchlist w WHERE w.id = :id";
-            Watchlist watchlist = entityManager.createQuery(jpql, Watchlist.class)
-                    .setParameter("id", id)
-                    .getSingleResultOrNull();
-            return Optional.ofNullable(watchlist);
-        } catch (Exception e) {
-            log.error("Error occurred while finding watchlist by ID: {}", id, e);
-            throw new RuntimeException("Error occurred while finding watchlist", e);
-        }
-    }
-
-    @Override
-    public List<Watchlist> findAll() {
-        try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            return entityManager.createQuery("SELECT w FROM Watchlist w", Watchlist.class).getResultList();
-        }
-    }
-
-    @Override
-    public void deleteById(UUID id) {
-        executeInTransaction(entityManager -> {
-            Watchlist watchlist = entityManager.find(Watchlist.class, id);
-            if (watchlist != null) {
-                entityManager.remove(watchlist);
-                log.info("Watchlist deleted successfully with ID: {}", id);
-            } else {
-                log.warn("Watchlist with ID: {} not found for deletion", id);
-            }
-            return null;
-        });
     }
 
     @Override

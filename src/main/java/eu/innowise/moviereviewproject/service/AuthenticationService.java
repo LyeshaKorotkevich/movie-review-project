@@ -2,8 +2,8 @@ package eu.innowise.moviereviewproject.service;
 
 import eu.innowise.moviereviewproject.dto.request.LoginRequest;
 import eu.innowise.moviereviewproject.dto.response.UserResponse;
+import eu.innowise.moviereviewproject.exceptions.EntityNotFoundException;
 import eu.innowise.moviereviewproject.exceptions.user.InvalidPasswordException;
-import eu.innowise.moviereviewproject.exceptions.user.UserNotFoundException;
 import eu.innowise.moviereviewproject.mapper.UserMapper;
 import eu.innowise.moviereviewproject.model.User;
 import eu.innowise.moviereviewproject.repository.UserRepository;
@@ -11,6 +11,8 @@ import eu.innowise.moviereviewproject.repository.impl.UserRepositoryImpl;
 import eu.innowise.moviereviewproject.validator.DtoValidator;
 import org.mapstruct.factory.Mappers;
 import org.mindrot.jbcrypt.BCrypt;
+
+import static eu.innowise.moviereviewproject.utils.Constants.USER_NOT_FOUND_BY_USERNAME;
 
 public class AuthenticationService {
 
@@ -36,7 +38,7 @@ public class AuthenticationService {
         DtoValidator.validate(loginRequest);
 
         User user = userRepository.findByUsername(loginRequest.username())
-                .orElseThrow(() -> new UserNotFoundException("User with username " + loginRequest.username() + " not found"));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(USER_NOT_FOUND_BY_USERNAME, loginRequest.username())));
 
         if (!BCrypt.checkpw(loginRequest.password(), user.getPassword())) {
             throw new InvalidPasswordException("Invalid password");

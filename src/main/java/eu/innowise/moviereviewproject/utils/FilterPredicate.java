@@ -20,7 +20,7 @@ public class FilterPredicate {
     }
 
     public <T> FilterPredicate add(T object, Function<T, Predicate> function) {
-        if(Objects.nonNull(object)) {
+        if (Objects.nonNull(object)) {
             predicates.add(function.apply(object));
         }
         return this;

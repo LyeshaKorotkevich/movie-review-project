@@ -2,7 +2,7 @@ package eu.innowise.moviereviewproject.service;
 
 import eu.innowise.moviereviewproject.dto.request.MovieFilterRequest;
 import eu.innowise.moviereviewproject.dto.response.MovieResponse;
-import eu.innowise.moviereviewproject.exceptions.movie.MovieNotFoundException;
+import eu.innowise.moviereviewproject.exceptions.EntityNotFoundException;
 import eu.innowise.moviereviewproject.mapper.MovieMapper;
 import eu.innowise.moviereviewproject.model.Movie;
 import eu.innowise.moviereviewproject.model.enums.MovieType;
@@ -15,6 +15,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
+
+import static eu.innowise.moviereviewproject.utils.Constants.MOVIE_NOT_FOUND_BY_ID;
 
 @Slf4j
 public class MovieService {
@@ -38,13 +40,6 @@ public class MovieService {
 
     public static MovieService getInstance() {
         return SingletonHelper.INSTANCE;
-    }
-
-    public List<MovieResponse> getAllMovies() {
-        return movieRepository.findAll()
-                .stream()
-                .map(movieMapper::toSummaryResponse)
-                .toList();
     }
 
     public List<MovieResponse> getAllMovies(int page, int typeNumber) {
@@ -84,7 +79,7 @@ public class MovieService {
         return movieRepository
                 .findById(id)
                 .map(movieMapper::toDetailedResponse)
-                .orElseThrow(() -> new MovieNotFoundException("Movie with ID " + id + " not found"));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(MOVIE_NOT_FOUND_BY_ID, id)));
     }
 
     public List<MovieResponse> getFilteredMovies(MovieFilterRequest movieFilterRequest) {

@@ -2,7 +2,7 @@ package eu.innowise.moviereviewproject.servlet.auth;
 
 import eu.innowise.moviereviewproject.dto.request.RegistrationRequest;
 import eu.innowise.moviereviewproject.exceptions.DtoValidationException;
-import eu.innowise.moviereviewproject.exceptions.user.UserAlreadyExistsException;
+import eu.innowise.moviereviewproject.exceptions.EntityAlreadyExistsException;
 import eu.innowise.moviereviewproject.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -41,7 +41,7 @@ public class RegistrationServlet extends HttpServlet {
             req.setAttribute("errors", e.getErrors());
             req.setAttribute("registrationDTO", registrationRequest);
             req.getRequestDispatcher("/WEB-INF/views/register.jsp").forward(req, resp);
-        } catch (UserAlreadyExistsException e) {
+        } catch (EntityAlreadyExistsException e) {
             req.setAttribute("userAlreadyExists", "Username or email is already taken");
             req.setAttribute("registrationDTO", registrationRequest);
             req.getRequestDispatcher("/WEB-INF/views/register.jsp").forward(req, resp);

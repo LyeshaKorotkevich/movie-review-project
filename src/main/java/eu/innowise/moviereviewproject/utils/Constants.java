@@ -28,7 +28,19 @@ public final class Constants {
 
     public static final String SELECT_REVIEWS = "SELECT r FROM Review r";
 
-    public static final String SELECT_USER_BY_ID = "SELECT u FROM User u WHERE u.id = :id";
     public static final String SELECT_USER_BY_USERNAME = "SELECT u FROM User u WHERE u.username = :username";
     public static final String SELECT_USERS = "SELECT u FROM User u";
+
+    // exceptions
+    public static final String USER_NOT_FOUND_BY_ID = "User with ID %s not found";
+    public static final String USER_NOT_FOUND_BY_USERNAME = "User with username %s not found";
+
+    public static final String MOVIE_NOT_FOUND_BY_ID = "Movie with ID %s not found";
+    public static final String MOVIE_ALREADY_IN_WATCHLIST = "Movie  with ID %s already in user's %s watchlist";
+    public static final String MOVIE_NOT_IN_WATCHLIST = "Movie with ID %s not in user's %s watchlist";
+
+    public static final String REVIEW_NOT_FOUND_BY_ID = "Review with ID %s not found";
+
+    public static final String COMPLAINT_NOT_FOUND_BY_ID = "Complaint with ID %s not found";
+
 }

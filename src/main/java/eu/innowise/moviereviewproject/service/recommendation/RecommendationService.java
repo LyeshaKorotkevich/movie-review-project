@@ -2,7 +2,7 @@ package eu.innowise.moviereviewproject.service.recommendation;
 
 import eu.innowise.moviereviewproject.dto.response.MovieResponse;
 import eu.innowise.moviereviewproject.dto.response.UserResponse;
-import eu.innowise.moviereviewproject.exceptions.movie.MovieNotFoundException;
+import eu.innowise.moviereviewproject.exceptions.EntityNotFoundException;
 import eu.innowise.moviereviewproject.mapper.IdMapper;
 import eu.innowise.moviereviewproject.mapper.MovieMapper;
 import eu.innowise.moviereviewproject.model.Review;
@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static eu.innowise.moviereviewproject.utils.Constants.MOVIE_NOT_FOUND_BY_ID;
+
 @Slf4j
 public class RecommendationService {
 
@@ -38,7 +40,7 @@ public class RecommendationService {
     private boolean isCsvUpdated = false;
 
     private RecommendationService(MovieRepository movieRepository, UserRepository userRepository, ReviewRepository reviewRepository,
-                                 RecommendationEngine recommendationEngine) {
+                                  RecommendationEngine recommendationEngine) {
         this.movieRepository = movieRepository;
         this.userRepository = userRepository;
         this.reviewRepository = reviewRepository;
@@ -70,7 +72,7 @@ public class RecommendationService {
             return recommendations.stream()
                     .map(rec -> movieRepository.findById(movieIdMapper.getOriginal(rec.getItemID()))
                             .map(movieMapper::toSummaryResponse)
-                            .orElseThrow(() -> new MovieNotFoundException("Movie not found for ID: " + rec.getItemID())))
+                            .orElseThrow(() -> new EntityNotFoundException(String.format(MOVIE_NOT_FOUND_BY_ID, rec.getItemID()))))
                     .toList();
         } catch (Exception e) {
             throw new RuntimeException("Error generating recommendations: " + e.getMessage(), e);

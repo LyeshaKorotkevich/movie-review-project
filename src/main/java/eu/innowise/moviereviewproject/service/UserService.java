@@ -3,8 +3,8 @@ package eu.innowise.moviereviewproject.service;
 import eu.innowise.moviereviewproject.dto.request.RegistrationRequest;
 import eu.innowise.moviereviewproject.dto.response.UserResponse;
 import eu.innowise.moviereviewproject.exceptions.DtoValidationException;
-import eu.innowise.moviereviewproject.exceptions.user.UserAlreadyExistsException;
-import eu.innowise.moviereviewproject.exceptions.user.UserNotFoundException;
+import eu.innowise.moviereviewproject.exceptions.EntityAlreadyExistsException;
+import eu.innowise.moviereviewproject.exceptions.EntityNotFoundException;
 import eu.innowise.moviereviewproject.mapper.UserMapper;
 import eu.innowise.moviereviewproject.model.User;
 import eu.innowise.moviereviewproject.model.enums.UserRole;
@@ -16,6 +16,9 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.List;
 import java.util.UUID;
+
+import static eu.innowise.moviereviewproject.utils.Constants.USER_NOT_FOUND_BY_ID;
+import static eu.innowise.moviereviewproject.utils.Constants.USER_NOT_FOUND_BY_USERNAME;
 
 public class UserService {
 
@@ -44,12 +47,12 @@ public class UserService {
     public UserResponse getUserById(UUID id) {
         return userRepository.findById(id)
                 .map(userMapper::toSummaryResponse)
-                .orElseThrow(() -> new UserNotFoundException("User with ID " + id + " not found"));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(USER_NOT_FOUND_BY_ID, id)));
     }
 
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("User with username " + username + " not found"));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(USER_NOT_FOUND_BY_USERNAME, username)));
     }
 
     public void registerUser(RegistrationRequest dto) throws DtoValidationException {
@@ -65,7 +68,7 @@ public class UserService {
     public void saveUser(User user) {
         try {
             userRepository.save(user);
-        } catch (UserAlreadyExistsException e) {
+        } catch (EntityAlreadyExistsException e) {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("Unexpected error during user registration", e);
@@ -75,7 +78,7 @@ public class UserService {
 
     public void updateUser(User user) {
         if (!userRepository.existsById(user.getId())) {
-            throw new UserNotFoundException("Cannot update user. User with ID " + user.getId() + " not found");
+            throw new EntityNotFoundException(String.format(USER_NOT_FOUND_BY_ID, user.getId()));
         }
         userRepository.update(user);
     }
@@ -83,7 +86,7 @@ public class UserService {
 
     public void deleteUser(UUID id) {
         if (!userRepository.existsById(id)) {
-            throw new UserNotFoundException("Cannot delete user. User with ID " + id + " not found");
+            throw new EntityNotFoundException(String.format(USER_NOT_FOUND_BY_ID, id));
         }
         userRepository.deleteById(id);
     }

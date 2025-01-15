@@ -1,11 +1,10 @@
 package eu.innowise.moviereviewproject.repository.impl;
 
 import eu.innowise.moviereviewproject.model.Person;
+import eu.innowise.moviereviewproject.repository.AbstractHibernateDao;
 import eu.innowise.moviereviewproject.repository.PersonRepository;
 import eu.innowise.moviereviewproject.utils.db.JpaUtil;
 import jakarta.persistence.EntityManager;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -13,8 +12,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class PersonRepositoryImpl implements PersonRepository {
+public class PersonRepositoryImpl extends AbstractHibernateDao<Person, UUID> implements PersonRepository {
+
+    private PersonRepositoryImpl() {
+        super(Person.class);
+    }
 
     private static class SingletonHelper {
         private static final PersonRepositoryImpl INSTANCE = new PersonRepositoryImpl();
@@ -22,33 +24,6 @@ public class PersonRepositoryImpl implements PersonRepository {
 
     public static PersonRepositoryImpl getInstance() {
         return PersonRepositoryImpl.SingletonHelper.INSTANCE;
-    }
-
-    @Override
-    public Person save(Person entity) {
-        return executeInTransaction(entityManager -> {
-            entityManager.persist(entity);
-            return entity;
-        });
-    }
-
-    @Override
-    public void update(Person entity) {
-        executeInTransaction(entityManager -> {
-            entityManager.merge(entity);
-            return null;
-        });
-    }
-
-    @Override
-    public Optional<Person> findById(UUID id) {
-        try (EntityManager entityManager = JpaUtil.getEntityManager()) {
-            Person person = entityManager.find(Person.class, id);
-            return Optional.ofNullable(person);
-        } catch (Exception e) {
-            log.error("Error occurred while finding person by ID: {}", id, e);
-            throw new RuntimeException("Error occurred while finding person by ID", e);
-        }
     }
 
     @Override
@@ -73,19 +48,5 @@ public class PersonRepositoryImpl implements PersonRepository {
             log.error("Error occurred while fetching all persons", e);
             throw new RuntimeException("Error occurred while fetching all persons", e);
         }
-    }
-
-    @Override
-    public void deleteById(UUID id) {
-        executeInTransaction(entityManager -> {
-            Person person = entityManager.find(Person.class, id);
-            if (person != null) {
-                entityManager.remove(person);
-                log.info("Person deleted successfully with ID: {}", id);
-            } else {
-                log.error("Person with ID: {} not found for deletion", id);
-            }
-            return null;
-        });
     }
 }
