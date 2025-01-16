@@ -5,6 +5,7 @@
 <%@ page import="eu.innowise.moviereviewproject.dto.response.GenreResponse" %>
 <%@ page import="eu.innowise.moviereviewproject.dto.response.MovieResponse" %>
 <%@ page import="eu.innowise.moviereviewproject.dto.response.UserResponse" %>
+<%@ page import="java.util.ResourceBundle" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
@@ -15,6 +16,11 @@
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 <body class="bg-light">
+
+<%
+    ResourceBundle bundle = ((ResourceBundle) request.getAttribute("bundle"));
+%>
+
 <div class="container py-3">
     <header class="mb-4">
         <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
@@ -25,33 +31,47 @@
                         if(currentType == null) currentType = "0";
                     %>
                     <li class="nav-item">
-                        <a class="nav-link" href="<%= request.getContextPath() %>/recommendations">Для тебя</a>
+                        <a class="nav-link" href="<%= request.getContextPath() %>/recommendations"><%=bundle.getString("ForYou")%></a>
                     </li>
                     <li class="nav-item <%= "0".equals(currentType) ? "active" : "" %>">
-                        <a class="nav-link" href="?typeNumber=0">Все</a>
+                        <a class="nav-link" href="?typeNumber=0"><%=bundle.getString("All")%></a>
                     </li>
                     <li class="nav-item <%= "1".equals(currentType) ? "active" : "" %>">
-                        <a class="nav-link" href="?typeNumber=1">Фильмы</a>
+                        <a class="nav-link" href="?typeNumber=1"><%=bundle.getString("Movies")%></a>
                     </li>
                     <li class="nav-item <%= "2".equals(currentType) ? "active" : "" %>">
-                        <a class="nav-link" href="?typeNumber=2">Сериалы</a>
+                        <a class="nav-link" href="?typeNumber=2"><%=bundle.getString("Series")%></a>
                     </li>
                     <li class="nav-item <%= "3".equals(currentType) ? "active" : "" %>">
-                        <a class="nav-link" href="?typeNumber=3">Мультфильмы</a>
+                        <a class="nav-link" href="?typeNumber=3"><%=bundle.getString("AnimatedMovies")%></a>
                     </li>
                     <li class="nav-item <%= "4".equals(currentType) ? "active" : "" %>">
-                        <a class="nav-link" href="?typeNumber=4">Аниме</a>
+                        <a class="nav-link" href="?typeNumber=4"><%=bundle.getString("Anime")%></a>
                     </li>
                     <li class="nav-item <%= "5".equals(currentType) ? "active" : "" %>">
-                        <a class="nav-link" href="?typeNumber=5">Анимационные сериалы</a>
+                        <a class="nav-link" href="?typeNumber=5"><%=bundle.getString("AnimatedSeries")%></a>
                     </li>
                 </ul>
                 <form class="form-inline my-2 my-lg-0" action="<%= request.getContextPath() %>/movies/search" method="get">
-                    <input class="form-control mr-sm-2" type="search" name="query" placeholder="Поиск фильмов..." aria-label="Search">
-                    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Искать</button>
+                    <input class="form-control mr-sm-2" type="search" name="query" placeholder="<%=bundle.getString("SearchMovies")%>" aria-label="Search">
+                    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit"><%=bundle.getString("Search")%></button>
                 </form>
 
                 <ul class="navbar-nav ml-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <%= bundle.getString("Language") %>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="languageDropdown">
+                            <a class="dropdown-item" href="<%= request.getContextPath() %>/change-language?lang=en">English</a>
+                            <a class="dropdown-item" href="<%= request.getContextPath() %>/change-language?lang=ru">Русский</a>
+                        </div>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav ml-auto">
+
+
                     <%
                         UserResponse user = (UserResponse) session.getAttribute("user");
                         if (user != null) {
@@ -62,15 +82,15 @@
                             <%= user.username() %>
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="<%= request.getContextPath() %>/watchlist">Список для просмотра</a>
-                            <a class="dropdown-item" href="<%= request.getContextPath() %>/auth/logout">Выйти</a>
+                            <a class="dropdown-item" href="<%= request.getContextPath() %>/watchlist"><%=bundle.getString("Watchlist")%></a>
+                            <a class="dropdown-item" href="<%= request.getContextPath() %>/auth/logout"><%=bundle.getString("LogOut")%></a>
                         </div>
                     </li>
                     <%
                     } else {
                     %>
                     <li class="nav-item">
-                        <a class="nav-link" href="<%= request.getContextPath() %>/auth/login">Войти</a>
+                        <a class="nav-link" href="<%= request.getContextPath() %>/auth/login"><%=bundle.getString("LogIn")%></a>
                     </li>
                     <%
                         }
@@ -82,14 +102,14 @@
 
     <div class="card mb-4">
         <div class="card-header bg-primary text-white">
-            Фильтры поиска
+            <%=bundle.getString("SearchFilters")%>
         </div>
         <div class="card-body">
             <form class="form-inline d-flex flex-wrap justify-content-start" action="<%= request.getContextPath() %>/movies" method="get" style="gap: 15px;">
                 <div class="form-group">
-                    <label for="genre" class="mr-2">Жанр</label>
+                    <label for="genre" class="mr-2"><%=bundle.getString("Genre")%></label>
                     <select id="genre" class="form-control form-control-sm" name="genre">
-                        <option value="">Все жанры</option>
+                        <option value=""><%=bundle.getString("Genres")%></option>
                         <%
                             List<GenreResponse> genres = (List<GenreResponse>) request.getAttribute("genres");
                             if (genres != null) {
@@ -104,18 +124,18 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="mr-2">Год выпуска</label>
-                    <input type="number" class="form-control form-control-sm" name="startYear" placeholder="От" style="width: 80px;">
-                    <input type="number" class="form-control form-control-sm" name="endYear" placeholder="До" style="width: 80px;">
+                    <label class="mr-2"><%=bundle.getString("ReleaseYear")%></label>
+                    <input type="number" class="form-control form-control-sm" name="startYear" placeholder="<%=bundle.getString("From")%>" style="width: 80px;">
+                    <input type="number" class="form-control form-control-sm" name="endYear" placeholder="<%=bundle.getString("To")%>" style="width: 80px;">
                 </div>
 
                 <div class="form-group">
-                    <label class="mr-2">Рейтинг</label>
-                    <input type="number" class="form-control form-control-sm" name="minRating" placeholder="От" style="width: 80px;">
-                    <input type="number" class="form-control form-control-sm" name="maxRating" placeholder="До" style="width: 80px;">
+                    <label class="mr-2"><%=bundle.getString("Rating")%></label>
+                    <input type="number" class="form-control form-control-sm" name="minRating" placeholder="<%=bundle.getString("From")%>" style="width: 80px;">
+                    <input type="number" class="form-control form-control-sm" name="maxRating" placeholder="<%=bundle.getString("To")%>" style="width: 80px;">
                 </div>
                 <input type="hidden" name="typeNumber" value="${param.typeNumber}"/>
-                <button class="btn btn-primary btn-sm">Применить</button>
+                <button class="btn btn-primary btn-sm"><%=bundle.getString("Apply")%></button>
             </form>
         </div>
     </div>
@@ -133,8 +153,8 @@
                     <img src="<%= movie.posterUrl() != null ? movie.posterUrl() : "https://via.placeholder.com/300x450" %>" class="card-img-top" alt="Постер">
                     <div class="card-body">
                         <h5 class="card-title text-truncate"><%= movie.title() %></h5>
-                        <p class="card-text">Год: <%= movie.releaseYear() %></p>
-                        <small class="text-muted">Рейтинг: <%= movie.rating() %></small>
+                        <p class="card-text"><%=bundle.getString("Year")%>: <%= movie.releaseYear() %></p>
+                        <small class="text-muted"><%=bundle.getString("Rating")%>: <%= movie.rating() %></small>
                     </div>
                 </a>
             </div>
@@ -175,11 +195,11 @@
         %>
         <% if (currentPage > 1) { %>
         <li class="page-item">
-            <a class="page-link" href="?page=<%= currentPage - 1 %><%= filterUrl%>">Предыдущая</a>
+            <a class="page-link" href="?page=<%= currentPage - 1 %><%= filterUrl%>"><%=bundle.getString("Previous")%></a>
         </li>
         <% } %>
         <li class="page-item">
-            <a class="page-link" href="?page=<%= currentPage + 1 %><%= filterUrl%>">Следующая</a>
+            <a class="page-link" href="?page=<%= currentPage + 1 %><%= filterUrl%>"><%=bundle.getString("Next")%></a>
         </li>
     </ul>
 

@@ -7,6 +7,7 @@
 <%@ page import="eu.innowise.moviereviewproject.dto.response.GenreResponse" %>
 <%@ page import="eu.innowise.moviereviewproject.dto.response.PersonResponse" %>
 <%@ page import="eu.innowise.moviereviewproject.dto.response.MovieResponse" %>
+<%@ page import="java.util.ResourceBundle" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
@@ -17,6 +18,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body class="bg-light">
+
+<%
+    ResourceBundle bundle = ((ResourceBundle) request.getAttribute("bundle"));
+%>
+
 <div class="container py-5">
 
     <%
@@ -45,7 +51,7 @@
                     } else {
                     %>
                     <button type="submit" class="btn btn-success btn-lg w-100">
-                        <i class="fas fa-plus-circle"></i> Добавить в список для просмотра
+                        <i class="fas fa-plus-circle"></i> <%=bundle.getString("AddToWatchlist")%>
                     </button>
                     <%
                         }
@@ -54,10 +60,10 @@
             </div>
         </div>
         <div class="col-md-6">
-            <p><strong>Год:</strong> <%= movie.releaseYear() %></p>
-            <p><strong>Описание:</strong> <%= movie.description() %></p>
-            <p><strong>Рейтинг:</strong> <%= movie.rating() %></p>
-            <p><strong>Жанры:</strong>
+            <p><strong><%=bundle.getString("Year")%>:</strong> <%= movie.releaseYear() %></p>
+            <p><strong><%=bundle.getString("Description")%>:</strong> <%= movie.description() %></p>
+            <p><strong><%=bundle.getString("Rating")%>:</strong> <%= movie.rating() %></p>
+            <p><strong><%=bundle.getString("Genres")%>:</strong>
                 <%
                     if (movie.genres() != null && !movie.genres().isEmpty()) {
                         for (GenreResponse genre : movie.genres()) {
@@ -113,10 +119,10 @@
     </div>
 
     <div class="mt-5">
-        <h3>Оставьте вашу рецензию</h3>
+        <h3><%=bundle.getString("LeaveYourReview")%></h3>
         <form action="<%= request.getContextPath() + "/review" %>" method="post">
             <div class="form-group">
-                <label>Рейтинг:</label>
+                <label><%=bundle.getString("Review")%>:</label>
                 <div class="star-rating">
                     <%
                         for (int i = 10; i >= 1; i--) {
@@ -130,8 +136,8 @@
                 </div>
             </div>
             <div class="form-group">
-                <label for="review">Рецензия:</label>
-                <textarea class="form-control" id="review" name="review" rows="5" placeholder="Напишите вашу рецензию здесь..."><%= existingReview != null ? existingReview.content() : "" %></textarea>
+                <label for="review"><%=bundle.getString("Review")%>:</label>
+                <textarea class="form-control" id="review" name="review" rows="5" placeholder="<%=bundle.getString("WriteYourReviewHere")%>"><%= existingReview != null ? existingReview.content() : "" %></textarea>
             </div>
             <%
                 if (existingReview != null) {
@@ -141,12 +147,12 @@
                 }
             %>
             <input type="hidden" name="movieId" value="<%= movie.id() %>">
-            <button type="submit" class="btn btn-primary">Отправить</button>
+            <button type="submit" class="btn btn-primary"><%=bundle.getString("Send")%></button>
         </form>
     </div>
 
     <div class="mt-5">
-        <h3>Рецензии:</h3>
+        <h3><%=bundle.getString("Reviews")%>:</h3>
 
         <%
             List<ReviewResponse> reviews = (List<ReviewResponse>) request.getAttribute("reviews");
@@ -209,18 +215,18 @@
             }
         } else {
         %>
-        <p>Рецензий еще нет.</p>
+        <p><%=bundle.getString("ThereIsNoReviews")%>.</p>
         <% } %>
 
         <nav aria-label="Навигация по страницам">
             <ul class="pagination justify-content-center">
                 <% if (currentPage > 1) { %>
                 <li class="page-item">
-                    <a class="page-link" href="?page=<%= currentPage - 1 %>">Предыдущая</a>
+                    <a class="page-link" href="?page=<%= currentPage - 1 %>"><%=bundle.getString("Previous")%></a>
                 </li>
                 <% } %>
                 <li class="page-item">
-                    <a class="page-link" href="?page=<%= currentPage + 1 %>">Следующая</a>
+                    <a class="page-link" href="?page=<%= currentPage + 1 %>"><%=bundle.getString("Next")%></a>
                 </li>
             </ul>
         </nav>

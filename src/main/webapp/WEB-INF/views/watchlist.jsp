@@ -1,5 +1,6 @@
 <%@ page import="java.util.List" %>
 <%@ page import="eu.innowise.moviereviewproject.dto.response.WatchlistResponse" %>
+<%@ page import="java.util.ResourceBundle" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
@@ -9,6 +10,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 <body class="bg-light">
+
+<%
+    ResourceBundle bundle = ((ResourceBundle) request.getAttribute("bundle"));
+%>
+
 <div class="container py-5">
     <h1 class="text-center mb-4">Список для просмотра</h1>
 
@@ -27,8 +33,8 @@
 
             <div>
                 <h5><%= watchlistMovie.movie().title() %></h5>
-                <p class="mb-1">Год: <%= watchlistMovie.movie().releaseYear() %></p>
-                <small class="text-muted">Рейтинг: <%= watchlistMovie.movie().rating() %></small>
+                <p class="mb-1"><%=bundle.getString("Year")%>: <%= watchlistMovie.movie().releaseYear() %></p>
+                <small class="text-muted"><%=bundle.getString("Rating")%>: <%= watchlistMovie.movie().rating() %></small>
                 <%
                     if (watchlistMovie.isWatched()) {
                 %>
@@ -68,11 +74,11 @@
         <ul class="pagination justify-content-center">
             <% if (currentPage > 1) { %>
             <li class="page-item">
-                <a class="page-link" href="?page=<%= currentPage - 1 %>">Предыдущая</a>
+                <a class="page-link" href="?page=<%= currentPage - 1 %>"><%=bundle.getString("Previous")%></a>
             </li>
             <% } %>
             <li class="page-item">
-                <a class="page-link" href="?page=<%= currentPage + 1 %>">Следующая</a>
+                <a class="page-link" href="?page=<%= currentPage + 1 %>"><%=bundle.getString("Next")%></a>
             </li>
         </ul>
     </nav>

@@ -1,6 +1,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="eu.innowise.moviereviewproject.dto.response.MovieResponse" %>
 <%@ page import="eu.innowise.moviereviewproject.dto.response.UserResponse" %>
+<%@ page import="java.util.ResourceBundle" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
@@ -11,6 +12,11 @@
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 <body class="bg-light">
+
+<%
+    ResourceBundle bundle = ((ResourceBundle) request.getAttribute("bundle"));
+%>
+
 <div class="container py-3">
 
     <div class="row">
@@ -25,8 +31,8 @@
                     <img src="<%= movie.posterUrl() != null ? movie.posterUrl() : "https://via.placeholder.com/300x450" %>" class="card-img-top" alt="Постер">
                     <div class="card-body">
                         <h5 class="card-title text-truncate"><%= movie.title() %></h5>
-                        <p class="card-text">Год: <%= movie.releaseYear() %></p>
-                        <small class="text-muted">Рейтинг: <%= movie.rating() %></small>
+                        <p class="card-text"><%=bundle.getString("Year")%>: <%= movie.releaseYear() %></p>
+                        <small class="text-muted"><%=bundle.getString("Rating")%>: <%= movie.rating() %></small>
                     </div>
                 </a>
             </div>
