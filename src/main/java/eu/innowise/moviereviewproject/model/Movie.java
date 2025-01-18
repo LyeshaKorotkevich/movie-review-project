@@ -1,6 +1,7 @@
 package eu.innowise.moviereviewproject.model;
 
 import eu.innowise.moviereviewproject.model.enums.MovieType;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
